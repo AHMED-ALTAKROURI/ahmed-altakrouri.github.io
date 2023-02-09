@@ -1,5 +1,5 @@
 # exampleSite/config.yaml
-baseURL: https://smigle-hugo-theme.netlify.app/ # Replace with your domain
+baseURL: https://ahmed-altakrouri.github.io/ # Replace with your domain
 languageCode: en-us
 title: Probabilistic Rethinking
 menu:
