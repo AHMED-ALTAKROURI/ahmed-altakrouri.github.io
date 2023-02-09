@@ -13,7 +13,8 @@ html {
   :root {
    /*  --bgcolor: black; */
      --fontcolor: black;
-     --linkcolor: #5bf;
+   /*  --linkcolor: #5bf; */
+     --linkcolor: #55ffa2;
      --visitedcolor: #ae5ee0;
      --precolor: #fff;
      --prebgcolor: #383838;
