@@ -53,6 +53,10 @@ pre {
   padding: 24px;
   overflow-x: auto;
 }
+b {
+   font-size: 1.25em;
+}
+
 article {
   padding: 5px 0;
 }
