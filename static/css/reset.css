@@ -11,7 +11,7 @@ html {
 }
 @media (prefers-color-scheme: dark) {
   :root {
-     --bgcolor: black;
+   /*  --bgcolor: black; */
      --fontcolor: white;
      --linkcolor: #5bf;
      --visitedcolor: #ae5ee0;
