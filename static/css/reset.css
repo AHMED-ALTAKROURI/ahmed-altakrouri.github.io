@@ -12,7 +12,7 @@ html {
 @media (prefers-color-scheme: dark) {
   :root {
    /*  --bgcolor: black; */
-     --fontcolor: white;
+     --fontcolor: black;
      --linkcolor: #5bf;
      --visitedcolor: #ae5ee0;
      --precolor: #fff;
