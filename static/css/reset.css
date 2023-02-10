@@ -14,7 +14,7 @@ html {
    /*  --bgcolor: black; */
      --fontcolor: black;
    /*  --linkcolor: #5bf; */
-     --linkcolor: #55ffa2;
+     --linkcolor: green;
      --visitedcolor: #ae5ee0;
      --precolor: #fff;
      --prebgcolor: #383838;
@@ -55,6 +55,7 @@ pre {
 }
 b {
    font-size: 1.25em;
+   color: blue;
 }
 
 article {
