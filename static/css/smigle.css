@@ -33,6 +33,7 @@ footer {
 }
 header nav {
   margin: 15px 0;
+ color: blue;
 }
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
