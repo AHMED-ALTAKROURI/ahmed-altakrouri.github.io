@@ -35,7 +35,8 @@ a:link {
   color: var(--linkcolor);
 }
 a:visited {
-  color: var(--visitedcolor);
+ /* color: var(--visitedcolor); */
+  color: green;
 }
 a:active {
   color: var(--visitedcolor);
