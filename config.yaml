@@ -1,7 +1,7 @@
 # exampleSite/config.yaml
 baseURL: https://ahmed-altakrouri.github.io/ # Replace with your domain
 languageCode: en-us
-title: Probabilistic Rethinking
+title: Probabilistic Thinking
 menu:
   main:
     - identifier: home
@@ -29,15 +29,15 @@ params:
   author: "Ahmed Altakrouri"
   brandIconFile: "images/brandIcon.svg"
   dateFmt: "2006-01-02"
-#  customStylesheets: # Use to override theme styles, like logo size
-#    - "css/custom.css"
+  #  customStylesheets: # Use to override theme styles, like logo size
+  #    - "css/custom.css"
   social:
     - name: GitHub
       url: https://github.com/AHMED-ALTAKROURI
     - name: Twitter
       url: https://twitter.com/ahmedtakrouri
-#    - name: Reddit
-#      url: https://www.reddit.com/user/ian-s-mcb
+    #    - name: Reddit
+    #      url: https://www.reddit.com/user/ian-s-mcb
     - name: Linkedin
       url: https://www.linkedin.com/in/ahmed-altakrouri-7422b185/
-  subtitle: "Probabilistic Problem Solving at Scale"
+  subtitle: "Ideas and thoughts on machine learning, data science, and statistics"
