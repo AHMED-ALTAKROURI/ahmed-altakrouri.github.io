@@ -1,6 +1,6 @@
 ---
 author: Hugo Authors
-title: ahmed altakrouri new new new 
+title: ahmed altakrouri
 date: 2018-02-13
 Lastmod: 2021-08-18
 description: Guide to emoji usage in Hugo
