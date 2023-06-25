@@ -17,8 +17,8 @@ html {
      --linkcolor: green;
      /* --visitedcolor: #ae5ee0;*/
        --visitedcolor: #ae5ee0;
-     --precolor: #fff;
-     --prebgcolor: #383838;
+     --precolor: #000;
+     --prebgcolor: #fff;
   }
 }
 body {
@@ -50,8 +50,8 @@ p > code {
   padding: 2px;
 }
 pre {
-  color: black;
-  background: none;
+  color: var(--precolor); 
+  background: var(--prebgcolor);
   padding: 24px;
   overflow-x: auto;
 }
