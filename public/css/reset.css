@@ -6,8 +6,8 @@ html {
   --fontcolor: #444;
   --linkcolor: #00e;
   --visitedcolor: #551a8b;
-  --precolor: #fff;
-  --prebgcolor: #000;
+  --precolor: #000;
+  --prebgcolor: #fff;
 }
 @media (prefers-color-scheme: dark) {
   :root {
