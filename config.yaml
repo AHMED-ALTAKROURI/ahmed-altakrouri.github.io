@@ -41,3 +41,5 @@ params:
     - name: Linkedin
       url: https://www.linkedin.com/in/ahmed-altakrouri-7422b185/
   subtitle: "Ideas and thoughts on machine learning, data science, and statistics"
+
+customCSS : ["/style.css"]
