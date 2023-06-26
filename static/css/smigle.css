@@ -73,3 +73,6 @@ header nav {
   margin: 2px;
   padding: 8px;
 }
+.justify-text {
+  text-align: justify;
+}

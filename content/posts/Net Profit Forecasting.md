@@ -1,31 +1,28 @@
 
 ---
-title: "Profit Forecasting Profit"
-date: 2022-04-15
+title: "Net Profit Forecasting"
+date: 2023-02-15
 draft: false
 ---
 
-### Overview:
 
+
+
+
+
+
+
+### Overview:
+{{< justify >}}
 This notebook aimed is to demonstrate the solution for simple regression problem, predict net profit given a set of attributes, first I start with simple EDA understand the data numerical and categorical distributions. Then I fit simple statistical model followed by linear regression and more complex one. each model includes scoring metrics and explanations.
 Finally, I communicate final finding of prediction of the provided Out-of-sample test set and the including factors or attributes that decided the final predictions using shapley values.
+{{< /justify >}}
+
 
 
 ```python
 
 %matplotlib inline
-
-
-import warnings
-
-# data wrangling:
-import pandas as pd
-
-# visualizations:
-import plotly.express as px
-import plotly.graph_objects as go
-import seaborn as sns
-from matplotlib import pyplot as plt
 
 # modeling:
 from sklearn.linear_model import LinearRegression
@@ -33,7 +30,6 @@ from statsmodels.regression.linear_model import OLS
 
 # metrics:
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import StratifiedKFold
 
 # model diagnosis:
 from yellowbrick.model_selection import learning_curve
@@ -46,14 +42,19 @@ import shap
 from utils import *
 
 
+import numpy as np
+
+from sklearn.model_selection import StratifiedKFold
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+
+from yellowbrick.datasets import load_game
+from yellowbrick.model_selection import LearningCurve
+
+
 import warnings
 warnings.filterwarnings('ignore')
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 ```
 
@@ -82,8 +83,8 @@ pd.options.display.max_columns = 30
 3. Statistical Model.
 4. baseline Model
 5. Complex Model.
-Scoring.
-6. SHAPly Values, Interoperable ML.
+6. Scoring.
+7. SHAPly Values, Interoperable ML.
 
 
 
@@ -106,6 +107,7 @@ modeling_data.head()
 
 
 
+
 <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -122,7 +124,7 @@ modeling_data.head()
 </style>
 <table border="1" class="dataframe">
   <thead>
-    <tr style="text-align: right;">
+    <tr style="text-align: justify;">
       <th></th>
       <th>Age</th>
       <th>Monthly premium</th>
@@ -433,82 +435,82 @@ modeling_data.isnull().sum().to_frame().style.background_gradient(cmap='summer')
 
 
 <style type="text/css">
-#T_07f17_row0_col0 {
+#T_18c32_row0_col0 {
   background-color: #53a966;
   color: #f1f1f1;
 }
-#T_07f17_row1_col0 {
+#T_18c32_row1_col0 {
   background-color: #369a66;
   color: #f1f1f1;
 }
-#T_07f17_row2_col0, #T_07f17_row3_col0, #T_07f17_row4_col0, #T_07f17_row5_col0, #T_07f17_row6_col0, #T_07f17_row7_col0, #T_07f17_row9_col0, #T_07f17_row10_col0, #T_07f17_row11_col0, #T_07f17_row12_col0 {
+#T_18c32_row2_col0, #T_18c32_row3_col0, #T_18c32_row4_col0, #T_18c32_row5_col0, #T_18c32_row6_col0, #T_18c32_row7_col0, #T_18c32_row9_col0, #T_18c32_row10_col0, #T_18c32_row11_col0, #T_18c32_row12_col0 {
   background-color: #008066;
   color: #f1f1f1;
 }
-#T_07f17_row8_col0 {
+#T_18c32_row8_col0 {
   background-color: #ffff66;
   color: #000000;
 }
 </style>
-<table id="T_07f17">
+<table id="T_18c32">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_07f17_level0_col0" class="col_heading level0 col0" >0</th>
+      <th id="T_18c32_level0_col0" class="col_heading level0 col0" >0</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_07f17_level0_row0" class="row_heading level0 row0" >Age</th>
-      <td id="T_07f17_row0_col0" class="data row0 col0" >17</td>
+      <th id="T_18c32_level0_row0" class="row_heading level0 row0" >Age</th>
+      <td id="T_18c32_row0_col0" class="data row0 col0" >17</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row1" class="row_heading level0 row1" >Monthly premium</th>
-      <td id="T_07f17_row1_col0" class="data row1 col0" >11</td>
+      <th id="T_18c32_level0_row1" class="row_heading level0 row1" >Monthly premium</th>
+      <td id="T_18c32_row1_col0" class="data row1 col0" >11</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row2" class="row_heading level0 row2" >Socioeconomic category</th>
-      <td id="T_07f17_row2_col0" class="data row2 col0" >0</td>
+      <th id="T_18c32_level0_row2" class="row_heading level0 row2" >Socioeconomic category</th>
+      <td id="T_18c32_row2_col0" class="data row2 col0" >0</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row3" class="row_heading level0 row3" >Monthly kilometers</th>
-      <td id="T_07f17_row3_col0" class="data row3 col0" >0</td>
+      <th id="T_18c32_level0_row3" class="row_heading level0 row3" >Monthly kilometers</th>
+      <td id="T_18c32_row3_col0" class="data row3 col0" >0</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row4" class="row_heading level0 row4" >Coefficient bonus malus</th>
-      <td id="T_07f17_row4_col0" class="data row4 col0" >0</td>
+      <th id="T_18c32_level0_row4" class="row_heading level0 row4" >Coefficient bonus malus</th>
+      <td id="T_18c32_row4_col0" class="data row4 col0" >0</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row5" class="row_heading level0 row5" >Vehicle type</th>
-      <td id="T_07f17_row5_col0" class="data row5 col0" >0</td>
+      <th id="T_18c32_level0_row5" class="row_heading level0 row5" >Vehicle type</th>
+      <td id="T_18c32_row5_col0" class="data row5 col0" >0</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row6" class="row_heading level0 row6" >CRM score</th>
-      <td id="T_07f17_row6_col0" class="data row6 col0" >0</td>
+      <th id="T_18c32_level0_row6" class="row_heading level0 row6" >CRM score</th>
+      <td id="T_18c32_row6_col0" class="data row6 col0" >0</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row7" class="row_heading level0 row7" >Standard of living</th>
-      <td id="T_07f17_row7_col0" class="data row7 col0" >0</td>
+      <th id="T_18c32_level0_row7" class="row_heading level0 row7" >Standard of living</th>
+      <td id="T_18c32_row7_col0" class="data row7 col0" >0</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row8" class="row_heading level0 row8" >Brand</th>
-      <td id="T_07f17_row8_col0" class="data row8 col0" >52</td>
+      <th id="T_18c32_level0_row8" class="row_heading level0 row8" >Brand</th>
+      <td id="T_18c32_row8_col0" class="data row8 col0" >52</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row9" class="row_heading level0 row9" >Yearly income</th>
-      <td id="T_07f17_row9_col0" class="data row9 col0" >0</td>
+      <th id="T_18c32_level0_row9" class="row_heading level0 row9" >Yearly income</th>
+      <td id="T_18c32_row9_col0" class="data row9 col0" >0</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row10" class="row_heading level0 row10" >Credit score</th>
-      <td id="T_07f17_row10_col0" class="data row10 col0" >0</td>
+      <th id="T_18c32_level0_row10" class="row_heading level0 row10" >Credit score</th>
+      <td id="T_18c32_row10_col0" class="data row10 col0" >0</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row11" class="row_heading level0 row11" >Yearly maintenance cost</th>
-      <td id="T_07f17_row11_col0" class="data row11 col0" >0</td>
+      <th id="T_18c32_level0_row11" class="row_heading level0 row11" >Yearly maintenance cost</th>
+      <td id="T_18c32_row11_col0" class="data row11 col0" >0</td>
     </tr>
     <tr>
-      <th id="T_07f17_level0_row12" class="row_heading level0 row12" >Net profit</th>
-      <td id="T_07f17_row12_col0" class="data row12 col0" >0</td>
+      <th id="T_18c32_level0_row12" class="row_heading level0 row12" >Net profit</th>
+      <td id="T_18c32_row12_col0" class="data row12 col0" >0</td>
     </tr>
   </tbody>
 </table>
@@ -572,16 +574,12 @@ chart.set_title('Histogram for Categorical Variables', fontsize=16, color='fireb
 # Show the plot
 plt.show()
 
-
-
-
-
 ```
 
 
     
-![png](output_13_0.png)
-    
+![My Image Description](/profit_forecast/output_13_0.png)
+
 
 
 
@@ -591,11 +589,11 @@ plt.show()
 sns.set(style="whitegrid")
 plt.figure(figsize=(11,7))
 
-# create the countplot
+# create the count-plot
 chart = sns.countplot(x='Brand', hue='Vehicle type', data=modeling_data, palette='deep')
 
 # update layout parameters
-chart.set_title('Countplot for Categorical Variables', fontsize=16, color='firebrick')
+chart.set_title('Count-plot for Categorical Variables', fontsize=16, color='firebrick')
 
 # Show the plot
 plt.show()
@@ -604,149 +602,7 @@ plt.show()
 ```
 
 
-    
-![png](output_14_0.png)
-    
-
-
-
-```python
-
-modeling_data.groupby(['Socioeconomic category', 'Vehicle type', 'Brand'])['Vehicle type'].count()
-
-```
-
-
-
-
-    Socioeconomic category  Vehicle type  Brand     
-    Labor worker            3 doors       Citroen       13
-                                          Opel           4
-                                          Peugeot       14
-                                          Renault       10
-                                          Toyota         3
-                                          Volkswagen     7
-                            5 doors       Citroen       16
-                                          Opel           3
-                                          Peugeot       33
-                                          Renault       12
-                                          Toyota         2
-                                          Volkswagen     9
-                                          other          3
-                            SUV           Citroen       12
-                                          Opel           5
-                                          Peugeot       23
-                                          Renault       13
-                                          Toyota         6
-                                          Volkswagen     5
-                                          other          3
-                            utility       Citroen        2
-                                          Opel           1
-                                          Peugeot        5
-                                          Renault        6
-                                          Toyota         3
-                                          Volkswagen     2
-                                          other          1
-    Office worker           3 doors       Citroen       13
-                                          Opel           7
-                                          Peugeot       14
-                                          Renault       21
-                                          Toyota        11
-                                          Volkswagen     7
-                                          other          6
-                            5 doors       Citroen       23
-                                          Opel           4
-                                          Peugeot       33
-                                          Renault       38
-                                          Toyota         9
-                                          Volkswagen    12
-                                          other         10
-                            SUV           Citroen       24
-                                          Opel           8
-                                          Peugeot       19
-                                          Renault       28
-                                          Toyota        12
-                                          Volkswagen    11
-                                          other          5
-                            utility       Citroen        5
-                                          Peugeot       10
-                                          Renault        9
-                                          Toyota         1
-                                          Volkswagen     2
-    Self employed           3 doors       Citroen        3
-                                          Opel           1
-                                          Peugeot        1
-                                          Renault        2
-                                          Toyota         3
-                                          Volkswagen     1
-                            5 doors       Citroen        6
-                                          Opel           1
-                                          Peugeot        4
-                                          Renault        5
-                                          Toyota         1
-                                          Volkswagen     2
-                                          other          1
-                            SUV           Citroen        4
-                                          Peugeot        3
-                                          Renault        2
-                                          Toyota         3
-                                          Volkswagen     1
-                                          other          2
-                            utility       Citroen        1
-                                          Peugeot        2
-                                          Volkswagen     1
-    Student                 3 doors       Citroen       12
-                                          Peugeot       16
-                                          Renault       13
-                                          Toyota         3
-                                          Volkswagen     8
-                                          other          3
-                            5 doors       Citroen       13
-                                          Opel           6
-                                          Peugeot       37
-                                          Renault       30
-                                          Toyota         7
-                                          Volkswagen    10
-                                          other          3
-                            SUV           Citroen       21
-                                          Opel           3
-                                          Peugeot       26
-                                          Renault       22
-                                          Toyota        14
-                                          Volkswagen    13
-                                          other          9
-                            utility       Citroen        5
-                                          Peugeot        2
-                                          Renault        5
-                                          Toyota         2
-                                          Volkswagen     4
-                                          other          1
-    Unemployed              3 doors       Citroen        9
-                                          Opel           1
-                                          Peugeot        7
-                                          Renault        3
-                                          Volkswagen     4
-                                          other          2
-                            5 doors       Citroen        6
-                                          Opel           2
-                                          Peugeot       14
-                                          Renault        8
-                                          Toyota         5
-                                          Volkswagen     6
-                                          other          1
-                            SUV           Citroen        3
-                                          Peugeot        5
-                                          Renault        2
-                                          Toyota         1
-                                          Volkswagen     5
-                                          other          1
-                            utility       Citroen        3
-                                          Opel           1
-                                          Renault        1
-                                          Toyota         1
-                                          Volkswagen     2
-    Name: Vehicle type, dtype: int64
-
+![My Image Description](/profit_forecast/output_14_0.png)
 
 
 There are few extreme outliers in the data, we might suspect a data entry problem:
@@ -757,13 +613,10 @@ There are few extreme outliers in the data, we might suspect a data entry proble
 
 # Create a larger figure
 plt.figure(figsize=(11,7))
-
-# Create boxplots for each variable
+# Create box-plots for each variable
 sns.boxplot(data=modeling_data[["Age", "Monthly premium", "Coefficient bonus malus", "CRM score", "Net profit"]])
-
 # Set plot title and labels
-plt.title('Boxplots for Selected Variables', fontsize=16, color='firebrick')
-
+plt.title('Box-plots for Selected Variables', fontsize=16, color='firebrick')
 
 # Show the plot
 plt.show()
@@ -772,11 +625,8 @@ plt.show()
 ```
 
 
-    
-![png](output_17_0.png)
-    
 
-
+![My Image Description](/profit_forecast/output_16_0.png)
 
 ```python
 
@@ -789,19 +639,15 @@ modeling_data = modeling_data[(modeling_data["Age"] < 124) & (modeling_data["Age
 
 ```python
 
-
-
 # no warning outlier for credit score, monthly kilometers and yearly maintenance cost:
-
-
 # Create a larger figure
 plt.figure(figsize=(11,7))
 
-# Create boxplots for each variable
+# Create box-plots for each variable
 sns.boxplot(data=modeling_data[["Monthly kilometers", "Credit score"]])
 
 # Set plot title and labels
-plt.title('Boxplots for Selected Variables', fontsize=16, color='firebrick')
+plt.title('Box-plots for Selected Variables', fontsize=16, color='firebrick')
 
 # remove background color
 plt.grid(False)
@@ -815,8 +661,8 @@ plt.show()
 
 
     
-![png](output_19_0.png)
-    
+![My Image Description](/profit_forecast/output_18_0.png)
+
 
 
 
@@ -840,8 +686,8 @@ plt.show()
 
 
     
-![png](output_20_0.png)
-    
+
+![My Image Description](/profit_forecast/output_19_0.png)
 
 
 
@@ -864,8 +710,8 @@ plt.show()
 
 
     
-![png](output_21_0.png)
-    
+
+![My Image Description](/profit_forecast/output_20_0.png)
 
 
 
@@ -888,8 +734,8 @@ plt.show()
 
 
     
-![png](output_22_0.png)
-    
+
+![My Image Description](/profit_forecast/output_21_0.png)
 
 
 
@@ -912,8 +758,8 @@ plt.show()
 
 
     
-![png](output_23_0.png)
-    
+
+![My Image Description](/profit_forecast/output_22_0.png)
 
 
 
@@ -934,10 +780,7 @@ plt.show()
 ```
 
 
-    
-![png](output_24_0.png)
-    
-
+![My Image Description](/profit_forecast/output_23_0.png)
 
 
 ```python
@@ -955,9 +798,9 @@ plt.show()
 
 
     
-![png](output_25_0.png)
-    
 
+
+![My Image Description](/profit_forecast/output_24_0.png)
 
 
 ```python
@@ -975,8 +818,8 @@ plt.show()
 
 
     
-![png](output_26_0.png)
-    
+
+![My Image Description](/profit_forecast/output_25_0.png)
 
 
 
@@ -995,9 +838,9 @@ plt.show()
 
 
     
-![png](output_27_0.png)
-    
 
+
+![My Image Description](/profit_forecast/output_26_0.png)
 
 
 ```python
@@ -1017,8 +860,8 @@ plt.show()
 
 
     
-![png](output_28_0.png)
-    
+
+![My Image Description](/profit_forecast/output_27_0.png)
 
 
 
@@ -1036,9 +879,7 @@ plt.show()
 ```
 
 
-    
-![png](output_29_0.png)
-    
+![My Image Description](/profit_forecast/output_28_0.png)
 
 
 
@@ -1057,8 +898,8 @@ plt.show()
 
 
     
-![png](output_30_0.png)
-    
+![My Image Description](/profit_forecast/output_29_0.png)
+
 
 
 
@@ -1076,10 +917,7 @@ plt.show()
 ```
 
 
-    
-![png](output_31_0.png)
-    
-
+![My Image Description](/profit_forecast/output_30_0.png)
 
 ### Observation
 
@@ -1161,18 +999,16 @@ sns.heatmap(modeling_data_visualization[corr_top].corr(), vmax=1.0, vmin=-1.0, l
 
 ```
 
-
-    
-![png](output_37_0.png)
-    
-
+![My Image Description](/profit_forecast/output_36_0.png)
 
 
 ```python
 
 corr = ordered_corr_columns.corr()
 plt.figure(figsize=(15, 15))
-sns.heatmap(corr[(corr >= 0.1)], vmax=1.0, vmin=-1.0, linewidths=0.1, annot=True, annot_kws={"size": 8}, square=True, cbar=False)
+sns.heatmap(corr[(corr >= 0.1)], vmax=1.0,
+ vmin=-1.0, linewidths=0.1,
+  annot=True, annot_kws={"size": 8}, square=True, cbar=False)
 
 
 ```
@@ -1180,14 +1016,13 @@ sns.heatmap(corr[(corr >= 0.1)], vmax=1.0, vmin=-1.0, linewidths=0.1, annot=True
 
 
 
-    <Axes: >
 
 
 
 
     
-![png](output_38_1.png)
-    
+
+![My Image Description](/profit_forecast/output_37_1.png)
 
 
 
@@ -1195,14 +1030,15 @@ sns.heatmap(corr[(corr >= 0.1)], vmax=1.0, vmin=-1.0, linewidths=0.1, annot=True
 
 corr = ordered_corr_columns.corr()
 plt.figure(figsize=(15, 15))
-sns.heatmap(corr[(corr <= -0.1)], vmax=1.0, vmin=-1.0, linewidths=0.1, annot=True, annot_kws={"size": 8}, square=True, cbar=False);
+sns.heatmap(corr[(corr <= -0.1)], vmax=1.0,
+ vmin=-1.0, linewidths=0.1, annot=True, annot_kws={"size": 8}, square=True, cbar=False);
 
 ```
 
 
     
-![png](output_39_0.png)
-    
+
+![My Image Description](/profit_forecast/output_38_0.png)
 
 
 
@@ -1216,14 +1052,14 @@ ax.invert_yaxis()
 
 
     
-![png](output_40_0.png)
-    
+
+![My Image Description](/profit_forecast/output_39_0.png)
 
 
 ### Observation
 
 - There is not any warning high correlation between target variable and independent variables.
-- Multicollinearity between Standard of living and yearly income, CRM score and Coefficient bonus malus, they might be problematic for linear models interpretation.
+- Multi-collinearity between Standard of living and yearly income, CRM score and Coefficient bonus malus, they might be problematic for linear models interpretation.
 - There are few independent variables can be used for fitting model that correlate positively/negatively with Net profit.
 - There is enough signals in the data simple model with fewer coefficient would generalize on unseen data.
 
@@ -1240,7 +1076,7 @@ Xs = modeling_data[Features]
 
 ```
 
-Multicollinearity Check VIF:
+Multi-collinearity Check VIF:
 
 
 
@@ -1254,157 +1090,157 @@ calculate_vif(Xs).style.background_gradient(cmap='summer')
 
 
 <style type="text/css">
-#T_c45c3_row0_col1 {
+#T_5a673_row0_col1 {
   background-color: #168a66;
   color: #f1f1f1;
 }
-#T_c45c3_row1_col1, #T_c45c3_row7_col1, #T_c45c3_row9_col1, #T_c45c3_row10_col1, #T_c45c3_row11_col1, #T_c45c3_row12_col1, #T_c45c3_row13_col1, #T_c45c3_row14_col1, #T_c45c3_row15_col1, #T_c45c3_row16_col1, #T_c45c3_row17_col1, #T_c45c3_row18_col1, #T_c45c3_row19_col1, #T_c45c3_row20_col1, #T_c45c3_row21_col1 {
+#T_5a673_row1_col1, #T_5a673_row7_col1, #T_5a673_row9_col1, #T_5a673_row10_col1, #T_5a673_row11_col1, #T_5a673_row12_col1, #T_5a673_row13_col1, #T_5a673_row14_col1, #T_5a673_row15_col1, #T_5a673_row16_col1, #T_5a673_row17_col1, #T_5a673_row18_col1, #T_5a673_row19_col1, #T_5a673_row20_col1, #T_5a673_row21_col1 {
   background-color: #008066;
   color: #f1f1f1;
 }
-#T_c45c3_row2_col1 {
+#T_5a673_row2_col1 {
   background-color: #028066;
   color: #f1f1f1;
 }
-#T_c45c3_row3_col1 {
+#T_5a673_row3_col1 {
   background-color: #99cc66;
   color: #000000;
 }
-#T_c45c3_row4_col1 {
+#T_5a673_row4_col1 {
   background-color: #ffff66;
   color: #000000;
 }
-#T_c45c3_row5_col1 {
+#T_5a673_row5_col1 {
   background-color: #269266;
   color: #f1f1f1;
 }
-#T_c45c3_row6_col1 {
+#T_5a673_row6_col1 {
   background-color: #289366;
   color: #f1f1f1;
 }
-#T_c45c3_row8_col1 {
+#T_5a673_row8_col1 {
   background-color: #0c8666;
   color: #f1f1f1;
 }
 </style>
-<table id="T_c45c3">
+<table id="T_5a673">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_c45c3_level0_col0" class="col_heading level0 col0" >variables</th>
-      <th id="T_c45c3_level0_col1" class="col_heading level0 col1" >VIF</th>
+      <th id="T_5a673_level0_col0" class="col_heading level0 col0" >variables</th>
+      <th id="T_5a673_level0_col1" class="col_heading level0 col1" >VIF</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_c45c3_level0_row0" class="row_heading level0 row0" >0</th>
-      <td id="T_c45c3_row0_col0" class="data row0 col0" >Age</td>
-      <td id="T_c45c3_row0_col1" class="data row0 col1" >63.237779</td>
+      <th id="T_5a673_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_5a673_row0_col0" class="data row0 col0" >Age</td>
+      <td id="T_5a673_row0_col1" class="data row0 col1" >63.237779</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row1" class="row_heading level0 row1" >1</th>
-      <td id="T_c45c3_row1_col0" class="data row1 col0" >Monthly premium</td>
-      <td id="T_c45c3_row1_col1" class="data row1 col1" >3.050082</td>
+      <th id="T_5a673_level0_row1" class="row_heading level0 row1" >1</th>
+      <td id="T_5a673_row1_col0" class="data row1 col0" >Monthly premium</td>
+      <td id="T_5a673_row1_col1" class="data row1 col1" >3.050082</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row2" class="row_heading level0 row2" >2</th>
-      <td id="T_c45c3_row2_col0" class="data row2 col0" >Monthly kilometers</td>
-      <td id="T_c45c3_row2_col1" class="data row2 col1" >7.627456</td>
+      <th id="T_5a673_level0_row2" class="row_heading level0 row2" >2</th>
+      <td id="T_5a673_row2_col0" class="data row2 col0" >Monthly kilometers</td>
+      <td id="T_5a673_row2_col1" class="data row2 col1" >7.627456</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row3" class="row_heading level0 row3" >3</th>
-      <td id="T_c45c3_row3_col0" class="data row3 col0" >Coefficient bonus malus</td>
-      <td id="T_c45c3_row3_col1" class="data row3 col1" >432.507997</td>
+      <th id="T_5a673_level0_row3" class="row_heading level0 row3" >3</th>
+      <td id="T_5a673_row3_col0" class="data row3 col0" >Coefficient bonus malus</td>
+      <td id="T_5a673_row3_col1" class="data row3 col1" >432.507997</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row4" class="row_heading level0 row4" >4</th>
-      <td id="T_c45c3_row4_col0" class="data row4 col0" >CRM score</td>
-      <td id="T_c45c3_row4_col1" class="data row4 col1" >718.673947</td>
+      <th id="T_5a673_level0_row4" class="row_heading level0 row4" >4</th>
+      <td id="T_5a673_row4_col0" class="data row4 col0" >CRM score</td>
+      <td id="T_5a673_row4_col1" class="data row4 col1" >718.673947</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row5" class="row_heading level0 row5" >5</th>
-      <td id="T_c45c3_row5_col0" class="data row5 col0" >Standard of living</td>
-      <td id="T_c45c3_row5_col1" class="data row5 col1" >110.184626</td>
+      <th id="T_5a673_level0_row5" class="row_heading level0 row5" >5</th>
+      <td id="T_5a673_row5_col0" class="data row5 col0" >Standard of living</td>
+      <td id="T_5a673_row5_col1" class="data row5 col1" >110.184626</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row6" class="row_heading level0 row6" >6</th>
-      <td id="T_c45c3_row6_col0" class="data row6 col0" >Yearly income</td>
-      <td id="T_c45c3_row6_col1" class="data row6 col1" >115.704855</td>
+      <th id="T_5a673_level0_row6" class="row_heading level0 row6" >6</th>
+      <td id="T_5a673_row6_col0" class="data row6 col0" >Yearly income</td>
+      <td id="T_5a673_row6_col1" class="data row6 col1" >115.704855</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row7" class="row_heading level0 row7" >7</th>
-      <td id="T_c45c3_row7_col0" class="data row7 col0" >Credit score</td>
-      <td id="T_c45c3_row7_col1" class="data row7 col1" >3.866306</td>
+      <th id="T_5a673_level0_row7" class="row_heading level0 row7" >7</th>
+      <td id="T_5a673_row7_col0" class="data row7 col0" >Credit score</td>
+      <td id="T_5a673_row7_col1" class="data row7 col1" >3.866306</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row8" class="row_heading level0 row8" >8</th>
-      <td id="T_c45c3_row8_col0" class="data row8 col0" >Yearly maintenance cost</td>
-      <td id="T_c45c3_row8_col1" class="data row8 col1" >35.804418</td>
+      <th id="T_5a673_level0_row8" class="row_heading level0 row8" >8</th>
+      <td id="T_5a673_row8_col0" class="data row8 col0" >Yearly maintenance cost</td>
+      <td id="T_5a673_row8_col1" class="data row8 col1" >35.804418</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row9" class="row_heading level0 row9" >9</th>
-      <td id="T_c45c3_row9_col0" class="data row9 col0" >Brand_Opel</td>
-      <td id="T_c45c3_row9_col1" class="data row9 col1" >1.240398</td>
+      <th id="T_5a673_level0_row9" class="row_heading level0 row9" >9</th>
+      <td id="T_5a673_row9_col0" class="data row9 col0" >Brand_Opel</td>
+      <td id="T_5a673_row9_col1" class="data row9 col1" >1.240398</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row10" class="row_heading level0 row10" >10</th>
-      <td id="T_c45c3_row10_col0" class="data row10 col0" >Brand_Peugeot</td>
-      <td id="T_c45c3_row10_col1" class="data row10 col1" >2.379924</td>
+      <th id="T_5a673_level0_row10" class="row_heading level0 row10" >10</th>
+      <td id="T_5a673_row10_col0" class="data row10 col0" >Brand_Peugeot</td>
+      <td id="T_5a673_row10_col1" class="data row10 col1" >2.379924</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row11" class="row_heading level0 row11" >11</th>
-      <td id="T_c45c3_row11_col0" class="data row11 col0" >Brand_Renault</td>
-      <td id="T_c45c3_row11_col1" class="data row11 col1" >2.191521</td>
+      <th id="T_5a673_level0_row11" class="row_heading level0 row11" >11</th>
+      <td id="T_5a673_row11_col0" class="data row11 col0" >Brand_Renault</td>
+      <td id="T_5a673_row11_col1" class="data row11 col1" >2.191521</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row12" class="row_heading level0 row12" >12</th>
-      <td id="T_c45c3_row12_col0" class="data row12 col0" >Brand_Toyota</td>
-      <td id="T_c45c3_row12_col1" class="data row12 col1" >1.432597</td>
+      <th id="T_5a673_level0_row12" class="row_heading level0 row12" >12</th>
+      <td id="T_5a673_row12_col0" class="data row12 col0" >Brand_Toyota</td>
+      <td id="T_5a673_row12_col1" class="data row12 col1" >1.432597</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row13" class="row_heading level0 row13" >13</th>
-      <td id="T_c45c3_row13_col0" class="data row13 col0" >Brand_Volkswagen</td>
-      <td id="T_c45c3_row13_col1" class="data row13 col1" >1.562894</td>
+      <th id="T_5a673_level0_row13" class="row_heading level0 row13" >13</th>
+      <td id="T_5a673_row13_col0" class="data row13 col0" >Brand_Volkswagen</td>
+      <td id="T_5a673_row13_col1" class="data row13 col1" >1.562894</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row14" class="row_heading level0 row14" >14</th>
-      <td id="T_c45c3_row14_col0" class="data row14 col0" >Brand_other</td>
-      <td id="T_c45c3_row14_col1" class="data row14 col1" >1.252540</td>
+      <th id="T_5a673_level0_row14" class="row_heading level0 row14" >14</th>
+      <td id="T_5a673_row14_col0" class="data row14 col0" >Brand_other</td>
+      <td id="T_5a673_row14_col1" class="data row14 col1" >1.252540</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row15" class="row_heading level0 row15" >15</th>
-      <td id="T_c45c3_row15_col0" class="data row15 col0" >Vehicle type_5 doors</td>
-      <td id="T_c45c3_row15_col1" class="data row15 col1" >2.692416</td>
+      <th id="T_5a673_level0_row15" class="row_heading level0 row15" >15</th>
+      <td id="T_5a673_row15_col0" class="data row15 col0" >Vehicle type_5 doors</td>
+      <td id="T_5a673_row15_col1" class="data row15 col1" >2.692416</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row16" class="row_heading level0 row16" >16</th>
-      <td id="T_c45c3_row16_col0" class="data row16 col0" >Vehicle type_SUV</td>
-      <td id="T_c45c3_row16_col1" class="data row16 col1" >2.464803</td>
+      <th id="T_5a673_level0_row16" class="row_heading level0 row16" >16</th>
+      <td id="T_5a673_row16_col0" class="data row16 col0" >Vehicle type_SUV</td>
+      <td id="T_5a673_row16_col1" class="data row16 col1" >2.464803</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row17" class="row_heading level0 row17" >17</th>
-      <td id="T_c45c3_row17_col0" class="data row17 col0" >Vehicle type_utility</td>
-      <td id="T_c45c3_row17_col1" class="data row17 col1" >1.374975</td>
+      <th id="T_5a673_level0_row17" class="row_heading level0 row17" >17</th>
+      <td id="T_5a673_row17_col0" class="data row17 col0" >Vehicle type_utility</td>
+      <td id="T_5a673_row17_col1" class="data row17 col1" >1.374975</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row18" class="row_heading level0 row18" >18</th>
-      <td id="T_c45c3_row18_col0" class="data row18 col0" >Socioeconomic category_Office worker</td>
-      <td id="T_c45c3_row18_col1" class="data row18 col1" >2.635837</td>
+      <th id="T_5a673_level0_row18" class="row_heading level0 row18" >18</th>
+      <td id="T_5a673_row18_col0" class="data row18 col0" >Socioeconomic category_Office worker</td>
+      <td id="T_5a673_row18_col1" class="data row18 col1" >2.635837</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row19" class="row_heading level0 row19" >19</th>
-      <td id="T_c45c3_row19_col0" class="data row19 col0" >Socioeconomic category_Self employed</td>
-      <td id="T_c45c3_row19_col1" class="data row19 col1" >1.248430</td>
+      <th id="T_5a673_level0_row19" class="row_heading level0 row19" >19</th>
+      <td id="T_5a673_row19_col0" class="data row19 col0" >Socioeconomic category_Self employed</td>
+      <td id="T_5a673_row19_col1" class="data row19 col1" >1.248430</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row20" class="row_heading level0 row20" >20</th>
-      <td id="T_c45c3_row20_col0" class="data row20 col0" >Socioeconomic category_Student</td>
-      <td id="T_c45c3_row20_col1" class="data row20 col1" >2.359763</td>
+      <th id="T_5a673_level0_row20" class="row_heading level0 row20" >20</th>
+      <td id="T_5a673_row20_col0" class="data row20 col0" >Socioeconomic category_Student</td>
+      <td id="T_5a673_row20_col1" class="data row20 col1" >2.359763</td>
     </tr>
     <tr>
-      <th id="T_c45c3_level0_row21" class="row_heading level0 row21" >21</th>
-      <td id="T_c45c3_row21_col0" class="data row21 col0" >Socioeconomic category_Unemployed</td>
-      <td id="T_c45c3_row21_col1" class="data row21 col1" >1.440898</td>
+      <th id="T_5a673_level0_row21" class="row_heading level0 row21" >21</th>
+      <td id="T_5a673_row21_col0" class="data row21 col0" >Socioeconomic category_Unemployed</td>
+      <td id="T_5a673_row21_col1" class="data row21 col1" >1.440898</td>
     </tr>
   </tbody>
 </table>
@@ -1424,165 +1260,165 @@ calculate_vif(fixed_Xs).style.background_gradient(cmap='summer')
 
 
 <style type="text/css">
-#T_e37c8_row0_col1 {
+#T_f0126_row0_col1 {
   background-color: #ffff66;
   color: #000000;
 }
-#T_e37c8_row1_col1 {
+#T_f0126_row1_col1 {
   background-color: #46a266;
   color: #f1f1f1;
 }
-#T_e37c8_row2_col1 {
+#T_f0126_row2_col1 {
   background-color: #e2f066;
   color: #000000;
 }
-#T_e37c8_row3_col1 {
+#T_f0126_row3_col1 {
   background-color: #60b066;
   color: #f1f1f1;
 }
-#T_e37c8_row4_col1 {
+#T_f0126_row4_col1 {
   background-color: #67b366;
   color: #f1f1f1;
 }
-#T_e37c8_row5_col1, #T_e37c8_row10_col1, #T_e37c8_row15_col1 {
+#T_f0126_row5_col1, #T_f0126_row10_col1, #T_f0126_row15_col1 {
   background-color: #008066;
   color: #f1f1f1;
 }
-#T_e37c8_row6_col1 {
+#T_f0126_row6_col1 {
   background-color: #2a9466;
   color: #f1f1f1;
 }
-#T_e37c8_row7_col1 {
+#T_f0126_row7_col1 {
   background-color: #239166;
   color: #f1f1f1;
 }
-#T_e37c8_row8_col1, #T_e37c8_row17_col1 {
+#T_f0126_row8_col1, #T_f0126_row17_col1 {
   background-color: #078366;
   color: #f1f1f1;
 }
-#T_e37c8_row9_col1 {
+#T_f0126_row9_col1 {
   background-color: #0b8566;
   color: #f1f1f1;
 }
-#T_e37c8_row11_col1 {
+#T_f0126_row11_col1 {
   background-color: #3a9c66;
   color: #f1f1f1;
 }
-#T_e37c8_row12_col1 {
+#T_f0126_row12_col1 {
   background-color: #319866;
   color: #f1f1f1;
 }
-#T_e37c8_row13_col1 {
+#T_f0126_row13_col1 {
   background-color: #058266;
   color: #f1f1f1;
 }
-#T_e37c8_row14_col1 {
+#T_f0126_row14_col1 {
   background-color: #359a66;
   color: #f1f1f1;
 }
-#T_e37c8_row16_col1 {
+#T_f0126_row16_col1 {
   background-color: #2b9566;
   color: #f1f1f1;
 }
 </style>
-<table id="T_e37c8">
+<table id="T_f0126">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_e37c8_level0_col0" class="col_heading level0 col0" >variables</th>
-      <th id="T_e37c8_level0_col1" class="col_heading level0 col1" >VIF</th>
+      <th id="T_f0126_level0_col0" class="col_heading level0 col0" >variables</th>
+      <th id="T_f0126_level0_col1" class="col_heading level0 col1" >VIF</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_e37c8_level0_row0" class="row_heading level0 row0" >0</th>
-      <td id="T_e37c8_row0_col0" class="data row0 col0" >Age</td>
-      <td id="T_e37c8_row0_col1" class="data row0 col1" >7.099762</td>
+      <th id="T_f0126_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_f0126_row0_col0" class="data row0 col0" >Age</td>
+      <td id="T_f0126_row0_col1" class="data row0 col1" >7.099762</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row1" class="row_heading level0 row1" >1</th>
-      <td id="T_e37c8_row1_col0" class="data row1 col0" >Monthly premium</td>
-      <td id="T_e37c8_row1_col1" class="data row1 col1" >2.836646</td>
+      <th id="T_f0126_level0_row1" class="row_heading level0 row1" >1</th>
+      <td id="T_f0126_row1_col0" class="data row1 col0" >Monthly premium</td>
+      <td id="T_f0126_row1_col1" class="data row1 col1" >2.836646</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row2" class="row_heading level0 row2" >2</th>
-      <td id="T_e37c8_row2_col0" class="data row2 col0" >Monthly kilometers</td>
-      <td id="T_e37c8_row2_col1" class="data row2 col1" >6.413401</td>
+      <th id="T_f0126_level0_row2" class="row_heading level0 row2" >2</th>
+      <td id="T_f0126_row2_col0" class="data row2 col0" >Monthly kilometers</td>
+      <td id="T_f0126_row2_col1" class="data row2 col1" >6.413401</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row3" class="row_heading level0 row3" >3</th>
-      <td id="T_e37c8_row3_col0" class="data row3 col0" >Yearly income</td>
-      <td id="T_e37c8_row3_col1" class="data row3 col1" >3.427115</td>
+      <th id="T_f0126_level0_row3" class="row_heading level0 row3" >3</th>
+      <td id="T_f0126_row3_col0" class="data row3 col0" >Yearly income</td>
+      <td id="T_f0126_row3_col1" class="data row3 col1" >3.427115</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row4" class="row_heading level0 row4" >4</th>
-      <td id="T_e37c8_row4_col0" class="data row4 col0" >Credit score</td>
-      <td id="T_e37c8_row4_col1" class="data row4 col1" >3.583600</td>
+      <th id="T_f0126_level0_row4" class="row_heading level0 row4" >4</th>
+      <td id="T_f0126_row4_col0" class="data row4 col0" >Credit score</td>
+      <td id="T_f0126_row4_col1" class="data row4 col1" >3.583600</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row5" class="row_heading level0 row5" >5</th>
-      <td id="T_e37c8_row5_col0" class="data row5 col0" >Brand_Opel</td>
-      <td id="T_e37c8_row5_col1" class="data row5 col1" >1.204267</td>
+      <th id="T_f0126_level0_row5" class="row_heading level0 row5" >5</th>
+      <td id="T_f0126_row5_col0" class="data row5 col0" >Brand_Opel</td>
+      <td id="T_f0126_row5_col1" class="data row5 col1" >1.204267</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row6" class="row_heading level0 row6" >6</th>
-      <td id="T_e37c8_row6_col0" class="data row6 col0" >Brand_Peugeot</td>
-      <td id="T_e37c8_row6_col1" class="data row6 col1" >2.175342</td>
+      <th id="T_f0126_level0_row6" class="row_heading level0 row6" >6</th>
+      <td id="T_f0126_row6_col0" class="data row6 col0" >Brand_Peugeot</td>
+      <td id="T_f0126_row6_col1" class="data row6 col1" >2.175342</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row7" class="row_heading level0 row7" >7</th>
-      <td id="T_e37c8_row7_col0" class="data row7 col0" >Brand_Renault</td>
-      <td id="T_e37c8_row7_col1" class="data row7 col1" >2.026626</td>
+      <th id="T_f0126_level0_row7" class="row_heading level0 row7" >7</th>
+      <td id="T_f0126_row7_col0" class="data row7 col0" >Brand_Renault</td>
+      <td id="T_f0126_row7_col1" class="data row7 col1" >2.026626</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row8" class="row_heading level0 row8" >8</th>
-      <td id="T_e37c8_row8_col0" class="data row8 col0" >Brand_Toyota</td>
-      <td id="T_e37c8_row8_col1" class="data row8 col1" >1.377058</td>
+      <th id="T_f0126_level0_row8" class="row_heading level0 row8" >8</th>
+      <td id="T_f0126_row8_col0" class="data row8 col0" >Brand_Toyota</td>
+      <td id="T_f0126_row8_col1" class="data row8 col1" >1.377058</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row9" class="row_heading level0 row9" >9</th>
-      <td id="T_e37c8_row9_col0" class="data row9 col0" >Brand_Volkswagen</td>
-      <td id="T_e37c8_row9_col1" class="data row9 col1" >1.472219</td>
+      <th id="T_f0126_level0_row9" class="row_heading level0 row9" >9</th>
+      <td id="T_f0126_row9_col0" class="data row9 col0" >Brand_Volkswagen</td>
+      <td id="T_f0126_row9_col1" class="data row9 col1" >1.472219</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row10" class="row_heading level0 row10" >10</th>
-      <td id="T_e37c8_row10_col0" class="data row10 col0" >Brand_other</td>
-      <td id="T_e37c8_row10_col1" class="data row10 col1" >1.225380</td>
+      <th id="T_f0126_level0_row10" class="row_heading level0 row10" >10</th>
+      <td id="T_f0126_row10_col0" class="data row10 col0" >Brand_other</td>
+      <td id="T_f0126_row10_col1" class="data row10 col1" >1.225380</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row11" class="row_heading level0 row11" >11</th>
-      <td id="T_e37c8_row11_col0" class="data row11 col0" >Vehicle type_5 doors</td>
-      <td id="T_e37c8_row11_col1" class="data row11 col1" >2.558872</td>
+      <th id="T_f0126_level0_row11" class="row_heading level0 row11" >11</th>
+      <td id="T_f0126_row11_col0" class="data row11 col0" >Vehicle type_5 doors</td>
+      <td id="T_f0126_row11_col1" class="data row11 col1" >2.558872</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row12" class="row_heading level0 row12" >12</th>
-      <td id="T_e37c8_row12_col0" class="data row12 col0" >Vehicle type_SUV</td>
-      <td id="T_e37c8_row12_col1" class="data row12 col1" >2.345649</td>
+      <th id="T_f0126_level0_row12" class="row_heading level0 row12" >12</th>
+      <td id="T_f0126_row12_col0" class="data row12 col0" >Vehicle type_SUV</td>
+      <td id="T_f0126_row12_col1" class="data row12 col1" >2.345649</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row13" class="row_heading level0 row13" >13</th>
-      <td id="T_e37c8_row13_col0" class="data row13 col0" >Vehicle type_utility</td>
-      <td id="T_e37c8_row13_col1" class="data row13 col1" >1.333014</td>
+      <th id="T_f0126_level0_row13" class="row_heading level0 row13" >13</th>
+      <td id="T_f0126_row13_col0" class="data row13 col0" >Vehicle type_utility</td>
+      <td id="T_f0126_row13_col1" class="data row13 col1" >1.333014</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row14" class="row_heading level0 row14" >14</th>
-      <td id="T_e37c8_row14_col0" class="data row14 col0" >Socioeconomic category_Office worker</td>
-      <td id="T_e37c8_row14_col1" class="data row14 col1" >2.430892</td>
+      <th id="T_f0126_level0_row14" class="row_heading level0 row14" >14</th>
+      <td id="T_f0126_row14_col0" class="data row14 col0" >Socioeconomic category_Office worker</td>
+      <td id="T_f0126_row14_col1" class="data row14 col1" >2.430892</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row15" class="row_heading level0 row15" >15</th>
-      <td id="T_e37c8_row15_col0" class="data row15 col0" >Socioeconomic category_Self employed</td>
-      <td id="T_e37c8_row15_col1" class="data row15 col1" >1.226225</td>
+      <th id="T_f0126_level0_row15" class="row_heading level0 row15" >15</th>
+      <td id="T_f0126_row15_col0" class="data row15 col0" >Socioeconomic category_Self employed</td>
+      <td id="T_f0126_row15_col1" class="data row15 col1" >1.226225</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row16" class="row_heading level0 row16" >16</th>
-      <td id="T_e37c8_row16_col0" class="data row16 col0" >Socioeconomic category_Student</td>
-      <td id="T_e37c8_row16_col1" class="data row16 col1" >2.203248</td>
+      <th id="T_f0126_level0_row16" class="row_heading level0 row16" >16</th>
+      <td id="T_f0126_row16_col0" class="data row16 col0" >Socioeconomic category_Student</td>
+      <td id="T_f0126_row16_col1" class="data row16 col1" >2.203248</td>
     </tr>
     <tr>
-      <th id="T_e37c8_level0_row17" class="row_heading level0 row17" >17</th>
-      <td id="T_e37c8_row17_col0" class="data row17 col0" >Socioeconomic category_Unemployed</td>
-      <td id="T_e37c8_row17_col1" class="data row17 col1" >1.386635</td>
+      <th id="T_f0126_level0_row17" class="row_heading level0 row17" >17</th>
+      <td id="T_f0126_row17_col0" class="data row17 col0" >Socioeconomic category_Unemployed</td>
+      <td id="T_f0126_row17_col1" class="data row17 col1" >1.386635</td>
     </tr>
   </tbody>
 </table>
@@ -1623,9 +1459,9 @@ coefficient_plot(coef.values(), coef.keys())
 
 
     
-![png](output_49_0.png)
-    
 
+
+![My Image Description](/profit_forecast/output_48_0.png)
 
 
 
@@ -1641,8 +1477,8 @@ print(est.summary())
     Dep. Variable:             Net profit   R-squared (uncentered):                   0.930
     Model:                            OLS   Adj. R-squared (uncentered):              0.929
     Method:                 Least Squares   F-statistic:                              569.0
-    Date:                Sat, 24 Jun 2023   Prob (F-statistic):                        0.00
-    Time:                        22:20:19   Log-Likelihood:                         -3203.3
+    Date:                Mon, 26 Jun 2023   Prob (F-statistic):                        0.00
+    Time:                        15:46:44   Log-Likelihood:                         -3203.3
     No. Observations:                 958   AIC:                                      6451.
     Df Residuals:                     936   BIC:                                      6558.
     Df Model:                          22                                                  
@@ -1698,192 +1534,192 @@ statistical_results_as_frame[statistical_results_as_frame["P>|t|"] <= 0.000].sty
 
 
 <style type="text/css">
-#T_3a59a_row0_col0, #T_3a59a_row0_col5 {
+#T_14bdf_row0_col0, #T_14bdf_row0_col5 {
   background-color: #018066;
   color: #f1f1f1;
 }
-#T_3a59a_row0_col1 {
+#T_14bdf_row0_col1 {
   background-color: #0d8666;
   color: #f1f1f1;
 }
-#T_3a59a_row0_col2, #T_3a59a_row8_col2 {
+#T_14bdf_row0_col2, #T_14bdf_row8_col2 {
   background-color: #2e9666;
   color: #f1f1f1;
 }
-#T_3a59a_row0_col3, #T_3a59a_row0_col4, #T_3a59a_row1_col0, #T_3a59a_row1_col1, #T_3a59a_row1_col3, #T_3a59a_row1_col4, #T_3a59a_row1_col5, #T_3a59a_row2_col0, #T_3a59a_row2_col1, #T_3a59a_row2_col3, #T_3a59a_row2_col4, #T_3a59a_row2_col5, #T_3a59a_row3_col0, #T_3a59a_row3_col1, #T_3a59a_row3_col2, #T_3a59a_row3_col3, #T_3a59a_row3_col4, #T_3a59a_row3_col5, #T_3a59a_row4_col3, #T_3a59a_row5_col3, #T_3a59a_row6_col3, #T_3a59a_row7_col3, #T_3a59a_row8_col3 {
+#T_14bdf_row0_col3, #T_14bdf_row0_col4, #T_14bdf_row1_col0, #T_14bdf_row1_col1, #T_14bdf_row1_col3, #T_14bdf_row1_col4, #T_14bdf_row1_col5, #T_14bdf_row2_col0, #T_14bdf_row2_col1, #T_14bdf_row2_col3, #T_14bdf_row2_col4, #T_14bdf_row2_col5, #T_14bdf_row3_col0, #T_14bdf_row3_col1, #T_14bdf_row3_col2, #T_14bdf_row3_col3, #T_14bdf_row3_col4, #T_14bdf_row3_col5, #T_14bdf_row4_col3, #T_14bdf_row5_col3, #T_14bdf_row6_col3, #T_14bdf_row7_col3, #T_14bdf_row8_col3 {
   background-color: #008066;
   color: #f1f1f1;
 }
-#T_3a59a_row1_col2 {
+#T_14bdf_row1_col2 {
   background-color: #399c66;
   color: #f1f1f1;
 }
-#T_3a59a_row2_col2 {
+#T_14bdf_row2_col2 {
   background-color: #0f8766;
   color: #f1f1f1;
 }
-#T_3a59a_row4_col0 {
+#T_14bdf_row4_col0 {
   background-color: #51a866;
   color: #f1f1f1;
 }
-#T_3a59a_row4_col1 {
+#T_14bdf_row4_col1 {
   background-color: #a6d266;
   color: #000000;
 }
-#T_3a59a_row4_col2 {
+#T_14bdf_row4_col2 {
   background-color: #8cc666;
   color: #000000;
 }
-#T_3a59a_row4_col4 {
+#T_14bdf_row4_col4 {
   background-color: #4ea666;
   color: #f1f1f1;
 }
-#T_3a59a_row4_col5 {
+#T_14bdf_row4_col5 {
   background-color: #54aa66;
   color: #f1f1f1;
 }
-#T_3a59a_row5_col0, #T_3a59a_row5_col4, #T_3a59a_row5_col5 {
+#T_14bdf_row5_col0, #T_14bdf_row5_col4, #T_14bdf_row5_col5 {
   background-color: #a8d366;
   color: #000000;
 }
-#T_3a59a_row5_col1 {
+#T_14bdf_row5_col1 {
   background-color: #acd666;
   color: #000000;
 }
-#T_3a59a_row5_col2 {
+#T_14bdf_row5_col2 {
   background-color: #fafc66;
   color: #000000;
 }
-#T_3a59a_row6_col0, #T_3a59a_row6_col1, #T_3a59a_row6_col2, #T_3a59a_row6_col4, #T_3a59a_row6_col5 {
+#T_14bdf_row6_col0, #T_14bdf_row6_col1, #T_14bdf_row6_col2, #T_14bdf_row6_col4, #T_14bdf_row6_col5 {
   background-color: #ffff66;
   color: #000000;
 }
-#T_3a59a_row7_col0 {
+#T_14bdf_row7_col0 {
   background-color: #108866;
   color: #f1f1f1;
 }
-#T_3a59a_row7_col1 {
+#T_14bdf_row7_col1 {
   background-color: #afd766;
   color: #000000;
 }
-#T_3a59a_row7_col2 {
+#T_14bdf_row7_col2 {
   background-color: #329866;
   color: #f1f1f1;
 }
-#T_3a59a_row7_col4, #T_3a59a_row8_col4 {
+#T_14bdf_row7_col4, #T_14bdf_row8_col4 {
   background-color: #0a8466;
   color: #f1f1f1;
 }
-#T_3a59a_row7_col5 {
+#T_14bdf_row7_col5 {
   background-color: #148a66;
   color: #f1f1f1;
 }
-#T_3a59a_row8_col0 {
+#T_14bdf_row8_col0 {
   background-color: #118866;
   color: #f1f1f1;
 }
-#T_3a59a_row8_col1 {
+#T_14bdf_row8_col1 {
   background-color: #f6fb66;
   color: #000000;
 }
-#T_3a59a_row8_col5 {
+#T_14bdf_row8_col5 {
   background-color: #188c66;
   color: #f1f1f1;
 }
 </style>
-<table id="T_3a59a">
+<table id="T_14bdf">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_3a59a_level0_col0" class="col_heading level0 col0" >coef</th>
-      <th id="T_3a59a_level0_col1" class="col_heading level0 col1" >std err</th>
-      <th id="T_3a59a_level0_col2" class="col_heading level0 col2" >t</th>
-      <th id="T_3a59a_level0_col3" class="col_heading level0 col3" >P>|t|</th>
-      <th id="T_3a59a_level0_col4" class="col_heading level0 col4" >[0.025</th>
-      <th id="T_3a59a_level0_col5" class="col_heading level0 col5" >0.975]</th>
+      <th id="T_14bdf_level0_col0" class="col_heading level0 col0" >coef</th>
+      <th id="T_14bdf_level0_col1" class="col_heading level0 col1" >std err</th>
+      <th id="T_14bdf_level0_col2" class="col_heading level0 col2" >t</th>
+      <th id="T_14bdf_level0_col3" class="col_heading level0 col3" >P>|t|</th>
+      <th id="T_14bdf_level0_col4" class="col_heading level0 col4" >[0.025</th>
+      <th id="T_14bdf_level0_col5" class="col_heading level0 col5" >0.975]</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_3a59a_level0_row0" class="row_heading level0 row0" >Age</th>
-      <td id="T_3a59a_row0_col0" class="data row0 col0" >0.214800</td>
-      <td id="T_3a59a_row0_col1" class="data row0 col1" >0.048000</td>
-      <td id="T_3a59a_row0_col2" class="data row0 col2" >4.474000</td>
-      <td id="T_3a59a_row0_col3" class="data row0 col3" >0.000000</td>
-      <td id="T_3a59a_row0_col4" class="data row0 col4" >0.121000</td>
-      <td id="T_3a59a_row0_col5" class="data row0 col5" >0.309000</td>
+      <th id="T_14bdf_level0_row0" class="row_heading level0 row0" >Age</th>
+      <td id="T_14bdf_row0_col0" class="data row0 col0" >0.214800</td>
+      <td id="T_14bdf_row0_col1" class="data row0 col1" >0.048000</td>
+      <td id="T_14bdf_row0_col2" class="data row0 col2" >4.474000</td>
+      <td id="T_14bdf_row0_col3" class="data row0 col3" >0.000000</td>
+      <td id="T_14bdf_row0_col4" class="data row0 col4" >0.121000</td>
+      <td id="T_14bdf_row0_col5" class="data row0 col5" >0.309000</td>
     </tr>
     <tr>
-      <th id="T_3a59a_level0_row1" class="row_heading level0 row1" >Monthly kilometers</th>
-      <td id="T_3a59a_row1_col0" class="data row1 col0" >0.007200</td>
-      <td id="T_3a59a_row1_col1" class="data row1 col1" >0.001000</td>
-      <td id="T_3a59a_row1_col2" class="data row1 col2" >7.597000</td>
-      <td id="T_3a59a_row1_col3" class="data row1 col3" >0.000000</td>
-      <td id="T_3a59a_row1_col4" class="data row1 col4" >0.005000</td>
-      <td id="T_3a59a_row1_col5" class="data row1 col5" >0.009000</td>
+      <th id="T_14bdf_level0_row1" class="row_heading level0 row1" >Monthly kilometers</th>
+      <td id="T_14bdf_row1_col0" class="data row1 col0" >0.007200</td>
+      <td id="T_14bdf_row1_col1" class="data row1 col1" >0.001000</td>
+      <td id="T_14bdf_row1_col2" class="data row1 col2" >7.597000</td>
+      <td id="T_14bdf_row1_col3" class="data row1 col3" >0.000000</td>
+      <td id="T_14bdf_row1_col4" class="data row1 col4" >0.005000</td>
+      <td id="T_14bdf_row1_col5" class="data row1 col5" >0.009000</td>
     </tr>
     <tr>
-      <th id="T_3a59a_level0_row2" class="row_heading level0 row2" >Yearly income</th>
-      <td id="T_3a59a_row2_col0" class="data row2 col0" >-0.000300</td>
-      <td id="T_3a59a_row2_col1" class="data row2 col1" >0.000069</td>
-      <td id="T_3a59a_row2_col2" class="data row2 col2" >-3.946000</td>
-      <td id="T_3a59a_row2_col3" class="data row2 col3" >0.000000</td>
-      <td id="T_3a59a_row2_col4" class="data row2 col4" >-0.000000</td>
-      <td id="T_3a59a_row2_col5" class="data row2 col5" >-0.000000</td>
+      <th id="T_14bdf_level0_row2" class="row_heading level0 row2" >Yearly income</th>
+      <td id="T_14bdf_row2_col0" class="data row2 col0" >-0.000300</td>
+      <td id="T_14bdf_row2_col1" class="data row2 col1" >0.000069</td>
+      <td id="T_14bdf_row2_col2" class="data row2 col2" >-3.946000</td>
+      <td id="T_14bdf_row2_col3" class="data row2 col3" >0.000000</td>
+      <td id="T_14bdf_row2_col4" class="data row2 col4" >-0.000000</td>
+      <td id="T_14bdf_row2_col5" class="data row2 col5" >-0.000000</td>
     </tr>
     <tr>
-      <th id="T_3a59a_level0_row3" class="row_heading level0 row3" >Yearly maintenance cost</th>
-      <td id="T_3a59a_row3_col0" class="data row3 col0" >-0.013900</td>
-      <td id="T_3a59a_row3_col1" class="data row3 col1" >0.002000</td>
-      <td id="T_3a59a_row3_col2" class="data row3 col2" >-8.276000</td>
-      <td id="T_3a59a_row3_col3" class="data row3 col3" >0.000000</td>
-      <td id="T_3a59a_row3_col4" class="data row3 col4" >-0.017000</td>
-      <td id="T_3a59a_row3_col5" class="data row3 col5" >-0.011000</td>
+      <th id="T_14bdf_level0_row3" class="row_heading level0 row3" >Yearly maintenance cost</th>
+      <td id="T_14bdf_row3_col0" class="data row3 col0" >-0.013900</td>
+      <td id="T_14bdf_row3_col1" class="data row3 col1" >0.002000</td>
+      <td id="T_14bdf_row3_col2" class="data row3 col2" >-8.276000</td>
+      <td id="T_14bdf_row3_col3" class="data row3 col3" >0.000000</td>
+      <td id="T_14bdf_row3_col4" class="data row3 col4" >-0.017000</td>
+      <td id="T_14bdf_row3_col5" class="data row3 col5" >-0.011000</td>
     </tr>
     <tr>
-      <th id="T_3a59a_level0_row4" class="row_heading level0 row4" >Vehicle type_5 doors</th>
-      <td id="T_3a59a_row4_col0" class="data row4 col0" >18.336400</td>
-      <td id="T_3a59a_row4_col1" class="data row4 col1" >0.600000</td>
-      <td id="T_3a59a_row4_col2" class="data row4 col2" >30.537000</td>
-      <td id="T_3a59a_row4_col3" class="data row4 col3" >0.000000</td>
-      <td id="T_3a59a_row4_col4" class="data row4 col4" >17.158000</td>
-      <td id="T_3a59a_row4_col5" class="data row4 col5" >19.515000</td>
+      <th id="T_14bdf_level0_row4" class="row_heading level0 row4" >Vehicle type_5 doors</th>
+      <td id="T_14bdf_row4_col0" class="data row4 col0" >18.336400</td>
+      <td id="T_14bdf_row4_col1" class="data row4 col1" >0.600000</td>
+      <td id="T_14bdf_row4_col2" class="data row4 col2" >30.537000</td>
+      <td id="T_14bdf_row4_col3" class="data row4 col3" >0.000000</td>
+      <td id="T_14bdf_row4_col4" class="data row4 col4" >17.158000</td>
+      <td id="T_14bdf_row4_col5" class="data row4 col5" >19.515000</td>
     </tr>
     <tr>
-      <th id="T_3a59a_level0_row5" class="row_heading level0 row5" >Vehicle type_SUV</th>
-      <td id="T_3a59a_row5_col0" class="data row5 col0" >37.858700</td>
-      <td id="T_3a59a_row5_col1" class="data row5 col1" >0.621000</td>
-      <td id="T_3a59a_row5_col2" class="data row5 col2" >60.937000</td>
-      <td id="T_3a59a_row5_col3" class="data row5 col3" >0.000000</td>
-      <td id="T_3a59a_row5_col4" class="data row5 col4" >36.639000</td>
-      <td id="T_3a59a_row5_col5" class="data row5 col5" >39.078000</td>
+      <th id="T_14bdf_level0_row5" class="row_heading level0 row5" >Vehicle type_SUV</th>
+      <td id="T_14bdf_row5_col0" class="data row5 col0" >37.858700</td>
+      <td id="T_14bdf_row5_col1" class="data row5 col1" >0.621000</td>
+      <td id="T_14bdf_row5_col2" class="data row5 col2" >60.937000</td>
+      <td id="T_14bdf_row5_col3" class="data row5 col3" >0.000000</td>
+      <td id="T_14bdf_row5_col4" class="data row5 col4" >36.639000</td>
+      <td id="T_14bdf_row5_col5" class="data row5 col5" >39.078000</td>
     </tr>
     <tr>
-      <th id="T_3a59a_level0_row6" class="row_heading level0 row6" >Vehicle type_utility</th>
-      <td id="T_3a59a_row6_col0" class="data row6 col0" >57.458300</td>
-      <td id="T_3a59a_row6_col1" class="data row6 col1" >0.921000</td>
-      <td id="T_3a59a_row6_col2" class="data row6 col2" >62.415000</td>
-      <td id="T_3a59a_row6_col3" class="data row6 col3" >0.000000</td>
-      <td id="T_3a59a_row6_col4" class="data row6 col4" >55.652000</td>
-      <td id="T_3a59a_row6_col5" class="data row6 col5" >59.265000</td>
+      <th id="T_14bdf_level0_row6" class="row_heading level0 row6" >Vehicle type_utility</th>
+      <td id="T_14bdf_row6_col0" class="data row6 col0" >57.458300</td>
+      <td id="T_14bdf_row6_col1" class="data row6 col1" >0.921000</td>
+      <td id="T_14bdf_row6_col2" class="data row6 col2" >62.415000</td>
+      <td id="T_14bdf_row6_col3" class="data row6 col3" >0.000000</td>
+      <td id="T_14bdf_row6_col4" class="data row6 col4" >55.652000</td>
+      <td id="T_14bdf_row6_col5" class="data row6 col5" >59.265000</td>
     </tr>
     <tr>
-      <th id="T_3a59a_level0_row7" class="row_heading level0 row7" >Socioeconomic category_Student</th>
-      <td id="T_3a59a_row7_col0" class="data row7 col0" >3.593700</td>
-      <td id="T_3a59a_row7_col1" class="data row7 col1" >0.633000</td>
-      <td id="T_3a59a_row7_col2" class="data row7 col2" >5.676000</td>
-      <td id="T_3a59a_row7_col3" class="data row7 col3" >0.000000</td>
-      <td id="T_3a59a_row7_col4" class="data row7 col4" >2.351000</td>
-      <td id="T_3a59a_row7_col5" class="data row7 col5" >4.836000</td>
+      <th id="T_14bdf_level0_row7" class="row_heading level0 row7" >Socioeconomic category_Student</th>
+      <td id="T_14bdf_row7_col0" class="data row7 col0" >3.593700</td>
+      <td id="T_14bdf_row7_col1" class="data row7 col1" >0.633000</td>
+      <td id="T_14bdf_row7_col2" class="data row7 col2" >5.676000</td>
+      <td id="T_14bdf_row7_col3" class="data row7 col3" >0.000000</td>
+      <td id="T_14bdf_row7_col4" class="data row7 col4" >2.351000</td>
+      <td id="T_14bdf_row7_col5" class="data row7 col5" >4.836000</td>
     </tr>
     <tr>
-      <th id="T_3a59a_level0_row8" class="row_heading level0 row8" >Socioeconomic category_Unemployed</th>
-      <td id="T_3a59a_row8_col0" class="data row8 col0" >3.931000</td>
-      <td id="T_3a59a_row8_col1" class="data row8 col1" >0.887000</td>
-      <td id="T_3a59a_row8_col2" class="data row8 col2" >4.431000</td>
-      <td id="T_3a59a_row8_col3" class="data row8 col3" >0.000000</td>
-      <td id="T_3a59a_row8_col4" class="data row8 col4" >2.190000</td>
-      <td id="T_3a59a_row8_col5" class="data row8 col5" >5.672000</td>
+      <th id="T_14bdf_level0_row8" class="row_heading level0 row8" >Socioeconomic category_Unemployed</th>
+      <td id="T_14bdf_row8_col0" class="data row8 col0" >3.931000</td>
+      <td id="T_14bdf_row8_col1" class="data row8 col1" >0.887000</td>
+      <td id="T_14bdf_row8_col2" class="data row8 col2" >4.431000</td>
+      <td id="T_14bdf_row8_col3" class="data row8 col3" >0.000000</td>
+      <td id="T_14bdf_row8_col4" class="data row8 col4" >2.190000</td>
+      <td id="T_14bdf_row8_col5" class="data row8 col5" >5.672000</td>
     </tr>
   </tbody>
 </table>
@@ -1901,476 +1737,69 @@ X_train, X_test, y_train, y_test = train_test_split(fixed_Xs, Ys, test_size=0.3,
 
 ```python
 
-learning_curve(simple_model, fixed_Xs, Ys, cv=20, scoring='r2')
+visualizer = LearningCurve(
+    simple_model, cv=20, scoring='r2',
+    n_jobs=4
+)
+visualizer.fit(fixed_Xs,Ys )
+visualizer.show()
 
 ```
 
 
     
-![png](output_53_0.png)
-    
 
 
+![My Image Description](/profit_forecast/output_52_0.png)
 
-    ---------------------------------------------------------------------------
 
-    ValueError                                Traceback (most recent call last)
 
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/core/formatters.py:972, in MimeBundleFormatter.__call__(self, obj, include, exclude)
-        969     method = get_real_method(obj, self.print_method)
-        971     if method is not None:
-    --> 972         return method(include=include, exclude=exclude)
-        973     return None
-        974 else:
 
 
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:631, in BaseEstimator._repr_mimebundle_(self, **kwargs)
-        629 def _repr_mimebundle_(self, **kwargs):
-        630     """Mime bundle used by jupyter kernels to display estimator"""
-    --> 631     output = {"text/plain": repr(self)}
-        632     if get_config()["display"] == "diagram":
-        633         output["text/html"] = estimator_html_repr(self)
+    <Axes: title={'center': 'Learning Curve for LinearRegression'}, xlabel='Training Instances', ylabel='Score'>
 
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:257, in BaseEstimator.__repr__(self, N_CHAR_MAX)
-        249 # use ellipsis for sequences with a lot of elements
-        250 pp = _EstimatorPrettyPrinter(
-        251     compact=True,
-        252     indent=1,
-        253     indent_at_name=True,
-        254     n_max_elements_to_show=N_MAX_ELEMENTS_TO_SHOW,
-        255 )
-    --> 257 repr_ = pp.pformat(self)
-        259 # Use bruteforce ellipsis when there are a lot of non-blank characters
-        260 n_nonblank = len("".join(repr_.split()))
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:153, in PrettyPrinter.pformat(self, object)
-        151 def pformat(self, object):
-        152     sio = _StringIO()
-    --> 153     self._format(object, sio, 0, 0, {}, 0)
-        154     return sio.getvalue()
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:170, in PrettyPrinter._format(self, object, stream, indent, allowance, context, level)
-        168     self._readable = False
-        169     return
-    --> 170 rep = self._repr(object, context, level)
-        171 max_width = self._width - indent - allowance
-        172 if len(rep) > max_width:
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:431, in PrettyPrinter._repr(self, object, context, level)
-        430 def _repr(self, object, context, level):
-    --> 431     repr, readable, recursive = self.format(object, context.copy(),
-        432                                             self._depth, level)
-        433     if not readable:
-        434         self._readable = False
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:189, in _EstimatorPrettyPrinter.format(self, object, context, maxlevels, level)
-        188 def format(self, object, context, maxlevels, level):
-    --> 189     return _safe_repr(
-        190         object, context, maxlevels, level, changed_only=self._changed_only
-        191     )
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:440, in _safe_repr(object, context, maxlevels, level, changed_only)
-        438 recursive = False
-        439 if changed_only:
-    --> 440     params = _changed_params(object)
-        441 else:
-        442     params = object.get_params(deep=False)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in _changed_params(estimator)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in <dictcomp>(.0)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:101, in _changed_params.<locals>.has_changed(k, v)
-         99 if k not in init_params:  # happens if k is part of a **kwargs
-        100     return True
-    --> 101 if init_params[k] == inspect._empty:  # k has no default value
-        102     return True
-        103 # try to avoid calling repr on nested estimators
-
-
-    ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
-
-
-
-    ---------------------------------------------------------------------------
-
-    ValueError                                Traceback (most recent call last)
-
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/core/formatters.py:706, in PlainTextFormatter.__call__(self, obj)
-        699 stream = StringIO()
-        700 printer = pretty.RepresentationPrinter(stream, self.verbose,
-        701     self.max_width, self.newline,
-        702     max_seq_length=self.max_seq_length,
-        703     singleton_pprinters=self.singleton_printers,
-        704     type_pprinters=self.type_printers,
-        705     deferred_pprinters=self.deferred_printers)
-    --> 706 printer.pretty(obj)
-        707 printer.flush()
-        708 return stream.getvalue()
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/lib/pretty.py:410, in RepresentationPrinter.pretty(self, obj)
-        407                         return meth(obj, self, cycle)
-        408                 if cls is not object \
-        409                         and callable(cls.__dict__.get('__repr__')):
-    --> 410                     return _repr_pprint(obj, self, cycle)
-        412     return _default_pprint(obj, self, cycle)
-        413 finally:
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/lib/pretty.py:778, in _repr_pprint(obj, p, cycle)
-        776 """A pprint that just redirects to the normal repr function."""
-        777 # Find newlines and replace them with p.break_()
-    --> 778 output = repr(obj)
-        779 lines = output.splitlines()
-        780 with p.group():
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:257, in BaseEstimator.__repr__(self, N_CHAR_MAX)
-        249 # use ellipsis for sequences with a lot of elements
-        250 pp = _EstimatorPrettyPrinter(
-        251     compact=True,
-        252     indent=1,
-        253     indent_at_name=True,
-        254     n_max_elements_to_show=N_MAX_ELEMENTS_TO_SHOW,
-        255 )
-    --> 257 repr_ = pp.pformat(self)
-        259 # Use bruteforce ellipsis when there are a lot of non-blank characters
-        260 n_nonblank = len("".join(repr_.split()))
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:153, in PrettyPrinter.pformat(self, object)
-        151 def pformat(self, object):
-        152     sio = _StringIO()
-    --> 153     self._format(object, sio, 0, 0, {}, 0)
-        154     return sio.getvalue()
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:170, in PrettyPrinter._format(self, object, stream, indent, allowance, context, level)
-        168     self._readable = False
-        169     return
-    --> 170 rep = self._repr(object, context, level)
-        171 max_width = self._width - indent - allowance
-        172 if len(rep) > max_width:
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:431, in PrettyPrinter._repr(self, object, context, level)
-        430 def _repr(self, object, context, level):
-    --> 431     repr, readable, recursive = self.format(object, context.copy(),
-        432                                             self._depth, level)
-        433     if not readable:
-        434         self._readable = False
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:189, in _EstimatorPrettyPrinter.format(self, object, context, maxlevels, level)
-        188 def format(self, object, context, maxlevels, level):
-    --> 189     return _safe_repr(
-        190         object, context, maxlevels, level, changed_only=self._changed_only
-        191     )
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:440, in _safe_repr(object, context, maxlevels, level, changed_only)
-        438 recursive = False
-        439 if changed_only:
-    --> 440     params = _changed_params(object)
-        441 else:
-        442     params = object.get_params(deep=False)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in _changed_params(estimator)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in <dictcomp>(.0)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:101, in _changed_params.<locals>.has_changed(k, v)
-         99 if k not in init_params:  # happens if k is part of a **kwargs
-        100     return True
-    --> 101 if init_params[k] == inspect._empty:  # k has no default value
-        102     return True
-        103 # try to avoid calling repr on nested estimators
-
-
-    ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
-
-
-
-    ---------------------------------------------------------------------------
-
-    ValueError                                Traceback (most recent call last)
-
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/core/formatters.py:342, in BaseFormatter.__call__(self, obj)
-        340     method = get_real_method(obj, self.print_method)
-        341     if method is not None:
-    --> 342         return method()
-        343     return None
-        344 else:
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:627, in BaseEstimator._repr_html_inner(self)
-        622 def _repr_html_inner(self):
-        623     """This function is returned by the @property `_repr_html_` to make
-        624     `hasattr(estimator, "_repr_html_") return `True` or `False` depending
-        625     on `get_config()["display"]`.
-        626     """
-    --> 627     return estimator_html_repr(self)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_estimator_html_repr.py:393, in estimator_html_repr(estimator)
-        391 style_template = Template(_STYLE)
-        392 style_with_id = style_template.substitute(id=container_id)
-    --> 393 estimator_str = str(estimator)
-        395 # The fallback message is shown by default and loading the CSS sets
-        396 # div.sk-text-repr-fallback to display: none to hide the fallback message.
-        397 #
-       (...)
-        402 # The reverse logic applies to HTML repr div.sk-container.
-        403 # div.sk-container is hidden by default and the loading the CSS displays it.
-        404 fallback_msg = (
-        405     "In a Jupyter environment, please rerun this cell to show the HTML"
-        406     " representation or trust the notebook. <br />On GitHub, the"
-        407     " HTML representation is unable to render, please try loading this page"
-        408     " with nbviewer.org."
-        409 )
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:257, in BaseEstimator.__repr__(self, N_CHAR_MAX)
-        249 # use ellipsis for sequences with a lot of elements
-        250 pp = _EstimatorPrettyPrinter(
-        251     compact=True,
-        252     indent=1,
-        253     indent_at_name=True,
-        254     n_max_elements_to_show=N_MAX_ELEMENTS_TO_SHOW,
-        255 )
-    --> 257 repr_ = pp.pformat(self)
-        259 # Use bruteforce ellipsis when there are a lot of non-blank characters
-        260 n_nonblank = len("".join(repr_.split()))
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:153, in PrettyPrinter.pformat(self, object)
-        151 def pformat(self, object):
-        152     sio = _StringIO()
-    --> 153     self._format(object, sio, 0, 0, {}, 0)
-        154     return sio.getvalue()
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:170, in PrettyPrinter._format(self, object, stream, indent, allowance, context, level)
-        168     self._readable = False
-        169     return
-    --> 170 rep = self._repr(object, context, level)
-        171 max_width = self._width - indent - allowance
-        172 if len(rep) > max_width:
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:431, in PrettyPrinter._repr(self, object, context, level)
-        430 def _repr(self, object, context, level):
-    --> 431     repr, readable, recursive = self.format(object, context.copy(),
-        432                                             self._depth, level)
-        433     if not readable:
-        434         self._readable = False
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:189, in _EstimatorPrettyPrinter.format(self, object, context, maxlevels, level)
-        188 def format(self, object, context, maxlevels, level):
-    --> 189     return _safe_repr(
-        190         object, context, maxlevels, level, changed_only=self._changed_only
-        191     )
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:440, in _safe_repr(object, context, maxlevels, level, changed_only)
-        438 recursive = False
-        439 if changed_only:
-    --> 440     params = _changed_params(object)
-        441 else:
-        442     params = object.get_params(deep=False)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in _changed_params(estimator)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in <dictcomp>(.0)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:101, in _changed_params.<locals>.has_changed(k, v)
-         99 if k not in init_params:  # happens if k is part of a **kwargs
-        100     return True
-    --> 101 if init_params[k] == inspect._empty:  # k has no default value
-        102     return True
-        103 # try to avoid calling repr on nested estimators
-
-
-    ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
 
 
 
 ```python
-
-visualizer = ResidualsPlot(simple_model)
+model = LinearRegression()
+visualizer = ResidualsPlot(model)
 
 visualizer.fit(X_train, y_train)
 visualizer.score(X_test, y_test)
-visualizer.show(simple_model)
+visualizer.show()
 
 ```
 
 
-    ---------------------------------------------------------------------------
-
-    AttributeError                            Traceback (most recent call last)
-
-    Cell In[46], line 5
-          3 visualizer.fit(X_train, y_train)
-          4 visualizer.score(X_test, y_test)
-    ----> 5 visualizer.show(simple_model)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/yellowbrick/base.py:244, in Visualizer.show(self, outpath, clear_figure, **kwargs)
-        241 self.finalize()
-        243 if outpath is not None:
-    --> 244     plt.savefig(outpath, **kwargs)
-        245 else:
-        246     plt.show()
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/pyplot.py:1023, in savefig(*args, **kwargs)
-       1020 @_copy_docstring_and_deprecators(Figure.savefig)
-       1021 def savefig(*args, **kwargs):
-       1022     fig = gcf()
-    -> 1023     res = fig.savefig(*args, **kwargs)
-       1024     fig.canvas.draw_idle()  # Need this if 'transparent=True', to reset colors.
-       1025     return res
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/figure.py:3343, in Figure.savefig(self, fname, transparent, **kwargs)
-       3339     for ax in self.axes:
-       3340         stack.enter_context(
-       3341             ax.patch._cm_set(facecolor='none', edgecolor='none'))
-    -> 3343 self.canvas.print_figure(fname, **kwargs)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/backend_bases.py:2366, in FigureCanvasBase.print_figure(self, filename, dpi, facecolor, edgecolor, orientation, format, bbox_inches, pad_inches, bbox_extra_artists, backend, **kwargs)
-       2362 try:
-       2363     # _get_renderer may change the figure dpi (as vector formats
-       2364     # force the figure dpi to 72), so we need to set it again here.
-       2365     with cbook._setattr_cm(self.figure, dpi=dpi):
-    -> 2366         result = print_method(
-       2367             filename,
-       2368             facecolor=facecolor,
-       2369             edgecolor=edgecolor,
-       2370             orientation=orientation,
-       2371             bbox_inches_restore=_bbox_inches_restore,
-       2372             **kwargs)
-       2373 finally:
-       2374     if bbox_inches and restore_bbox:
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/backend_bases.py:2232, in FigureCanvasBase._switch_canvas_and_return_print_method.<locals>.<lambda>(*args, **kwargs)
-       2228     optional_kws = {  # Passed by print_figure for other renderers.
-       2229         "dpi", "facecolor", "edgecolor", "orientation",
-       2230         "bbox_inches_restore"}
-       2231     skip = optional_kws - {*inspect.signature(meth).parameters}
-    -> 2232     print_method = functools.wraps(meth)(lambda *args, **kwargs: meth(
-       2233         *args, **{k: v for k, v in kwargs.items() if k not in skip}))
-       2234 else:  # Let third-parties do as they see fit.
-       2235     print_method = meth
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/backends/backend_agg.py:509, in FigureCanvasAgg.print_png(self, filename_or_obj, metadata, pil_kwargs)
-        462 def print_png(self, filename_or_obj, *, metadata=None, pil_kwargs=None):
-        463     """
-        464     Write the figure to a PNG file.
-        465 
-       (...)
-        507         *metadata*, including the default 'Software' key.
-        508     """
-    --> 509     self._print_pil(filename_or_obj, "png", pil_kwargs, metadata)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/backends/backend_agg.py:458, in FigureCanvasAgg._print_pil(self, filename_or_obj, fmt, pil_kwargs, metadata)
-        453 """
-        454 Draw the canvas, then save it using `.image.imsave` (to which
-        455 *pil_kwargs* and *metadata* are forwarded).
-        456 """
-        457 FigureCanvasAgg.draw(self)
-    --> 458 mpl.image.imsave(
-        459     filename_or_obj, self.buffer_rgba(), format=fmt, origin="upper",
-        460     dpi=self.figure.dpi, metadata=metadata, pil_kwargs=pil_kwargs)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/image.py:1689, in imsave(fname, arr, vmin, vmax, cmap, format, origin, dpi, metadata, pil_kwargs)
-       1687 pil_kwargs.setdefault("format", format)
-       1688 pil_kwargs.setdefault("dpi", (dpi, dpi))
-    -> 1689 image.save(fname, **pil_kwargs)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/PIL/Image.py:2320, in Image.save(self, fp, format, **params)
-       2317         fp = builtins.open(filename, "w+b")
-       2319 try:
-    -> 2320     save_handler(self, fp, filename)
-       2321 except Exception:
-       2322     if open_fp:
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/PIL/PngImagePlugin.py:1262, in _save(im, fp, filename, chunk, save_all)
-       1257     raise OSError(f"cannot write mode {mode} as PNG") from e
-       1259 #
-       1260 # write minimal PNG file
-    -> 1262 fp.write(_MAGIC)
-       1264 chunk(
-       1265     fp,
-       1266     b"IHDR",
-       (...)
-       1272     b"\0",  # 12: interlace flag
-       1273 )
-       1275 chunks = [b"cHRM", b"gAMA", b"sBIT", b"sRGB", b"tIME"]
-
-
-    AttributeError: 'LinearRegression' object has no attribute 'write'
-
-
-
     
-![png](output_54_1.png)
-    
+
+![My Image Description](/profit_forecast/output_53_0.png)
+
+
+
+
+
+    <Axes: title={'center': 'Residuals for LinearRegression Model'}, xlabel='Predicted Value', ylabel='Residuals'>
+
 
 
 ### Observation:
-- As suspected Standard of living, yearly income and Coefficient bonus malus has strong correlation with other other independent variables, they can be predicted by other independent variables.
-- As suspected model is stable against few features, after dropping independent variables with high VIF scores scores 0.886
+- As suspected Standard of living, yearly income and Coefficient bonus malus has strong correlation with other independent variables, they can be predicted by other independent variables.
+- As suspected model is stable against few features, after dropping independent variables with high VIF scores 0.886
 - P-values: Socioeconomic: student, unemployed, vehicle types 3,5 suv and utility, yearly income, age and monthly kilometers suggest strong significant relation between them and target variable on large populations.
 - Brand Renault and Toyota P-values suggest strong influence on target variable compared to other brands.
 - Residuals: indicates a good fit for linear model, predicted values greater than 40 are misfit for compared to the training samples.
 - unexpected high p-value for Socioeconomic Self employed brand Volkswagen, Credit score and Yearly maintenance cost independent variables.
 - Model tend to generalize when applying cross-validation of 20 folds, testing and training scores are matching after 20 folds/iterations.
 
-## More Complex Model:
+
+
+
+
+
+
+# Complex Model:
 - From the above observation we have constructed a stable model with simple features and linear regressor, I would vote for simplified models since they are easy to explain to stakeholders and easier to productionize compared to more complex model with high variance.
 - The fact that the data is synthetic and generated from known function makes it even easier to fit a model against normally distributed target variables.
 - Tho it's not required for this particular dataset but the demonstration below will help explain what is happening behind the scene why applying a particular predictions.
@@ -2389,7 +1818,7 @@ complex_model.fit(X_train, y_train)
 
 
 
-<style>#sk-container-id-2 {color: black;background-color: white;}#sk-container-id-2 pre{padding: 0;}#sk-container-id-2 div.sk-toggleable {background-color: white;}#sk-container-id-2 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-2 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-2 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-2 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-2 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-2 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-2 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-2 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-2 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-2 div.sk-item {position: relative;z-index: 1;}#sk-container-id-2 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-2 div.sk-item::before, #sk-container-id-2 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-2 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-2 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-2 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-2 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-2 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-2 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-2 div.sk-label-container {text-align: center;}#sk-container-id-2 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-2 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LGBMRegressor(random_state=2147483648)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">LGBMRegressor</label><div class="sk-toggleable__content"><pre>LGBMRegressor(random_state=2147483648)</pre></div></div></div></div></div>
+<style>#sk-container-id-7 {color: black;background-color: white;}#sk-container-id-7 pre{padding: 0;}#sk-container-id-7 div.sk-toggleable {background-color: white;}#sk-container-id-7 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-7 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-7 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-7 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-7 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-7 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-7 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-7 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-7 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-7 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-7 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-7 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-7 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-7 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-7 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-7 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-7 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-7 div.sk-item {position: relative;z-index: 1;}#sk-container-id-7 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-7 div.sk-item::before, #sk-container-id-7 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-7 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-7 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-7 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-7 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-7 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-7 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-7 div.sk-label-container {text-align: center;}#sk-container-id-7 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-7 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-7" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LGBMRegressor(random_state=2147483648)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">LGBMRegressor</label><div class="sk-toggleable__content"><pre>LGBMRegressor(random_state=2147483648)</pre></div></div></div></div></div>
 
 
 
@@ -2411,333 +1840,27 @@ complex_model.fit(X_train, y_train)
 
 ```python
 
-from yellowbrick.model_selection import learning_curve
-learning_curve(complex_model, fixed_Xs, Ys, cv=20, scoring='r2', n_jobs=None)
+visualizer = LearningCurve(
+    complex_model, cv=20, scoring='r2',
+    n_jobs=4
+)
+visualizer.fit(fixed_Xs,Ys )
+visualizer.show()
+
 
 ```
 
 
     
-![png](output_59_0.png)
-    
 
 
+![My Image Description](/profit_forecast/output_58_0.png)
 
-    ---------------------------------------------------------------------------
 
-    ValueError                                Traceback (most recent call last)
 
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/core/formatters.py:972, in MimeBundleFormatter.__call__(self, obj, include, exclude)
-        969     method = get_real_method(obj, self.print_method)
-        971     if method is not None:
-    --> 972         return method(include=include, exclude=exclude)
-        973     return None
-        974 else:
 
+    <Axes: title={'center': 'Learning Curve for LGBMRegressor'}, xlabel='Training Instances', ylabel='Score'>
 
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:631, in BaseEstimator._repr_mimebundle_(self, **kwargs)
-        629 def _repr_mimebundle_(self, **kwargs):
-        630     """Mime bundle used by jupyter kernels to display estimator"""
-    --> 631     output = {"text/plain": repr(self)}
-        632     if get_config()["display"] == "diagram":
-        633         output["text/html"] = estimator_html_repr(self)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:257, in BaseEstimator.__repr__(self, N_CHAR_MAX)
-        249 # use ellipsis for sequences with a lot of elements
-        250 pp = _EstimatorPrettyPrinter(
-        251     compact=True,
-        252     indent=1,
-        253     indent_at_name=True,
-        254     n_max_elements_to_show=N_MAX_ELEMENTS_TO_SHOW,
-        255 )
-    --> 257 repr_ = pp.pformat(self)
-        259 # Use bruteforce ellipsis when there are a lot of non-blank characters
-        260 n_nonblank = len("".join(repr_.split()))
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:153, in PrettyPrinter.pformat(self, object)
-        151 def pformat(self, object):
-        152     sio = _StringIO()
-    --> 153     self._format(object, sio, 0, 0, {}, 0)
-        154     return sio.getvalue()
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:170, in PrettyPrinter._format(self, object, stream, indent, allowance, context, level)
-        168     self._readable = False
-        169     return
-    --> 170 rep = self._repr(object, context, level)
-        171 max_width = self._width - indent - allowance
-        172 if len(rep) > max_width:
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:431, in PrettyPrinter._repr(self, object, context, level)
-        430 def _repr(self, object, context, level):
-    --> 431     repr, readable, recursive = self.format(object, context.copy(),
-        432                                             self._depth, level)
-        433     if not readable:
-        434         self._readable = False
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:189, in _EstimatorPrettyPrinter.format(self, object, context, maxlevels, level)
-        188 def format(self, object, context, maxlevels, level):
-    --> 189     return _safe_repr(
-        190         object, context, maxlevels, level, changed_only=self._changed_only
-        191     )
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:440, in _safe_repr(object, context, maxlevels, level, changed_only)
-        438 recursive = False
-        439 if changed_only:
-    --> 440     params = _changed_params(object)
-        441 else:
-        442     params = object.get_params(deep=False)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in _changed_params(estimator)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in <dictcomp>(.0)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:101, in _changed_params.<locals>.has_changed(k, v)
-         99 if k not in init_params:  # happens if k is part of a **kwargs
-        100     return True
-    --> 101 if init_params[k] == inspect._empty:  # k has no default value
-        102     return True
-        103 # try to avoid calling repr on nested estimators
-
-
-    ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
-
-
-
-    ---------------------------------------------------------------------------
-
-    ValueError                                Traceback (most recent call last)
-
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/core/formatters.py:706, in PlainTextFormatter.__call__(self, obj)
-        699 stream = StringIO()
-        700 printer = pretty.RepresentationPrinter(stream, self.verbose,
-        701     self.max_width, self.newline,
-        702     max_seq_length=self.max_seq_length,
-        703     singleton_pprinters=self.singleton_printers,
-        704     type_pprinters=self.type_printers,
-        705     deferred_pprinters=self.deferred_printers)
-    --> 706 printer.pretty(obj)
-        707 printer.flush()
-        708 return stream.getvalue()
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/lib/pretty.py:410, in RepresentationPrinter.pretty(self, obj)
-        407                         return meth(obj, self, cycle)
-        408                 if cls is not object \
-        409                         and callable(cls.__dict__.get('__repr__')):
-    --> 410                     return _repr_pprint(obj, self, cycle)
-        412     return _default_pprint(obj, self, cycle)
-        413 finally:
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/lib/pretty.py:778, in _repr_pprint(obj, p, cycle)
-        776 """A pprint that just redirects to the normal repr function."""
-        777 # Find newlines and replace them with p.break_()
-    --> 778 output = repr(obj)
-        779 lines = output.splitlines()
-        780 with p.group():
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:257, in BaseEstimator.__repr__(self, N_CHAR_MAX)
-        249 # use ellipsis for sequences with a lot of elements
-        250 pp = _EstimatorPrettyPrinter(
-        251     compact=True,
-        252     indent=1,
-        253     indent_at_name=True,
-        254     n_max_elements_to_show=N_MAX_ELEMENTS_TO_SHOW,
-        255 )
-    --> 257 repr_ = pp.pformat(self)
-        259 # Use bruteforce ellipsis when there are a lot of non-blank characters
-        260 n_nonblank = len("".join(repr_.split()))
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:153, in PrettyPrinter.pformat(self, object)
-        151 def pformat(self, object):
-        152     sio = _StringIO()
-    --> 153     self._format(object, sio, 0, 0, {}, 0)
-        154     return sio.getvalue()
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:170, in PrettyPrinter._format(self, object, stream, indent, allowance, context, level)
-        168     self._readable = False
-        169     return
-    --> 170 rep = self._repr(object, context, level)
-        171 max_width = self._width - indent - allowance
-        172 if len(rep) > max_width:
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:431, in PrettyPrinter._repr(self, object, context, level)
-        430 def _repr(self, object, context, level):
-    --> 431     repr, readable, recursive = self.format(object, context.copy(),
-        432                                             self._depth, level)
-        433     if not readable:
-        434         self._readable = False
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:189, in _EstimatorPrettyPrinter.format(self, object, context, maxlevels, level)
-        188 def format(self, object, context, maxlevels, level):
-    --> 189     return _safe_repr(
-        190         object, context, maxlevels, level, changed_only=self._changed_only
-        191     )
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:440, in _safe_repr(object, context, maxlevels, level, changed_only)
-        438 recursive = False
-        439 if changed_only:
-    --> 440     params = _changed_params(object)
-        441 else:
-        442     params = object.get_params(deep=False)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in _changed_params(estimator)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in <dictcomp>(.0)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:101, in _changed_params.<locals>.has_changed(k, v)
-         99 if k not in init_params:  # happens if k is part of a **kwargs
-        100     return True
-    --> 101 if init_params[k] == inspect._empty:  # k has no default value
-        102     return True
-        103 # try to avoid calling repr on nested estimators
-
-
-    ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
-
-
-
-    ---------------------------------------------------------------------------
-
-    ValueError                                Traceback (most recent call last)
-
-    File /opt/anaconda3/lib/python3.9/site-packages/IPython/core/formatters.py:342, in BaseFormatter.__call__(self, obj)
-        340     method = get_real_method(obj, self.print_method)
-        341     if method is not None:
-    --> 342         return method()
-        343     return None
-        344 else:
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:627, in BaseEstimator._repr_html_inner(self)
-        622 def _repr_html_inner(self):
-        623     """This function is returned by the @property `_repr_html_` to make
-        624     `hasattr(estimator, "_repr_html_") return `True` or `False` depending
-        625     on `get_config()["display"]`.
-        626     """
-    --> 627     return estimator_html_repr(self)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_estimator_html_repr.py:393, in estimator_html_repr(estimator)
-        391 style_template = Template(_STYLE)
-        392 style_with_id = style_template.substitute(id=container_id)
-    --> 393 estimator_str = str(estimator)
-        395 # The fallback message is shown by default and loading the CSS sets
-        396 # div.sk-text-repr-fallback to display: none to hide the fallback message.
-        397 #
-       (...)
-        402 # The reverse logic applies to HTML repr div.sk-container.
-        403 # div.sk-container is hidden by default and the loading the CSS displays it.
-        404 fallback_msg = (
-        405     "In a Jupyter environment, please rerun this cell to show the HTML"
-        406     " representation or trust the notebook. <br />On GitHub, the"
-        407     " HTML representation is unable to render, please try loading this page"
-        408     " with nbviewer.org."
-        409 )
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/base.py:257, in BaseEstimator.__repr__(self, N_CHAR_MAX)
-        249 # use ellipsis for sequences with a lot of elements
-        250 pp = _EstimatorPrettyPrinter(
-        251     compact=True,
-        252     indent=1,
-        253     indent_at_name=True,
-        254     n_max_elements_to_show=N_MAX_ELEMENTS_TO_SHOW,
-        255 )
-    --> 257 repr_ = pp.pformat(self)
-        259 # Use bruteforce ellipsis when there are a lot of non-blank characters
-        260 n_nonblank = len("".join(repr_.split()))
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:153, in PrettyPrinter.pformat(self, object)
-        151 def pformat(self, object):
-        152     sio = _StringIO()
-    --> 153     self._format(object, sio, 0, 0, {}, 0)
-        154     return sio.getvalue()
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:170, in PrettyPrinter._format(self, object, stream, indent, allowance, context, level)
-        168     self._readable = False
-        169     return
-    --> 170 rep = self._repr(object, context, level)
-        171 max_width = self._width - indent - allowance
-        172 if len(rep) > max_width:
-
-
-    File /opt/anaconda3/lib/python3.9/pprint.py:431, in PrettyPrinter._repr(self, object, context, level)
-        430 def _repr(self, object, context, level):
-    --> 431     repr, readable, recursive = self.format(object, context.copy(),
-        432                                             self._depth, level)
-        433     if not readable:
-        434         self._readable = False
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:189, in _EstimatorPrettyPrinter.format(self, object, context, maxlevels, level)
-        188 def format(self, object, context, maxlevels, level):
-    --> 189     return _safe_repr(
-        190         object, context, maxlevels, level, changed_only=self._changed_only
-        191     )
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:440, in _safe_repr(object, context, maxlevels, level, changed_only)
-        438 recursive = False
-        439 if changed_only:
-    --> 440     params = _changed_params(object)
-        441 else:
-        442     params = object.get_params(deep=False)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in _changed_params(estimator)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:113, in <dictcomp>(.0)
-        110         return True
-        111     return False
-    --> 113 return {k: v for k, v in params.items() if has_changed(k, v)}
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/_pprint.py:101, in _changed_params.<locals>.has_changed(k, v)
-         99 if k not in init_params:  # happens if k is part of a **kwargs
-        100     return True
-    --> 101 if init_params[k] == inspect._empty:  # k has no default value
-        102     return True
-        103 # try to avoid calling repr on nested estimators
-
-
-    ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
 
 
 
@@ -2746,129 +1869,21 @@ learning_curve(complex_model, fixed_Xs, Ys, cv=20, scoring='r2', n_jobs=None)
 visualizer = ResidualsPlot(complex_model)
 visualizer.fit(X_train, y_train)
 visualizer.score(X_test, y_test)
-visualizer.show(complex_model)
+visualizer.show()
 
 ```
 
 
-    ---------------------------------------------------------------------------
-
-    AttributeError                            Traceback (most recent call last)
-
-    Cell In[50], line 4
-          2 visualizer.fit(X_train, y_train)
-          3 visualizer.score(X_test, y_test)
-    ----> 4 visualizer.show(complex_model)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/yellowbrick/base.py:244, in Visualizer.show(self, outpath, clear_figure, **kwargs)
-        241 self.finalize()
-        243 if outpath is not None:
-    --> 244     plt.savefig(outpath, **kwargs)
-        245 else:
-        246     plt.show()
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/pyplot.py:1023, in savefig(*args, **kwargs)
-       1020 @_copy_docstring_and_deprecators(Figure.savefig)
-       1021 def savefig(*args, **kwargs):
-       1022     fig = gcf()
-    -> 1023     res = fig.savefig(*args, **kwargs)
-       1024     fig.canvas.draw_idle()  # Need this if 'transparent=True', to reset colors.
-       1025     return res
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/figure.py:3343, in Figure.savefig(self, fname, transparent, **kwargs)
-       3339     for ax in self.axes:
-       3340         stack.enter_context(
-       3341             ax.patch._cm_set(facecolor='none', edgecolor='none'))
-    -> 3343 self.canvas.print_figure(fname, **kwargs)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/backend_bases.py:2366, in FigureCanvasBase.print_figure(self, filename, dpi, facecolor, edgecolor, orientation, format, bbox_inches, pad_inches, bbox_extra_artists, backend, **kwargs)
-       2362 try:
-       2363     # _get_renderer may change the figure dpi (as vector formats
-       2364     # force the figure dpi to 72), so we need to set it again here.
-       2365     with cbook._setattr_cm(self.figure, dpi=dpi):
-    -> 2366         result = print_method(
-       2367             filename,
-       2368             facecolor=facecolor,
-       2369             edgecolor=edgecolor,
-       2370             orientation=orientation,
-       2371             bbox_inches_restore=_bbox_inches_restore,
-       2372             **kwargs)
-       2373 finally:
-       2374     if bbox_inches and restore_bbox:
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/backend_bases.py:2232, in FigureCanvasBase._switch_canvas_and_return_print_method.<locals>.<lambda>(*args, **kwargs)
-       2228     optional_kws = {  # Passed by print_figure for other renderers.
-       2229         "dpi", "facecolor", "edgecolor", "orientation",
-       2230         "bbox_inches_restore"}
-       2231     skip = optional_kws - {*inspect.signature(meth).parameters}
-    -> 2232     print_method = functools.wraps(meth)(lambda *args, **kwargs: meth(
-       2233         *args, **{k: v for k, v in kwargs.items() if k not in skip}))
-       2234 else:  # Let third-parties do as they see fit.
-       2235     print_method = meth
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/backends/backend_agg.py:509, in FigureCanvasAgg.print_png(self, filename_or_obj, metadata, pil_kwargs)
-        462 def print_png(self, filename_or_obj, *, metadata=None, pil_kwargs=None):
-        463     """
-        464     Write the figure to a PNG file.
-        465 
-       (...)
-        507         *metadata*, including the default 'Software' key.
-        508     """
-    --> 509     self._print_pil(filename_or_obj, "png", pil_kwargs, metadata)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/backends/backend_agg.py:458, in FigureCanvasAgg._print_pil(self, filename_or_obj, fmt, pil_kwargs, metadata)
-        453 """
-        454 Draw the canvas, then save it using `.image.imsave` (to which
-        455 *pil_kwargs* and *metadata* are forwarded).
-        456 """
-        457 FigureCanvasAgg.draw(self)
-    --> 458 mpl.image.imsave(
-        459     filename_or_obj, self.buffer_rgba(), format=fmt, origin="upper",
-        460     dpi=self.figure.dpi, metadata=metadata, pil_kwargs=pil_kwargs)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/matplotlib/image.py:1689, in imsave(fname, arr, vmin, vmax, cmap, format, origin, dpi, metadata, pil_kwargs)
-       1687 pil_kwargs.setdefault("format", format)
-       1688 pil_kwargs.setdefault("dpi", (dpi, dpi))
-    -> 1689 image.save(fname, **pil_kwargs)
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/PIL/Image.py:2320, in Image.save(self, fp, format, **params)
-       2317         fp = builtins.open(filename, "w+b")
-       2319 try:
-    -> 2320     save_handler(self, fp, filename)
-       2321 except Exception:
-       2322     if open_fp:
-
-
-    File /opt/anaconda3/lib/python3.9/site-packages/PIL/PngImagePlugin.py:1262, in _save(im, fp, filename, chunk, save_all)
-       1257     raise OSError(f"cannot write mode {mode} as PNG") from e
-       1259 #
-       1260 # write minimal PNG file
-    -> 1262 fp.write(_MAGIC)
-       1264 chunk(
-       1265     fp,
-       1266     b"IHDR",
-       (...)
-       1272     b"\0",  # 12: interlace flag
-       1273 )
-       1275 chunks = [b"cHRM", b"gAMA", b"sBIT", b"sRGB", b"tIME"]
-
-
-    AttributeError: 'LGBMRegressor' object has no attribute 'write'
-
-
-
     
-![png](output_60_1.png)
-    
+
+![My Image Description](/profit_forecast/output_59_0.png)
+
+
+
+
+
+    <Axes: title={'center': 'Residuals for LGBMRegressor Model'}, xlabel='Predicted Value', ylabel='Residuals'>
+
 
 
 
@@ -2882,8 +1897,8 @@ feature_importance_plot(complex_model.feature_importances_, X_train.columns.toli
 
 
     
-![png](output_61_0.png)
-    
+
+![My Image Description](/profit_forecast/output_60_0.png)
 
 
 
@@ -2936,7 +1951,7 @@ complex_model.fit(fixed_Xs, Ys)
 
 
 
-<style>#sk-container-id-4 {color: black;background-color: white;}#sk-container-id-4 pre{padding: 0;}#sk-container-id-4 div.sk-toggleable {background-color: white;}#sk-container-id-4 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-4 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-4 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-4 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-4 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-4 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-4 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-4 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-4 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-4 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-4 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-4 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-4 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-4 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-4 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-4 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-4 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-4 div.sk-item {position: relative;z-index: 1;}#sk-container-id-4 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-4 div.sk-item::before, #sk-container-id-4 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-4 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-4 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-4 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-4 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-4 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-4 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-4 div.sk-label-container {text-align: center;}#sk-container-id-4 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-4 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-4" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LGBMRegressor(random_state=2147483648)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" checked><label for="sk-estimator-id-2" class="sk-toggleable__label sk-toggleable__label-arrow">LGBMRegressor</label><div class="sk-toggleable__content"><pre>LGBMRegressor(random_state=2147483648)</pre></div></div></div></div></div>
+<style>#sk-container-id-9 {color: black;background-color: white;}#sk-container-id-9 pre{padding: 0;}#sk-container-id-9 div.sk-toggleable {background-color: white;}#sk-container-id-9 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-9 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-9 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-9 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-9 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-9 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-9 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-9 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-9 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-9 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-9 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-9 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-9 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-9 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-9 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-9 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-9 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-9 div.sk-item {position: relative;z-index: 1;}#sk-container-id-9 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-9 div.sk-item::before, #sk-container-id-9 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-9 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-9 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-9 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-9 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-9 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-9 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-9 div.sk-label-container {text-align: center;}#sk-container-id-9 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-9 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-9" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LGBMRegressor(random_state=2147483648)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" checked><label for="sk-estimator-id-2" class="sk-toggleable__label sk-toggleable__label-arrow">LGBMRegressor</label><div class="sk-toggleable__content"><pre>LGBMRegressor(random_state=2147483648)</pre></div></div></div></div></div>
 
 
 
@@ -2951,7 +1966,6 @@ save_model(complex_model, "lgb.pkl")
 
 
 ### Observations:
-- Running Hyperparameters search for limited number of parms did improve the results by 0.01 only, it comes from the fact that the dataset is small with limited number of features.
 - Baseline boosting model is accurate enough to generalize on unseen data.
 
 ### Predict on unseen Out-of-Sample Data:
@@ -3121,15 +2135,15 @@ shap.summary_plot(shap_values, golden_data, max_display=len(golden_data.index))
 
 
     
-![png](output_75_0.png)
-    
+
+![My Image Description](/profit_forecast/output_74_0.png)
 
 
 #### Observations:
 - Vehicle type 5 doors and SUV to blame for low Net-profit forecasting.
 - Numerical variables Age and monthly kilometers and CRM score contributed the most for higher net profit.
 - Other features such as Brands, Socioeconomic status has no effect compared to variables on the top.
-- From feature importance plot it shows Yearly income, monthly kilometers, Age and CRM score are most important factors in deciding net profit.
+- From feature importance plot it shows Yearly income, monthly kilometers, Age and CRM score are the most important factors in deciding net profit.
 - It would be insightful to understand what to blame for high or low net profit from an out-of-sample dataset, as per individual forecasts.
 - Higher age and monthly kilometers contributes higher net-profit, tho there are some cases where high value of age "red" decreases nonprofit, a dependence plot between two features will show how two similar values of monthly kilometers contributes differently to profit as it depends on interaction of two features.
 
@@ -3152,8 +2166,8 @@ golden_data.iloc[1]
 
 
     
-![png](output_78_0.png)
-    
+
+![My Image Description](/profit_forecast/output_77_0.png)
 
 
     49.894912616226186
@@ -3197,8 +2211,8 @@ golden_data.iloc[292]
 
 
     
-![png](output_79_0.png)
-    
+![My Image Description](/profit_forecast/output_78_0.png)
+
 
 
     34.0143422063608
@@ -3241,8 +2255,8 @@ golden_data.iloc[185]
 
 
     
-![png](output_80_0.png)
-    
+
+![My Image Description](/profit_forecast/output_79_0.png)
 
 
     36.434799275715484
@@ -3285,8 +2299,8 @@ golden_data.iloc[3]
 
 
     
-![png](output_81_0.png)
-    
+
+![My Image Description](/profit_forecast/output_80_0.png)
 
 
     -24.23093475368557
@@ -3329,8 +2343,8 @@ golden_data.iloc[19]
 
 
     
-![png](output_82_0.png)
-    
+
+![My Image Description](/profit_forecast/output_81_0.png)
 
 
     -17.41840315625436
@@ -3372,8 +2386,8 @@ golden_data.iloc[140]
 
 
     
-![png](output_83_0.png)
-    
+
+![My Image Description](/profit_forecast/output_82_0.png)
 
 
     -17.65590834806663
@@ -3416,8 +2430,8 @@ golden_data.iloc[264]
 
 
     
-![png](output_84_0.png)
-    
+
+![My Image Description](/profit_forecast/output_83_0.png)
 
 
     -16.60818486301198

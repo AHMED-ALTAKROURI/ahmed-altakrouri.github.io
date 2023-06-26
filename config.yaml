@@ -29,8 +29,8 @@ params:
   author: "Ahmed Altakrouri"
   brandIconFile: "images/brandIcon.svg"
   dateFmt: "2006-01-02"
-  #  customStylesheets: # Use to override theme styles, like logo size
-  #    - "css/custom.css"
+  customStylesheets: # Use to override theme styles, like logo size
+      - "css/style.css"
   social:
     - name: GitHub
       url: https://github.com/AHMED-ALTAKROURI
@@ -42,4 +42,10 @@ params:
       url: https://www.linkedin.com/in/ahmed-altakrouri-7422b185/
   subtitle: "Ideas and thoughts on machine learning, data science, and statistics"
 
-customCSS : ["/style.css"]
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+justifyContent : true

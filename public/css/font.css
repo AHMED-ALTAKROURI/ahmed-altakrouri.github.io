@@ -19,3 +19,6 @@
   font-weight: italic;
   font-style: italic;
 }
+.justify-text {
+  text-align: justify;
+}

@@ -17,21 +17,21 @@
     </item>
     
     <item>
+      <title>Net Profit Forecasting</title>
+      <link>https://ahmed-altakrouri.github.io/posts/net-profit-forecasting/</link>
+      <pubDate>Wed, 15 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ahmed-altakrouri.github.io/posts/net-profit-forecasting/</guid>
+      <description>Overview: This notebook aimed is to demonstrate the solution for simple regression problem, predict net profit given a set of attributes, first I start with simple EDA understand the data numerical and categorical distributions. Then I fit simple statistical model followed by linear regression and more complex one. each model includes scoring metrics and explanations. Finally, I communicate final finding of prediction of the provided Out-of-sample test set and the including factors or attributes that decided the final predictions using shapley values.</description>
+    </item>
+    
+    <item>
       <title>Placeholder Text</title>
       <link>https://ahmed-altakrouri.github.io/posts/placeholder-text/</link>
       <pubDate>Wed, 01 Feb 2023 00:00:00 +0000</pubDate>
       
       <guid>https://ahmed-altakrouri.github.io/posts/placeholder-text/</guid>
       <description>&lt;p&gt;Lorem est tota propiore conpellat pectoribus de pectora summo.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Profit Forecasting Profit</title>
-      <link>https://ahmed-altakrouri.github.io/posts/eda-&#43;-modeling/</link>
-      <pubDate>Fri, 15 Apr 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://ahmed-altakrouri.github.io/posts/eda-&#43;-modeling/</guid>
-      <description>Overview: This notebook aimed is to demonstrate the solution for simple regression problem, predict net profit given a set of attributes, first I start with simple EDA understand the data numerical and categorical distributions. Then I fit simple statistical model followed by linear regression and more complex one. each model includes scoring metrics and explanations. Finally, I communicate final finding of prediction of the provided Out-of-sample test set and the including factors or attributes that decided the final predictions using shapley values.</description>
     </item>
     
     <item>

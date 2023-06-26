@@ -82,3 +82,6 @@ figcaption {
 figure {
   margin: auto;
 }
+.justify-text {
+  text-align: justify;
+}
