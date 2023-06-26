@@ -49,3 +49,38 @@ markup:
       unsafe: true
 
 justifyContent : true
+
+
+#markup:
+#  highlight:
+#    noClasses: false
+
+#markup:
+#  highlight:
+#    codeFences: true
+#    guessSyntax: true
+#    hl_Lines: ""
+#    lineNoStart: 1
+#    lineNos: true
+#    lineNumbersInTable: true
+#    tabWidth: 4
+#    noClasses: false
+
+#pygmentsUseClasses: false
+#pygmentsCodefences: true
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    codeFences: true
+    guessSyntax: false
+    hl_Lines: ""
+    lineNoStart: 1
+    lineNos: false
+    lineNumbersInTable: true
+    noClasses: true
+    tabWidth: 2
+    style: "default"
+

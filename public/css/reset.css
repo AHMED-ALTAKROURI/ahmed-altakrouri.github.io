@@ -6,19 +6,19 @@ html {
   --fontcolor: #444;
   --linkcolor: #00e;
   --visitedcolor: #551a8b;
-  --precolor: #fff;
-  --prebgcolor: #000;
+  --precolor: #0e0101;
+  --prebgcolor: #090000;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-   /*  --bgcolor: black; */
-     --fontcolor: black;
-   /*  --linkcolor: #5bf; */
-     --linkcolor: green;
-     /* --visitedcolor: #ae5ee0;*/
-       --visitedcolor: #ae5ee0;
-     --precolor: #fff;
-     --prebgcolor: #383838;
+    /*  --bgcolor: black; */
+    --fontcolor: black;
+    /*  --linkcolor: #5bf; */
+    --linkcolor: green;
+    /* --visitedcolor: #ae5ee0;*/
+    --visitedcolor: #ae5ee0;
+    --precolor: #0e0101;
+    --prebgcolor: #090000;
   }
 }
 body {
@@ -35,7 +35,7 @@ a:link {
   color: var(--linkcolor);
 }
 a:visited {
- /* color: var(--visitedcolor); */
+  /* color: var(--visitedcolor); */
   color: green;
 }
 a:active {
@@ -56,8 +56,8 @@ pre {
   overflow-x: auto;
 }
 b {
-   font-size: 1.25em;
-   color: blue;
+  font-size: 1.25em;
+  color: blue;
 }
 
 article {
@@ -81,7 +81,4 @@ figcaption {
 }
 figure {
   margin: auto;
-}
-.justify-text {
-  text-align: justify;
 }

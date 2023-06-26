@@ -6,8 +6,8 @@ html {
   --fontcolor: #444;
   --linkcolor: #00e;
   --visitedcolor: #551a8b;
-  --precolor: #fff;
-  --prebgcolor: #000;
+  --precolor: #150101;
+  --prebgcolor: #f6f0f0;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -17,8 +17,8 @@ html {
      --linkcolor: green;
      /* --visitedcolor: #ae5ee0;*/
        --visitedcolor: #ae5ee0;
-     --precolor: #fff;
-     --prebgcolor: #383838;
+     --precolor: #100101;
+     --prebgcolor: #f5ecec;
   }
 }
 body {
@@ -85,3 +85,4 @@ figure {
 .justify-text {
   text-align: justify;
 }
+
