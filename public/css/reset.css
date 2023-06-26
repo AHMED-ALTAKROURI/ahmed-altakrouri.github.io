@@ -11,7 +11,7 @@ html {
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    /*  --bgcolor: black; */
+    --bgcolor: #F1F3F4; 
     --fontcolor: black;
     /*  --linkcolor: #5bf; */
     --linkcolor: green;
