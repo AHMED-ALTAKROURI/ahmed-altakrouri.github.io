@@ -7,11 +7,6 @@ draft: false
 
 
 
-
-
-
-
-
 ### Overview:
 {{< justify >}}
 This notebook aimed is to demonstrate the solution for simple regression problem, predict net profit given a set of attributes, first I start with simple EDA understand the data numerical and categorical distributions. Then I fit simple statistical model followed by linear regression and more complex one. each model includes scoring metrics and explanations.
