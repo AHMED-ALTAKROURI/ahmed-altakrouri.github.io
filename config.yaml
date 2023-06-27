@@ -1,7 +1,7 @@
 # exampleSite/config.yaml
 baseURL: https://ahmed-altakrouri.github.io/ # Replace with your domain
 languageCode: en-us
-title: Probabilistic Thinking
+title: AHMED AL-TAKROURI
 menu:
   main:
     - identifier: home
@@ -40,7 +40,7 @@ params:
     #      url: https://www.reddit.com/user/ian-s-mcb
     - name: Linkedin
       url: https://www.linkedin.com/in/ahmed-altakrouri-7422b185/
-  subtitle: "Ideas and thoughts on machine learning, data science, and statistics"
+  subtitle: "Data Science Blog"
 
 
 markup:
