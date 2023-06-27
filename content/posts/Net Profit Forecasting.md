@@ -15,16 +15,23 @@ Finally, I communicate final finding of prediction of the provided Out-of-sample
 
 
 
+1. Basic EDA.
+2. Feature Engineering.
+3. Statistical Model.
+4. Baseline Model
+5. Complex Model.
+6. Scoring.
+7. SHAPly Values, Interoperable ML.
+
+
 ```python
-
-%matplotlib inline
-
-# modeling:
+# modeling
 from sklearn.linear_model import LinearRegression
+from lightgbm import LGBMRegressor
 from statsmodels.regression.linear_model import OLS
-
-# metrics:
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedKFold
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 
 # model diagnosis:
 from yellowbrick.model_selection import learning_curve
@@ -32,76 +39,35 @@ from yellowbrick.regressor import ResidualsPlot
 
 # Interpretable Machine Learning:
 import shap
-
 # helper functions I wrote for this dataset:
 from utils import *
-
-
-import numpy as np
-
-from sklearn.model_selection import StratifiedKFold
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-
-from yellowbrick.datasets import load_game
-from yellowbrick.model_selection import LearningCurve
-
-
 import warnings
 warnings.filterwarnings('ignore')
-
-
-```
-
-
-```python
 
 # Settings and aesthetics:
 cmap_data = plt.cm.Paired
 cmap_cv = plt.cm.coolwarm
 cmap_data = plt.cm.Paired
 cmap_cv = plt.cm.coolwarm
-warnings.filterwarnings('ignore')
 
 # Some basic settings here:
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 pd.options.display.max_columns = 30
-
-
 ```
 
 
-1. Basic EDA.
-2. Feature Engineering.
-3. Statistical Model.
-4. baseline Model
-5. Complex Model.
-6. Scoring.
-7. SHAPly Values, Interoperable ML.
 
 
-
-### EDA
+# EDA
 
 
 ```python
-
 modeling_data = pd.read_csv("../../Data/labeled_dataset.csv")
 modeling_data.set_index("index", inplace=True)
-
-```
-
-
-```python
-
 modeling_data.head()
-
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -238,163 +204,8 @@ modeling_data.head()
 </div>
 
 
-
-
 ```python
-
-modeling_data.describe()
-
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Monthly premium</th>
-      <th>Monthly kilometers</th>
-      <th>Coefficient bonus malus</th>
-      <th>CRM score</th>
-      <th>Standard of living</th>
-      <th>Yearly income</th>
-      <th>Credit score</th>
-      <th>Yearly maintenance cost</th>
-      <th>Net profit</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>count</th>
-      <td>983.000000</td>
-      <td>989.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-    </tr>
-    <tr>
-      <th>mean</th>
-      <td>35.953204</td>
-      <td>18.754297</td>
-      <td>605.675000</td>
-      <td>100.008000</td>
-      <td>134.724000</td>
-      <td>4207.239000</td>
-      <td>29553.820000</td>
-      <td>493.933000</td>
-      <td>792.998000</td>
-      <td>16.975844</td>
-    </tr>
-    <tr>
-      <th>std</th>
-      <td>17.985224</td>
-      <td>13.162842</td>
-      <td>232.394446</td>
-      <td>14.854379</td>
-      <td>20.389791</td>
-      <td>2665.071559</td>
-      <td>18054.980164</td>
-      <td>288.958869</td>
-      <td>99.422638</td>
-      <td>19.436137</td>
-    </tr>
-    <tr>
-      <th>min</th>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>200.000000</td>
-      <td>50.000000</td>
-      <td>79.000000</td>
-      <td>-558.000000</td>
-      <td>880.000000</td>
-      <td>1.000000</td>
-      <td>520.000000</td>
-      <td>-35.720831</td>
-    </tr>
-    <tr>
-      <th>25%</th>
-      <td>26.000000</td>
-      <td>9.000000</td>
-      <td>411.000000</td>
-      <td>90.000000</td>
-      <td>121.000000</td>
-      <td>2335.000000</td>
-      <td>16795.000000</td>
-      <td>237.000000</td>
-      <td>726.000000</td>
-      <td>5.991101</td>
-    </tr>
-    <tr>
-      <th>50%</th>
-      <td>32.000000</td>
-      <td>16.000000</td>
-      <td>614.000000</td>
-      <td>100.000000</td>
-      <td>134.000000</td>
-      <td>3652.500000</td>
-      <td>25955.000000</td>
-      <td>493.500000</td>
-      <td>794.000000</td>
-      <td>14.386086</td>
-    </tr>
-    <tr>
-      <th>75%</th>
-      <td>42.000000</td>
-      <td>25.000000</td>
-      <td>807.000000</td>
-      <td>110.000000</td>
-      <td>147.000000</td>
-      <td>5491.250000</td>
-      <td>38067.500000</td>
-      <td>731.750000</td>
-      <td>863.000000</td>
-      <td>30.344179</td>
-    </tr>
-    <tr>
-      <th>max</th>
-      <td>198.000000</td>
-      <td>80.000000</td>
-      <td>999.000000</td>
-      <td>154.000000</td>
-      <td>254.000000</td>
-      <td>23673.000000</td>
-      <td>165760.000000</td>
-      <td>999.000000</td>
-      <td>1145.000000</td>
-      <td>78.114678</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
-
 modeling_data.info()
-
 ```
 
     <class 'pandas.core.frame.DataFrame'>
@@ -421,9 +232,7 @@ modeling_data.info()
 
 
 ```python
-
 modeling_data.isnull().sum().to_frame().style.background_gradient(cmap='summer')
-
 ```
 
 
@@ -515,30 +324,12 @@ modeling_data.isnull().sum().to_frame().style.background_gradient(cmap='summer')
 
 
 ```python
-
-
 # fill nan with other Brand types:
 modeling_data["Brand"].fillna("other", inplace=True)
-
-```
-
-
-```python
-
 modeling_data = modeling_data[modeling_data["Monthly premium"].notna()]
-
-```
-
-
-```python
-
 modeling_data.columns.tolist()
-
 ```
-
-
-
-
+```
     ['Age',
      'Monthly premium',
      'Socioeconomic category',
@@ -552,71 +343,50 @@ modeling_data.columns.tolist()
      'Credit score',
      'Yearly maintenance cost',
      'Net profit']
-
+```
 
 
 
 ```python
-
-# create histogram here for categorical variables:
 plt.figure(figsize=(10,6))
 sns.set(style="whitegrid", font_scale=1.2)
-
-chart = sns.countplot(x='Brand', hue='Socioeconomic category', data=modeling_data, palette='deep')
-
-# Update layout parameters
+chart = sns.countplot(x='Brand',
+                      hue='Socioeconomic category',
+                      data=modeling_data,
+                      palette='deep')
 chart.set_title('Histogram for Categorical Variables', fontsize=16, color='firebrick')
-# Show the plot
 plt.show()
-
 ```
 
-
-    
+ 
 ![My Image Description](/profit_forecast/output_13_0.png)
 
 
 
-
 ```python
-
-# set the style and figure size
 sns.set(style="whitegrid")
 plt.figure(figsize=(11,7))
-
-# create the count-plot
-chart = sns.countplot(x='Brand', hue='Vehicle type', data=modeling_data, palette='deep')
-
-# update layout parameters
+chart = sns.countplot(x='Brand',
+                      hue='Vehicle type',
+                      data=modeling_data,
+                      palette='deep')
 chart.set_title('Count-plot for Categorical Variables', fontsize=16, color='firebrick')
-
-# Show the plot
 plt.show()
-
-
 ```
 
 
 ![My Image Description](/profit_forecast/output_14_0.png)
 
 
-There are few extreme outliers in the data, we might suspect a data entry problem:
-
-
 ```python
-
-
-# Create a larger figure
 plt.figure(figsize=(11,7))
-# Create box-plots for each variable
-sns.boxplot(data=modeling_data[["Age", "Monthly premium", "Coefficient bonus malus", "CRM score", "Net profit"]])
-# Set plot title and labels
+sns.boxplot(data=modeling_data[["Age",
+                                "Monthly premium", 
+                                "Coefficient bonus malus", 
+                                "CRM score", 
+                                "Net profit"]])
 plt.title('Box-plots for Selected Variables', fontsize=16, color='firebrick')
-
-# Show the plot
 plt.show()
-
-
 ```
 
 
@@ -624,34 +394,19 @@ plt.show()
 ![My Image Description](/profit_forecast/output_16_0.png)
 
 ```python
-
 # drop extreme outlier from the above observations:
 modeling_data = modeling_data[modeling_data["CRM score"] < 254]
 modeling_data = modeling_data[(modeling_data["Age"] < 124) & (modeling_data["Age"] > 0)]
-
 ```
 
 
 ```python
-
 # no warning outlier for credit score, monthly kilometers and yearly maintenance cost:
-# Create a larger figure
 plt.figure(figsize=(11,7))
-
-# Create box-plots for each variable
 sns.boxplot(data=modeling_data[["Monthly kilometers", "Credit score"]])
-
-# Set plot title and labels
 plt.title('Box-plots for Selected Variables', fontsize=16, color='firebrick')
-
-# remove background color
 plt.grid(False)
-
-# Show the plot
 plt.show()
-
-
-
 ```
 
 
@@ -662,21 +417,10 @@ plt.show()
 
 
 ```python
-
-# Create a larger figure
 plt.figure(figsize=(11,7))
-
-# Create boxplot for the variable
 sns.boxplot(x=modeling_data["Yearly maintenance cost"], color='aqua')
-
-# Set plot title and labels
 plt.title('Boxplot for Yearly Maintenance Cost', fontsize=16, color='firebrick')
-
-# remove background color
-
-# Show the plot
 plt.show()
-
 ```
 
 
@@ -687,20 +431,10 @@ plt.show()
 
 
 ```python
-
-# Create a larger figure
 plt.figure(figsize=(11,7))
-
-# Create boxplot for the variable
 sns.boxplot(x=modeling_data["Yearly income"], color='lightseagreen')
-
-# Set plot title and labels
 plt.title('Boxplot for Yearly Income', fontsize=16, color='firebrick')
-
-
-# Show the plot
 plt.show()
-
 ```
 
 
@@ -711,20 +445,13 @@ plt.show()
 
 
 ```python
-
-
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 5))
-
 sns.boxplot(x=modeling_data["Standard of living"])
-
 plt.xlabel("Standard of living")
 plt.ylabel("Values")
 plt.title("Box Plot - Standard of living")
-
 plt.show()
-
-
 ```
 
 
@@ -735,20 +462,13 @@ plt.show()
 
 
 ```python
-
-
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 6))
-
 sns.histplot(data=modeling_data, x="Yearly income", hue="Socioeconomic category", multiple="stack")
-
 plt.xlabel("Yearly income")
 plt.ylabel("Count")
 plt.title("Yearly income per Socioeconomic Category")
-
 plt.show()
-
-
 ```
 
 
@@ -759,19 +479,13 @@ plt.show()
 
 
 ```python
-
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 6))
-
 sns.histplot(data=modeling_data, x="Yearly income", hue="Vehicle type", multiple="stack")
-
 plt.xlabel("Yearly income")
 plt.ylabel("Count")
 plt.title("Vehicle Type Per Yearly Income")
-
 plt.show()
-
-
 ```
 
 
@@ -781,13 +495,10 @@ plt.show()
 ```python
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 5))
-
 sns.boxplot(x=modeling_data["Standard of living"])
-
 plt.xlabel("Standard of living")
 plt.ylabel("Values")
 plt.title("Box Plot - Standard of living")
-
 plt.show()
 ```
 
@@ -801,13 +512,10 @@ plt.show()
 ```python
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 6))
-
 sns.histplot(data=modeling_data, x="Yearly income", hue="Socioeconomic category", element="step")
-
 plt.xlabel("Yearly income")
 plt.ylabel("Count")
 plt.title("Yearly income per Socioeconomic Category")
-
 plt.show()
 ```
 
@@ -821,13 +529,10 @@ plt.show()
 ```python
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 6))
-
 sns.histplot(data=modeling_data, x="Yearly income", hue="Vehicle type", multiple="stack")
-
 plt.xlabel("Yearly income")
 plt.ylabel("Count")
 plt.title("Vehicle Type Per Yearly Income")
-
 plt.show()
 ```
 
@@ -839,18 +544,13 @@ plt.show()
 
 
 ```python
-
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 5))
-
 sns.histplot(data=modeling_data, x="Yearly income", hue="Brand", multiple="stack")
-
 plt.xlabel("Yearly income")
 plt.ylabel("Count")
 plt.title("Brand Type Per Yearly Income")
-
 plt.show()
-
 ```
 
 
@@ -863,13 +563,10 @@ plt.show()
 ```python
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 5))
-
 sns.histplot(data=modeling_data, x="Net profit", hue="Socioeconomic category", multiple="stack")
-
 plt.xlabel("Net profit")
 plt.ylabel("Count")
 plt.title("Net Profit per Socioeconomic Category")
-
 plt.show()
 ```
 
@@ -881,13 +578,10 @@ plt.show()
 ```python
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 5))
-
 sns.histplot(data=modeling_data, x="Net profit", hue="Vehicle type", multiple="stack")
-
 plt.xlabel("Net profit")
 plt.ylabel("Count")
 plt.title("Net Profit Distribution Per Vehicle Type")
-
 plt.show()
 ```
 
@@ -901,20 +595,17 @@ plt.show()
 ```python
 sns.set(style="whitegrid", font_scale=1.2)
 plt.figure(figsize=(8, 5))
-
 sns.histplot(data=modeling_data, x="Net profit", hue="Brand", multiple="stack")
-
 plt.xlabel("Net profit")
 plt.ylabel("Count")
 plt.title("Net Profit per Brand")
-
 plt.show()
 ```
 
 
 ![My Image Description](/profit_forecast/output_30_0.png)
 
-### Observation
+### Observations:
 
 - No warning outliers seen in the data except for yearly income, CRM score and Age.
 - Numerical data are normally distributed.
@@ -923,7 +614,6 @@ plt.show()
 
 
 ```python
-
 # categorize your variables here:
 categories = [
     'Brand',
@@ -932,25 +622,20 @@ categories = [
 ]
 modeling_data_visualization = pd.get_dummies(modeling_data,
                                columns=categories,
-                               drop_first=False)
-
+                               drop_first=True)
 ```
 
 
 ```python
-
 modeling_data = pd.get_dummies(
                                modeling_data,
                                columns=categories,
                                drop_first=True
                                )
-
-
 ```
 
 
 ```python
-
 # rearrange columns:
 ordered_corr_columns = modeling_data_visualization.copy()
 ordered_corr_columns = ordered_corr_columns[['Age',
@@ -980,38 +665,37 @@ ordered_corr_columns = ordered_corr_columns[['Age',
                                              'Socioeconomic category_Unemployed',
                                              'Net profit'
                                              ]]
-
 ```
 
 
 ```python
-
 plt.figure(figsize=(15, 15))
 corr = ordered_corr_columns.corr()
 corr_top = corr.index
-sns.heatmap(modeling_data_visualization[corr_top].corr(), vmax=1.0, vmin=-1.0, linewidths=0.1, annot=True, annot_kws={"size": 8},
+sns.heatmap(modeling_data_visualization[corr_top].corr(),
+            vmax=1.0,
+            vmin=-1.0,
+            linewidths=0.1,
+            annot=True,
+            annot_kws={"size": 8},
             square=True, cbar=False);
-
 ```
 
 ![My Image Description](/profit_forecast/output_36_0.png)
 
 
 ```python
-
 corr = ordered_corr_columns.corr()
 plt.figure(figsize=(15, 15))
-sns.heatmap(corr[(corr >= 0.1)], vmax=1.0,
- vmin=-1.0, linewidths=0.1,
-  annot=True, annot_kws={"size": 8}, square=True, cbar=False)
-
-
+sns.heatmap(corr[(corr >= 0.1)],
+            vmax=1.0,
+            vmin=-1.0,
+            linewidths=0.1,
+            annot=True,
+            annot_kws={"size": 8}, 
+            square=True,
+            cbar=False)
 ```
-
-
-
-
-
 
 
 
@@ -1022,12 +706,16 @@ sns.heatmap(corr[(corr >= 0.1)], vmax=1.0,
 
 
 ```python
-
 corr = ordered_corr_columns.corr()
 plt.figure(figsize=(15, 15))
-sns.heatmap(corr[(corr <= -0.1)], vmax=1.0,
- vmin=-1.0, linewidths=0.1, annot=True, annot_kws={"size": 8}, square=True, cbar=False);
-
+sns.heatmap(corr[(corr <= -0.1)], 
+            vmax=1.0,
+            vmin=-1.0,
+            linewidths=0.1,
+            annot=True,
+            annot_kws={"size": 8}, 
+            square=True,
+            cbar=False);
 ```
 
 
@@ -1038,11 +726,13 @@ sns.heatmap(corr[(corr <= -0.1)], vmax=1.0,
 
 
 ```python
-
 fig, ax = plt.subplots(figsize=(8, 8))
-sns.heatmap(modeling_data_visualization.corr()[["Net profit"]].sort_values("Net profit"), vmax=1, vmin=-1, annot=True, ax=ax)
+sns.heatmap(modeling_data_visualization.corr()[["Net profit"]].sort_values("Net profit"),
+            vmax=1,
+            vmin=-1,
+            annot=True, 
+            ax=ax)
 ax.invert_yaxis()
-
 ```
 
 
@@ -1051,24 +741,21 @@ ax.invert_yaxis()
 ![My Image Description](/profit_forecast/output_39_0.png)
 
 
-### Observation
-
+### Observations:
 - There is not any warning high correlation between target variable and independent variables.
 - Multi-collinearity between Standard of living and yearly income, CRM score and Coefficient bonus malus, they might be problematic for linear models interpretation.
 - There are few independent variables can be used for fitting model that correlate positively/negatively with Net profit.
 - There is enough signals in the data simple model with fewer coefficient would generalize on unseen data.
 
 
-### Simple Model:
+## Simple Model:
 
 
 ```python
-
 Features = modeling_data.columns.tolist()
 Features.remove("Net profit")
 Ys = modeling_data["Net profit"]
 Xs = modeling_data[Features]
-
 ```
 
 Multi-collinearity Check VIF:
@@ -1076,9 +763,7 @@ Multi-collinearity Check VIF:
 
 
 ```python
-
 calculate_vif(Xs).style.background_gradient(cmap='summer')
-
 ```
 
 
@@ -1245,10 +930,11 @@ calculate_vif(Xs).style.background_gradient(cmap='summer')
 
 
 ```python
-
-fixed_Xs = Xs.drop(["Standard of living", "Coefficient bonus malus","CRM score","Yearly maintenance cost"], axis=1)
+fixed_Xs = Xs.drop(["Standard of living",
+                    "Coefficient bonus malus",
+                    "CRM score",
+                    "Yearly maintenance cost"], axis=1)
 calculate_vif(fixed_Xs).style.background_gradient(cmap='summer')
-
 ```
 
 
@@ -1423,7 +1109,6 @@ calculate_vif(fixed_Xs).style.background_gradient(cmap='summer')
 
 
 ```python
-
 simple_model = LinearRegression().fit(fixed_Xs, Ys)
 simple_model.score(fixed_Xs, Ys)
 
@@ -1438,17 +1123,10 @@ simple_model.score(fixed_Xs, Ys)
 
 
 ```python
-
 coef = get_regressor_coefficients(simple_model, fixed_Xs.columns.tolist())
-
-```
-
-
-```python
-
 coefficient_plot(coef.values(), coef.keys())
-
 ```
+
 
 
 
@@ -1461,10 +1139,8 @@ coefficient_plot(coef.values(), coef.keys())
 
 
 ```python
-
 est = OLS(Ys, Xs).fit()
 print(est.summary())
-
 ```
 
                                      OLS Regression Results                                
@@ -1519,10 +1195,9 @@ print(est.summary())
 
 
 ```python
-
 statistical_results_as_frame = get_dataframe_from_summary(est)
-statistical_results_as_frame[statistical_results_as_frame["P>|t|"] <= 0.000].style.background_gradient(cmap='summer')
-
+statistical_results_as_frame[statistical_results_as_frame["P>|t|"] <= 0.000].
+style.background_gradient(cmap='summer')
 ```
 
 
@@ -1724,21 +1399,20 @@ statistical_results_as_frame[statistical_results_as_frame["P>|t|"] <= 0.000].sty
 
 
 ```python
-
-X_train, X_test, y_train, y_test = train_test_split(fixed_Xs, Ys, test_size=0.3, random_state=10101)
-
+X_train, X_test, y_train, y_test = train_test_split(fixed_Xs,
+                                                    Ys,
+                                                    test_size=0.3,
+                                                    random_state=10101)
 ```
 
 
 ```python
-
 visualizer = LearningCurve(
     simple_model, cv=20, scoring='r2',
     n_jobs=4
 )
 visualizer.fit(fixed_Xs,Ys )
 visualizer.show()
-
 ```
 
 
@@ -1759,11 +1433,9 @@ visualizer.show()
 ```python
 model = LinearRegression()
 visualizer = ResidualsPlot(model)
-
 visualizer.fit(X_train, y_train)
 visualizer.score(X_test, y_test)
 visualizer.show()
-
 ```
 
 
@@ -1779,7 +1451,7 @@ visualizer.show()
 
 
 
-### Observation:
+### Observations:
 - As suspected Standard of living, yearly income and Coefficient bonus malus has strong correlation with other independent variables, they can be predicted by other independent variables.
 - As suspected model is stable against few features, after dropping independent variables with high VIF scores 0.886
 - P-values: Socioeconomic: student, unemployed, vehicle types 3,5 suv and utility, yearly income, age and monthly kilometers suggest strong significant relation between them and target variable on large populations.
@@ -1794,20 +1466,15 @@ visualizer.show()
 
 
 
-# Complex Model:
-- From the above observation we have constructed a stable model with simple features and linear regressor, I would vote for simplified models since they are easy to explain to stakeholders and easier to productionize compared to more complex model with high variance.
+## Complex Model:
+- From the above observation we have constructed a stable model with simple features and linear repressor, I would vote for simplified models since they are easy to explain to stakeholders and easier to productionize compared to more complex model with high variance.
 - The fact that the data is synthetic and generated from known function makes it even easier to fit a model against normally distributed target variables.
 - Tho it's not required for this particular dataset but the demonstration below will help explain what is happening behind the scene why applying a particular predictions.
 
 
 ```python
-
-from lightgbm import LGBMRegressor
-import numpy as np
-
 complex_model = LGBMRegressor(random_state=np.random.RandomState().get_state()[1][0])
 complex_model.fit(X_train, y_train)
-
 ```
 
 
@@ -1819,10 +1486,8 @@ complex_model.fit(X_train, y_train)
 
 
 ```python
-
 {"training score": complex_model.score(X_train, y_train),
  "testing score": complex_model.score(X_test, y_test)}
-
 ```
 
 
@@ -1834,15 +1499,14 @@ complex_model.fit(X_train, y_train)
 
 
 ```python
-
 visualizer = LearningCurve(
-    complex_model, cv=20, scoring='r2',
+    complex_model,
+    cv=20,
+    scoring='r2',
     n_jobs=4
 )
 visualizer.fit(fixed_Xs,Ys )
 visualizer.show()
-
-
 ```
 
 
@@ -1860,12 +1524,10 @@ visualizer.show()
 
 
 ```python
-
 visualizer = ResidualsPlot(complex_model)
 visualizer.fit(X_train, y_train)
 visualizer.score(X_test, y_test)
 visualizer.show()
-
 ```
 
 
@@ -1883,9 +1545,7 @@ visualizer.show()
 
 
 ```python
-
 feature_importance_plot(complex_model.feature_importances_, X_train.columns.tolist())
-
 ```
 
 
@@ -1899,19 +1559,16 @@ feature_importance_plot(complex_model.feature_importances_, X_train.columns.toli
 
 
 ```python
-
-from sklearn.model_selection import train_test_split
-
-X_train, X_test, y_train, y_test = train_test_split(fixed_Xs, Ys, test_size=0.3, random_state=10101)
-
+X_train, X_test, y_train, y_test = train_test_split(fixed_Xs,
+                                                    Ys,
+                                                    test_size=0.3,
+                                                    random_state=10101)
 ```
 
 
 ```python
-
 complex_model.fit(X_train, y_train)
 complex_model.score(X_test, y_test)
-
 ```
 
 
@@ -1923,10 +1580,8 @@ complex_model.score(X_test, y_test)
 
 
 ```python
-
 {"training score": complex_model.score(X_train, y_train),
  "testing score": complex_model.score(X_test, y_test)}
-
 ```
 
 
@@ -1938,9 +1593,7 @@ complex_model.score(X_test, y_test)
 
 
 ```python
-
 complex_model.fit(fixed_Xs, Ys)
-
 ```
 
 
@@ -1952,9 +1605,7 @@ complex_model.fit(fixed_Xs, Ys)
 
 
 ```python
-
 save_model(complex_model, "lgb.pkl")
-
 ```
 
     model saved....
@@ -1967,24 +1618,18 @@ save_model(complex_model, "lgb.pkl")
 
 
 ```python
-
 golden_data = pd.read_csv("../../Data/scoring_dataset.csv")
-
 ```
 
 
 ```python
-
 golden_data = prepare_out_of_sample_data(golden_data)
-
 ```
 
 
 ```python
-
 predictions = complex_model.predict(golden_data)
 predictions
-
 ```
 
 
@@ -2069,22 +1714,18 @@ predictions
 
 
 ```python
-
 golden_data_output = golden_data.copy()
 golden_data_output["Predictions"] = predictions
 golden_data_output.to_csv("../../Output Files/Data/prediction.csv")
-
 ```
 
 ### Analyze Predictions with SHAP values:
 
 
 ```python
-
 shap.initjs()
 explainer = shap.TreeExplainer(complex_model)
 shap_values = explainer.shap_values(golden_data, predictions, check_additivity=False)
-
 ```
 
 
@@ -2147,16 +1788,13 @@ shap.summary_plot(shap_values, golden_data, max_display=len(golden_data.index))
 ### Individual Explanations of High and Low net profit forecasts.
 
 
-
 ```python
-
 shap.plots._waterfall.waterfall_legacy(explainer.expected_value,
                                        shap_values[1],
                                        golden_data.iloc[1],
                                        golden_data.columns)
 print(predictions[1])
 golden_data.iloc[1]
-
 ```
 
 
@@ -2165,12 +1803,7 @@ golden_data.iloc[1]
 ![My Image Description](/profit_forecast/output_77_0.png)
 
 
-    49.894912616226186
-
-
-
-
-
+    Predicted-Profit             49.894912616226186
     Age                                        21.0
     Monthly premium                            14.0
     Monthly kilometers                        694.0
@@ -2195,13 +1828,12 @@ golden_data.iloc[1]
 
 
 ```python
-
-
-shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[292], golden_data.iloc[292],
+shap.plots._waterfall.waterfall_legacy(explainer.expected_value, 
+                                       shap_values[292],
+                                       golden_data.iloc[292],
                                        golden_data.columns)
 print(predictions[292])
 golden_data.iloc[292]
-
 ```
 
 
@@ -2209,13 +1841,8 @@ golden_data.iloc[292]
 ![My Image Description](/profit_forecast/output_78_0.png)
 
 
-
-    34.0143422063608
-
-
-
-
-
+  
+    Predicted-Profit               34.0143422063608
     Age                                        33.0
     Monthly premium                             8.0
     Monthly kilometers                        748.0
@@ -2240,12 +1867,12 @@ golden_data.iloc[292]
 
 
 ```python
-
-shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[185], golden_data.iloc[185],
+shap.plots._waterfall.waterfall_legacy(explainer.expected_value,
+                                       shap_values[185],
+                                       golden_data.iloc[185],
                                        golden_data.columns)
 print(predictions[185])
 golden_data.iloc[185]
-
 ```
 
 
@@ -2254,12 +1881,7 @@ golden_data.iloc[185]
 ![My Image Description](/profit_forecast/output_79_0.png)
 
 
-    36.434799275715484
-
-
-
-
-
+    Predicted-Profit             36.434799275715484
     Age                                        42.0
     Monthly premium                            15.0
     Monthly kilometers                        345.0
@@ -2284,12 +1906,12 @@ golden_data.iloc[185]
 
 
 ```python
-
-shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[3], golden_data.iloc[3],
+shap.plots._waterfall.waterfall_legacy(explainer.expected_value,
+                                       shap_values[3],
+                                       golden_data.iloc[3],
                                        golden_data.columns)
 print(predictions[3])
 golden_data.iloc[3]
-
 ```
 
 
@@ -2298,12 +1920,7 @@ golden_data.iloc[3]
 ![My Image Description](/profit_forecast/output_80_0.png)
 
 
-    -24.23093475368557
-
-
-
-
-
+    Predicted-Profit             -24.23093475368557
     Age                                        33.0
     Monthly premium                             2.0
     Monthly kilometers                        970.0
@@ -2328,26 +1945,19 @@ golden_data.iloc[3]
 
 
 ```python
-
-shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[19], golden_data.iloc[19],
+shap.plots._waterfall.waterfall_legacy(explainer.expected_value,
+                                       shap_values[19],
+                                       golden_data.iloc[19],
                                        golden_data.columns)
 print(predictions[19])
 golden_data.iloc[19]
-
 ```
 
-
-    
 
 ![My Image Description](/profit_forecast/output_81_0.png)
 
 
-    -17.41840315625436
-
-
-
-
-
+    Predicted-Profit             -17.41840315625436
     Age                                        45.0
     Monthly premium                             4.0
     Monthly kilometers                        993.0
@@ -2372,11 +1982,12 @@ golden_data.iloc[19]
 
 
 ```python
-shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[140], golden_data.iloc[140],
+shap.plots._waterfall.waterfall_legacy(explainer.expected_value,
+                                       shap_values[140],
+                                       golden_data.iloc[140],
                                        golden_data.columns)
 print(predictions[140])
 golden_data.iloc[140]
-
 ```
 
 
@@ -2385,12 +1996,7 @@ golden_data.iloc[140]
 ![My Image Description](/profit_forecast/output_82_0.png)
 
 
-    -17.65590834806663
-
-
-
-
-
+    Predicted-Profit             -17.65590834806663
     Age                                        30.0
     Monthly premium                            27.0
     Monthly kilometers                        915.0
@@ -2416,11 +2022,12 @@ golden_data.iloc[140]
 
 ```python
 
-shap.plots._waterfall.waterfall_legacy(explainer.expected_value, shap_values[264], golden_data.iloc[264],
+shap.plots._waterfall.waterfall_legacy(explainer.expected_value,
+                                       shap_values[264], 
+                                       golden_data.iloc[264],
                                        golden_data.columns)
 print(predictions[264])
 golden_data.iloc[264]
-
 ```
 
 
@@ -2429,12 +2036,7 @@ golden_data.iloc[264]
 ![My Image Description](/profit_forecast/output_83_0.png)
 
 
-    -16.60818486301198
-
-
-
-
-
+    Predicted-Profit             -16.60818486301198
     Age                                        41.0
     Monthly premium                             5.0
     Monthly kilometers                        801.0
