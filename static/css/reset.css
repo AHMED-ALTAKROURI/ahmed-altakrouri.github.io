@@ -11,14 +11,14 @@ html {
 }
 @media (prefers-color-scheme: dark) {
   :root {
-   /*  --bgcolor: black; */
-     --fontcolor: black;
-   /*  --linkcolor: #5bf; */
+     /*--bgcolor: black;*/
+     --fontcolor: #2f2b2b;
+     --linkcolor: #5bf;
      --linkcolor: green;
-     /* --visitedcolor: #ae5ee0;*/
+      --visitedcolor: #ae5ee0;
        --visitedcolor: #ae5ee0;
      --precolor: #0e0101;
-     --prebgcolor: #bd9c9c;
+     --prebgcolor: #fbfbfb;
   }
 }
 body {
@@ -44,17 +44,17 @@ a:active {
 h1,h2,h3 {
   line-height: 1.2;
 }
-/*p > code {*/
-/*  color: var(--precolor);*/
-/*  background: var(--prebgcolor);*/
-/*  padding: 2px;*/
-/*}*/
-/*pre {*/
-/*  color: var(--precolor);*/
-/*  background: var(--prebgcolor);*/
-/*  padding: 24px;*/
-/*  overflow-x: auto;*/
-/*}*/
+p > code {
+  color:#0e0101;
+  background: var(--prebgcolor);
+  padding: 2px;
+}
+pre {
+  color: #0e0101;
+  background: var(--prebgcolor);
+  padding: 24px;
+  overflow-x: auto;
+}
 b {
    font-size: 1.25em;
    color: blue;

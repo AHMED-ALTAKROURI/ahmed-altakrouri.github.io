@@ -82,5 +82,5 @@ markup:
     lineNumbersInTable: true
     noClasses: true
     tabWidth: 2
-    style: "perldoc"
-
+    style: "friendly"
+#    style: "emacs"
