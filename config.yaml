@@ -26,7 +26,7 @@ menu:
       weight: 5
 params:
   abbrDateFmt: "Jan 2"
-  author: "Ahmed Altakrouri"
+  author: "Ahmed Al-takrouri"
   brandIconFile: "images/brandIcon.svg"
   dateFmt: "2006-01-02"
   customStylesheets: # Use to override theme styles, like logo size
@@ -43,10 +43,10 @@ params:
   subtitle: "Data Science Blog"
 
 
-markup:
-  goldmark:
-    renderer:
-      unsafe: true
+#markup:
+#  goldmark:
+#    renderer:
+#      unsafe: true
 
 justifyContent : true
 
