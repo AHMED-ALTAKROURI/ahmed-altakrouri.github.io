@@ -11,7 +11,7 @@
   />
   
     
-      <title>Net Profit Forecasting | Probabilistic Thinking</title>
+      <title>Net Profit Forecasting | AHMED AL-TAKROURI</title>
     
   
   <link rel="stylesheet" href="/css/reset.css"/>
@@ -39,8 +39,8 @@
       />
     </a>
     <div class="text">
-      <a href="https://ahmed-altakrouri.github.io/"><h1>Probabilistic Thinking</h1></a>
-      <h3>Ideas and thoughts on machine learning, data science, and statistics</h3>
+      <a href="https://ahmed-altakrouri.github.io/"><h1>AHMED AL-TAKROURI</h1></a>
+      <h3>Data Science Blog</h3>
     </div>
   </div>
   <nav>
@@ -78,8 +78,8 @@
     
     
   </strong>
-  <span> • 3325 words</span>
-  <span> • 16 minute read</span>
+  <span> • 3054 words</span>
+  <span> • 15 minute read</span>
   
   
 </div>
@@ -88,15 +88,22 @@
 <p class="justify-text">This notebook aimed is to demonstrate the solution for simple regression problem, predict net profit given a set of attributes, first I start with simple EDA understand the data numerical and categorical distributions. Then I fit simple statistical model followed by linear regression and more complex one. each model includes scoring metrics and explanations.
 Finally, I communicate final finding of prediction of the provided Out-of-sample test set and the including factors or attributes that decided the final predictions using shapley values.</p>
 
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#666">%</span>matplotlib inline
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># modeling:</span>
+<ol>
+<li>Basic EDA.</li>
+<li>Feature Engineering.</li>
+<li>Statistical Model.</li>
+<li>Baseline Model</li>
+<li>Complex Model.</li>
+<li>Scoring.</li>
+<li>SHAPly Values, Interoperable ML.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># modeling</span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn.linear_model</span> <span style="color:#007020;font-weight:bold">import</span> LinearRegression
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">lightgbm</span> <span style="color:#007020;font-weight:bold">import</span> LGBMRegressor
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">statsmodels.regression.linear_model</span> <span style="color:#007020;font-weight:bold">import</span> OLS
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># metrics:</span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn.model_selection</span> <span style="color:#007020;font-weight:bold">import</span> train_test_split
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn.model_selection</span> <span style="color:#007020;font-weight:bold">import</span> StratifiedKFold
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn.preprocessing</span> <span style="color:#007020;font-weight:bold">import</span> OneHotEncoder, LabelEncoder
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># model diagnosis:</span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">yellowbrick.model_selection</span> <span style="color:#007020;font-weight:bold">import</span> learning_curve
@@ -104,50 +111,25 @@ Finally, I communicate final finding of prediction of the provided Out-of-sample
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Interpretable Machine Learning:</span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">shap</span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># helper functions I wrote for this dataset:</span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">utils</span> <span style="color:#007020;font-weight:bold">import</span> <span style="color:#666">*</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">numpy</span> <span style="color:#007020;font-weight:bold">as</span> <span style="color:#0e84b5;font-weight:bold">np</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn.model_selection</span> <span style="color:#007020;font-weight:bold">import</span> StratifiedKFold
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn.naive_bayes</span> <span style="color:#007020;font-weight:bold">import</span> MultinomialNB
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn.preprocessing</span> <span style="color:#007020;font-weight:bold">import</span> OneHotEncoder, LabelEncoder
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">yellowbrick.datasets</span> <span style="color:#007020;font-weight:bold">import</span> load_game
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">yellowbrick.model_selection</span> <span style="color:#007020;font-weight:bold">import</span> LearningCurve
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">warnings</span>
 </span></span><span style="display:flex;"><span>warnings<span style="color:#666">.</span>filterwarnings(<span style="color:#4070a0">&#39;ignore&#39;</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Settings and aesthetics:</span>
 </span></span><span style="display:flex;"><span>cmap_data <span style="color:#666">=</span> plt<span style="color:#666">.</span>cm<span style="color:#666">.</span>Paired
 </span></span><span style="display:flex;"><span>cmap_cv <span style="color:#666">=</span> plt<span style="color:#666">.</span>cm<span style="color:#666">.</span>coolwarm
 </span></span><span style="display:flex;"><span>cmap_data <span style="color:#666">=</span> plt<span style="color:#666">.</span>cm<span style="color:#666">.</span>Paired
 </span></span><span style="display:flex;"><span>cmap_cv <span style="color:#666">=</span> plt<span style="color:#666">.</span>cm<span style="color:#666">.</span>coolwarm
-</span></span><span style="display:flex;"><span>warnings<span style="color:#666">.</span>filterwarnings(<span style="color:#4070a0">&#39;ignore&#39;</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Some basic settings here:</span>
 </span></span><span style="display:flex;"><span>pd<span style="color:#666">.</span>set_option(<span style="color:#4070a0">&#39;display.max_rows&#39;</span>, <span style="color:#40a070">500</span>)
 </span></span><span style="display:flex;"><span>pd<span style="color:#666">.</span>set_option(<span style="color:#4070a0">&#39;display.max_columns&#39;</span>, <span style="color:#40a070">500</span>)
 </span></span><span style="display:flex;"><span>pd<span style="color:#666">.</span>set_option(<span style="color:#4070a0">&#39;display.width&#39;</span>, <span style="color:#40a070">1000</span>)
 </span></span><span style="display:flex;"><span>pd<span style="color:#666">.</span>options<span style="color:#666">.</span>display<span style="color:#666">.</span>max_columns <span style="color:#666">=</span> <span style="color:#40a070">30</span>
-</span></span></code></pre></div><ol>
-<li>Basic EDA.</li>
-<li>Feature Engineering.</li>
-<li>Statistical Model.</li>
-<li>baseline Model</li>
-<li>Complex Model.</li>
-<li>Scoring.</li>
-<li>SHAPly Values, Interoperable ML.</li>
-</ol>
-<h3 id="eda">EDA</h3>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>modeling_data <span style="color:#666">=</span> pd<span style="color:#666">.</span>read_csv(<span style="color:#4070a0">&#34;../../Data/labeled_dataset.csv&#34;</span>)
+</span></span></code></pre></div><h1 id="eda">EDA</h1>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>modeling_data <span style="color:#666">=</span> pd<span style="color:#666">.</span>read_csv(<span style="color:#4070a0">&#34;../../Data/labeled_dataset.csv&#34;</span>)
 </span></span><span style="display:flex;"><span>modeling_data<span style="color:#666">.</span>set_index(<span style="color:#4070a0">&#34;index&#34;</span>, inplace<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>modeling_data<span style="color:#666">.</span>head()
 </span></span></code></pre></div><div>
 <style scoped>
@@ -282,148 +264,7 @@ Finally, I communicate final finding of prediction of the provided Out-of-sample
   </tbody>
 </table>
 </div>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>modeling_data<span style="color:#666">.</span>describe()
-</span></span></code></pre></div><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-<pre><code>.dataframe tbody tr th {
-    vertical-align: top;
-}
-
-.dataframe thead th {
-    text-align: right;
-}
-</code></pre>
-<p></style></p>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Monthly premium</th>
-      <th>Monthly kilometers</th>
-      <th>Coefficient bonus malus</th>
-      <th>CRM score</th>
-      <th>Standard of living</th>
-      <th>Yearly income</th>
-      <th>Credit score</th>
-      <th>Yearly maintenance cost</th>
-      <th>Net profit</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>count</th>
-      <td>983.000000</td>
-      <td>989.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-      <td>1000.000000</td>
-    </tr>
-    <tr>
-      <th>mean</th>
-      <td>35.953204</td>
-      <td>18.754297</td>
-      <td>605.675000</td>
-      <td>100.008000</td>
-      <td>134.724000</td>
-      <td>4207.239000</td>
-      <td>29553.820000</td>
-      <td>493.933000</td>
-      <td>792.998000</td>
-      <td>16.975844</td>
-    </tr>
-    <tr>
-      <th>std</th>
-      <td>17.985224</td>
-      <td>13.162842</td>
-      <td>232.394446</td>
-      <td>14.854379</td>
-      <td>20.389791</td>
-      <td>2665.071559</td>
-      <td>18054.980164</td>
-      <td>288.958869</td>
-      <td>99.422638</td>
-      <td>19.436137</td>
-    </tr>
-    <tr>
-      <th>min</th>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>200.000000</td>
-      <td>50.000000</td>
-      <td>79.000000</td>
-      <td>-558.000000</td>
-      <td>880.000000</td>
-      <td>1.000000</td>
-      <td>520.000000</td>
-      <td>-35.720831</td>
-    </tr>
-    <tr>
-      <th>25%</th>
-      <td>26.000000</td>
-      <td>9.000000</td>
-      <td>411.000000</td>
-      <td>90.000000</td>
-      <td>121.000000</td>
-      <td>2335.000000</td>
-      <td>16795.000000</td>
-      <td>237.000000</td>
-      <td>726.000000</td>
-      <td>5.991101</td>
-    </tr>
-    <tr>
-      <th>50%</th>
-      <td>32.000000</td>
-      <td>16.000000</td>
-      <td>614.000000</td>
-      <td>100.000000</td>
-      <td>134.000000</td>
-      <td>3652.500000</td>
-      <td>25955.000000</td>
-      <td>493.500000</td>
-      <td>794.000000</td>
-      <td>14.386086</td>
-    </tr>
-    <tr>
-      <th>75%</th>
-      <td>42.000000</td>
-      <td>25.000000</td>
-      <td>807.000000</td>
-      <td>110.000000</td>
-      <td>147.000000</td>
-      <td>5491.250000</td>
-      <td>38067.500000</td>
-      <td>731.750000</td>
-      <td>863.000000</td>
-      <td>30.344179</td>
-    </tr>
-    <tr>
-      <th>max</th>
-      <td>198.000000</td>
-      <td>80.000000</td>
-      <td>999.000000</td>
-      <td>154.000000</td>
-      <td>254.000000</td>
-      <td>23673.000000</td>
-      <td>165760.000000</td>
-      <td>999.000000</td>
-      <td>1145.000000</td>
-      <td>78.114678</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>modeling_data<span style="color:#666">.</span>info()
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>modeling_data<span style="color:#666">.</span>info()
 </span></span></code></pre></div><pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
 Int64Index: 1000 entries, 0 to 999
 Data columns (total 13 columns):
@@ -445,8 +286,7 @@ Data columns (total 13 columns):
 dtypes: float64(3), int64(7), object(3)
 memory usage: 109.4+ KB
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>modeling_data<span style="color:#666">.</span>isnull()<span style="color:#666">.</span>sum()<span style="color:#666">.</span>to_frame()<span style="color:#666">.</span>style<span style="color:#666">.</span>background_gradient(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;summer&#39;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>modeling_data<span style="color:#666">.</span>isnull()<span style="color:#666">.</span>sum()<span style="color:#666">.</span>to_frame()<span style="color:#666">.</span>style<span style="color:#666">.</span>background_gradient(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;summer&#39;</span>)
 </span></span></code></pre></div><style type="text/css">
 #T_18c32_row0_col0 {
   background-color: #53a966;
@@ -527,241 +367,157 @@ memory usage: 109.4+ KB
     </tr>
   </tbody>
 </table>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># fill nan with other Brand types:</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># fill nan with other Brand types:</span>
 </span></span><span style="display:flex;"><span>modeling_data[<span style="color:#4070a0">&#34;Brand&#34;</span>]<span style="color:#666">.</span>fillna(<span style="color:#4070a0">&#34;other&#34;</span>, inplace<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>modeling_data <span style="color:#666">=</span> modeling_data[modeling_data[<span style="color:#4070a0">&#34;Monthly premium&#34;</span>]<span style="color:#666">.</span>notna()]
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>modeling_data<span style="color:#666">.</span>columns<span style="color:#666">.</span>tolist()
-</span></span></code></pre></div><pre><code>['Age',
- 'Monthly premium',
- 'Socioeconomic category',
- 'Monthly kilometers',
- 'Coefficient bonus malus',
- 'Vehicle type',
- 'CRM score',
- 'Standard of living',
- 'Brand',
- 'Yearly income',
- 'Credit score',
- 'Yearly maintenance cost',
- 'Net profit']
-</code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># create histogram here for categorical variables:</span>
-</span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">10</span>,<span style="color:#40a070">6</span>))
+</span></span></code></pre></div><pre tabindex="0"><code>    [&#39;Age&#39;,
+     &#39;Monthly premium&#39;,
+     &#39;Socioeconomic category&#39;,
+     &#39;Monthly kilometers&#39;,
+     &#39;Coefficient bonus malus&#39;,
+     &#39;Vehicle type&#39;,
+     &#39;CRM score&#39;,
+     &#39;Standard of living&#39;,
+     &#39;Brand&#39;,
+     &#39;Yearly income&#39;,
+     &#39;Credit score&#39;,
+     &#39;Yearly maintenance cost&#39;,
+     &#39;Net profit&#39;]
+</code></pre><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">10</span>,<span style="color:#40a070">6</span>))
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>chart <span style="color:#666">=</span> sns<span style="color:#666">.</span>countplot(x<span style="color:#666">=</span><span style="color:#4070a0">&#39;Brand&#39;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#39;Socioeconomic category&#39;</span>, data<span style="color:#666">=</span>modeling_data, palette<span style="color:#666">=</span><span style="color:#4070a0">&#39;deep&#39;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Update layout parameters</span>
+</span></span><span style="display:flex;"><span>chart <span style="color:#666">=</span> sns<span style="color:#666">.</span>countplot(x<span style="color:#666">=</span><span style="color:#4070a0">&#39;Brand&#39;</span>,
+</span></span><span style="display:flex;"><span>                      hue<span style="color:#666">=</span><span style="color:#4070a0">&#39;Socioeconomic category&#39;</span>,
+</span></span><span style="display:flex;"><span>                      data<span style="color:#666">=</span>modeling_data,
+</span></span><span style="display:flex;"><span>                      palette<span style="color:#666">=</span><span style="color:#4070a0">&#39;deep&#39;</span>)
 </span></span><span style="display:flex;"><span>chart<span style="color:#666">.</span>set_title(<span style="color:#4070a0">&#39;Histogram for Categorical Variables&#39;</span>, fontsize<span style="color:#666">=</span><span style="color:#40a070">16</span>, color<span style="color:#666">=</span><span style="color:#4070a0">&#39;firebrick&#39;</span>)
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Show the plot</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_13_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># set the style and figure size</span>
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">11</span>,<span style="color:#40a070">7</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># create the count-plot</span>
-</span></span><span style="display:flex;"><span>chart <span style="color:#666">=</span> sns<span style="color:#666">.</span>countplot(x<span style="color:#666">=</span><span style="color:#4070a0">&#39;Brand&#39;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#39;Vehicle type&#39;</span>, data<span style="color:#666">=</span>modeling_data, palette<span style="color:#666">=</span><span style="color:#4070a0">&#39;deep&#39;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># update layout parameters</span>
+</span></span><span style="display:flex;"><span>chart <span style="color:#666">=</span> sns<span style="color:#666">.</span>countplot(x<span style="color:#666">=</span><span style="color:#4070a0">&#39;Brand&#39;</span>,
+</span></span><span style="display:flex;"><span>                      hue<span style="color:#666">=</span><span style="color:#4070a0">&#39;Vehicle type&#39;</span>,
+</span></span><span style="display:flex;"><span>                      data<span style="color:#666">=</span>modeling_data,
+</span></span><span style="display:flex;"><span>                      palette<span style="color:#666">=</span><span style="color:#4070a0">&#39;deep&#39;</span>)
 </span></span><span style="display:flex;"><span>chart<span style="color:#666">.</span>set_title(<span style="color:#4070a0">&#39;Count-plot for Categorical Variables&#39;</span>, fontsize<span style="color:#666">=</span><span style="color:#40a070">16</span>, color<span style="color:#666">=</span><span style="color:#4070a0">&#39;firebrick&#39;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Show the plot</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_14_0.png" alt="My Image Description"></p>
-<p>There are few extreme outliers in the data, we might suspect a data entry problem:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Create a larger figure</span>
-</span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">11</span>,<span style="color:#40a070">7</span>))
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Create box-plots for each variable</span>
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>boxplot(data<span style="color:#666">=</span>modeling_data[[<span style="color:#4070a0">&#34;Age&#34;</span>, <span style="color:#4070a0">&#34;Monthly premium&#34;</span>, <span style="color:#4070a0">&#34;Coefficient bonus malus&#34;</span>, <span style="color:#4070a0">&#34;CRM score&#34;</span>, <span style="color:#4070a0">&#34;Net profit&#34;</span>]])
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Set plot title and labels</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">11</span>,<span style="color:#40a070">7</span>))
+</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>boxplot(data<span style="color:#666">=</span>modeling_data[[<span style="color:#4070a0">&#34;Age&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#4070a0">&#34;Monthly premium&#34;</span>, 
+</span></span><span style="display:flex;"><span>                                <span style="color:#4070a0">&#34;Coefficient bonus malus&#34;</span>, 
+</span></span><span style="display:flex;"><span>                                <span style="color:#4070a0">&#34;CRM score&#34;</span>, 
+</span></span><span style="display:flex;"><span>                                <span style="color:#4070a0">&#34;Net profit&#34;</span>]])
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#39;Box-plots for Selected Variables&#39;</span>, fontsize<span style="color:#666">=</span><span style="color:#40a070">16</span>, color<span style="color:#666">=</span><span style="color:#4070a0">&#39;firebrick&#39;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Show the plot</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_16_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># drop extreme outlier from the above observations:</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># drop extreme outlier from the above observations:</span>
 </span></span><span style="display:flex;"><span>modeling_data <span style="color:#666">=</span> modeling_data[modeling_data[<span style="color:#4070a0">&#34;CRM score&#34;</span>] <span style="color:#666">&lt;</span> <span style="color:#40a070">254</span>]
 </span></span><span style="display:flex;"><span>modeling_data <span style="color:#666">=</span> modeling_data[(modeling_data[<span style="color:#4070a0">&#34;Age&#34;</span>] <span style="color:#666">&lt;</span> <span style="color:#40a070">124</span>) <span style="color:#666">&amp;</span> (modeling_data[<span style="color:#4070a0">&#34;Age&#34;</span>] <span style="color:#666">&gt;</span> <span style="color:#40a070">0</span>)]
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># no warning outlier for credit score, monthly kilometers and yearly maintenance cost:</span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Create a larger figure</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># no warning outlier for credit score, monthly kilometers and yearly maintenance cost:</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">11</span>,<span style="color:#40a070">7</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Create box-plots for each variable</span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>boxplot(data<span style="color:#666">=</span>modeling_data[[<span style="color:#4070a0">&#34;Monthly kilometers&#34;</span>, <span style="color:#4070a0">&#34;Credit score&#34;</span>]])
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Set plot title and labels</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#39;Box-plots for Selected Variables&#39;</span>, fontsize<span style="color:#666">=</span><span style="color:#40a070">16</span>, color<span style="color:#666">=</span><span style="color:#4070a0">&#39;firebrick&#39;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># remove background color</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>grid(<span style="color:#007020;font-weight:bold">False</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Show the plot</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_18_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Create a larger figure</span>
-</span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">11</span>,<span style="color:#40a070">7</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Create boxplot for the variable</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">11</span>,<span style="color:#40a070">7</span>))
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>boxplot(x<span style="color:#666">=</span>modeling_data[<span style="color:#4070a0">&#34;Yearly maintenance cost&#34;</span>], color<span style="color:#666">=</span><span style="color:#4070a0">&#39;aqua&#39;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Set plot title and labels</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#39;Boxplot for Yearly Maintenance Cost&#39;</span>, fontsize<span style="color:#666">=</span><span style="color:#40a070">16</span>, color<span style="color:#666">=</span><span style="color:#4070a0">&#39;firebrick&#39;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># remove background color</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Show the plot</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_19_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Create a larger figure</span>
-</span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">11</span>,<span style="color:#40a070">7</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Create boxplot for the variable</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">11</span>,<span style="color:#40a070">7</span>))
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>boxplot(x<span style="color:#666">=</span>modeling_data[<span style="color:#4070a0">&#34;Yearly income&#34;</span>], color<span style="color:#666">=</span><span style="color:#4070a0">&#39;lightseagreen&#39;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Set plot title and labels</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#39;Boxplot for Yearly Income&#39;</span>, fontsize<span style="color:#666">=</span><span style="color:#40a070">16</span>, color<span style="color:#666">=</span><span style="color:#4070a0">&#39;firebrick&#39;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Show the plot</span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_20_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">5</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>boxplot(x<span style="color:#666">=</span>modeling_data[<span style="color:#4070a0">&#34;Standard of living&#34;</span>])
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Standard of living&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Values&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Box Plot - Standard of living&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_21_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">6</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>modeling_data, x<span style="color:#666">=</span><span style="color:#4070a0">&#34;Yearly income&#34;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#34;Socioeconomic category&#34;</span>, multiple<span style="color:#666">=</span><span style="color:#4070a0">&#34;stack&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Yearly income&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Count&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Yearly income per Socioeconomic Category&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_22_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">6</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>modeling_data, x<span style="color:#666">=</span><span style="color:#4070a0">&#34;Yearly income&#34;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#34;Vehicle type&#34;</span>, multiple<span style="color:#666">=</span><span style="color:#4070a0">&#34;stack&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Yearly income&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Count&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Vehicle Type Per Yearly Income&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_23_0.png" alt="My Image Description"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">5</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>boxplot(x<span style="color:#666">=</span>modeling_data[<span style="color:#4070a0">&#34;Standard of living&#34;</span>])
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Standard of living&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Values&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Box Plot - Standard of living&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_24_0.png" alt="My Image Description"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">6</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>modeling_data, x<span style="color:#666">=</span><span style="color:#4070a0">&#34;Yearly income&#34;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#34;Socioeconomic category&#34;</span>, element<span style="color:#666">=</span><span style="color:#4070a0">&#34;step&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Yearly income&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Count&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Yearly income per Socioeconomic Category&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_25_0.png" alt="My Image Description"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">6</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>modeling_data, x<span style="color:#666">=</span><span style="color:#4070a0">&#34;Yearly income&#34;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#34;Vehicle type&#34;</span>, multiple<span style="color:#666">=</span><span style="color:#4070a0">&#34;stack&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Yearly income&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Count&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Vehicle Type Per Yearly Income&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_26_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">5</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>modeling_data, x<span style="color:#666">=</span><span style="color:#4070a0">&#34;Yearly income&#34;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#34;Brand&#34;</span>, multiple<span style="color:#666">=</span><span style="color:#4070a0">&#34;stack&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Yearly income&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Count&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Brand Type Per Yearly Income&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_27_0.png" alt="My Image Description"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">5</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>modeling_data, x<span style="color:#666">=</span><span style="color:#4070a0">&#34;Net profit&#34;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#34;Socioeconomic category&#34;</span>, multiple<span style="color:#666">=</span><span style="color:#4070a0">&#34;stack&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Net profit&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Count&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Net Profit per Socioeconomic Category&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_28_0.png" alt="My Image Description"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">5</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>modeling_data, x<span style="color:#666">=</span><span style="color:#4070a0">&#34;Net profit&#34;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#34;Vehicle type&#34;</span>, multiple<span style="color:#666">=</span><span style="color:#4070a0">&#34;stack&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Net profit&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Count&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Net Profit Distribution Per Vehicle Type&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_29_0.png" alt="My Image Description"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sns<span style="color:#666">.</span>set(style<span style="color:#666">=</span><span style="color:#4070a0">&#34;whitegrid&#34;</span>, font_scale<span style="color:#666">=</span><span style="color:#40a070">1.2</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">5</span>))
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>modeling_data, x<span style="color:#666">=</span><span style="color:#4070a0">&#34;Net profit&#34;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#34;Brand&#34;</span>, multiple<span style="color:#666">=</span><span style="color:#4070a0">&#34;stack&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>xlabel(<span style="color:#4070a0">&#34;Net profit&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>ylabel(<span style="color:#4070a0">&#34;Count&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#34;Net Profit per Brand&#34;</span>)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_30_0.png" alt="My Image Description"></p>
-<h3 id="observation">Observation</h3>
+<h3 id="observations">Observations:</h3>
 <ul>
 <li>No warning outliers seen in the data except for yearly income, CRM score and Age.</li>
 <li>Numerical data are normally distributed.</li>
 </ul>
 <h4 id="encode-categorical-variables-and-clean-data-for-modeling">Encode categorical variables and clean data for modeling:</h4>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># categorize your variables here:</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># categorize your variables here:</span>
 </span></span><span style="display:flex;"><span>categories <span style="color:#666">=</span> [
 </span></span><span style="display:flex;"><span>    <span style="color:#4070a0">&#39;Brand&#39;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#4070a0">&#39;Vehicle type&#39;</span>,
@@ -769,15 +525,13 @@ memory usage: 109.4+ KB
 </span></span><span style="display:flex;"><span>]
 </span></span><span style="display:flex;"><span>modeling_data_visualization <span style="color:#666">=</span> pd<span style="color:#666">.</span>get_dummies(modeling_data,
 </span></span><span style="display:flex;"><span>                               columns<span style="color:#666">=</span>categories,
-</span></span><span style="display:flex;"><span>                               drop_first<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>modeling_data <span style="color:#666">=</span> pd<span style="color:#666">.</span>get_dummies(
+</span></span><span style="display:flex;"><span>                               drop_first<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>modeling_data <span style="color:#666">=</span> pd<span style="color:#666">.</span>get_dummies(
 </span></span><span style="display:flex;"><span>                               modeling_data,
 </span></span><span style="display:flex;"><span>                               columns<span style="color:#666">=</span>categories,
 </span></span><span style="display:flex;"><span>                               drop_first<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>
 </span></span><span style="display:flex;"><span>                               )
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># rearrange columns:</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># rearrange columns:</span>
 </span></span><span style="display:flex;"><span>ordered_corr_columns <span style="color:#666">=</span> modeling_data_visualization<span style="color:#666">.</span>copy()
 </span></span><span style="display:flex;"><span>ordered_corr_columns <span style="color:#666">=</span> ordered_corr_columns[[<span style="color:#4070a0">&#39;Age&#39;</span>,
 </span></span><span style="display:flex;"><span>                                             <span style="color:#4070a0">&#39;Monthly premium&#39;</span>,
@@ -806,47 +560,61 @@ memory usage: 109.4+ KB
 </span></span><span style="display:flex;"><span>                                             <span style="color:#4070a0">&#39;Socioeconomic category_Unemployed&#39;</span>,
 </span></span><span style="display:flex;"><span>                                             <span style="color:#4070a0">&#39;Net profit&#39;</span>
 </span></span><span style="display:flex;"><span>                                             ]]
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">15</span>, <span style="color:#40a070">15</span>))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">15</span>, <span style="color:#40a070">15</span>))
 </span></span><span style="display:flex;"><span>corr <span style="color:#666">=</span> ordered_corr_columns<span style="color:#666">.</span>corr()
 </span></span><span style="display:flex;"><span>corr_top <span style="color:#666">=</span> corr<span style="color:#666">.</span>index
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(modeling_data_visualization[corr_top]<span style="color:#666">.</span>corr(), vmax<span style="color:#666">=</span><span style="color:#40a070">1.0</span>, vmin<span style="color:#666">=-</span><span style="color:#40a070">1.0</span>, linewidths<span style="color:#666">=</span><span style="color:#40a070">0.1</span>, annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>, annot_kws<span style="color:#666">=</span>{<span style="color:#4070a0">&#34;size&#34;</span>: <span style="color:#40a070">8</span>},
+</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(modeling_data_visualization[corr_top]<span style="color:#666">.</span>corr(),
+</span></span><span style="display:flex;"><span>            vmax<span style="color:#666">=</span><span style="color:#40a070">1.0</span>,
+</span></span><span style="display:flex;"><span>            vmin<span style="color:#666">=-</span><span style="color:#40a070">1.0</span>,
+</span></span><span style="display:flex;"><span>            linewidths<span style="color:#666">=</span><span style="color:#40a070">0.1</span>,
+</span></span><span style="display:flex;"><span>            annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>,
+</span></span><span style="display:flex;"><span>            annot_kws<span style="color:#666">=</span>{<span style="color:#4070a0">&#34;size&#34;</span>: <span style="color:#40a070">8</span>},
 </span></span><span style="display:flex;"><span>            square<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>, cbar<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>);
 </span></span></code></pre></div><p><img src="/profit_forecast/output_36_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>corr <span style="color:#666">=</span> ordered_corr_columns<span style="color:#666">.</span>corr()
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>corr <span style="color:#666">=</span> ordered_corr_columns<span style="color:#666">.</span>corr()
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">15</span>, <span style="color:#40a070">15</span>))
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(corr[(corr <span style="color:#666">&gt;=</span> <span style="color:#40a070">0.1</span>)], vmax<span style="color:#666">=</span><span style="color:#40a070">1.0</span>,
-</span></span><span style="display:flex;"><span> vmin<span style="color:#666">=-</span><span style="color:#40a070">1.0</span>, linewidths<span style="color:#666">=</span><span style="color:#40a070">0.1</span>,
-</span></span><span style="display:flex;"><span>  annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>, annot_kws<span style="color:#666">=</span>{<span style="color:#4070a0">&#34;size&#34;</span>: <span style="color:#40a070">8</span>}, square<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>, cbar<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>)
+</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(corr[(corr <span style="color:#666">&gt;=</span> <span style="color:#40a070">0.1</span>)],
+</span></span><span style="display:flex;"><span>            vmax<span style="color:#666">=</span><span style="color:#40a070">1.0</span>,
+</span></span><span style="display:flex;"><span>            vmin<span style="color:#666">=-</span><span style="color:#40a070">1.0</span>,
+</span></span><span style="display:flex;"><span>            linewidths<span style="color:#666">=</span><span style="color:#40a070">0.1</span>,
+</span></span><span style="display:flex;"><span>            annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>,
+</span></span><span style="display:flex;"><span>            annot_kws<span style="color:#666">=</span>{<span style="color:#4070a0">&#34;size&#34;</span>: <span style="color:#40a070">8</span>}, 
+</span></span><span style="display:flex;"><span>            square<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>,
+</span></span><span style="display:flex;"><span>            cbar<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>)
 </span></span></code></pre></div><p><img src="/profit_forecast/output_37_1.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>corr <span style="color:#666">=</span> ordered_corr_columns<span style="color:#666">.</span>corr()
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>corr <span style="color:#666">=</span> ordered_corr_columns<span style="color:#666">.</span>corr()
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">15</span>, <span style="color:#40a070">15</span>))
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(corr[(corr <span style="color:#666">&lt;=</span> <span style="color:#666">-</span><span style="color:#40a070">0.1</span>)], vmax<span style="color:#666">=</span><span style="color:#40a070">1.0</span>,
-</span></span><span style="display:flex;"><span> vmin<span style="color:#666">=-</span><span style="color:#40a070">1.0</span>, linewidths<span style="color:#666">=</span><span style="color:#40a070">0.1</span>, annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>, annot_kws<span style="color:#666">=</span>{<span style="color:#4070a0">&#34;size&#34;</span>: <span style="color:#40a070">8</span>}, square<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>, cbar<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>);
+</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(corr[(corr <span style="color:#666">&lt;=</span> <span style="color:#666">-</span><span style="color:#40a070">0.1</span>)], 
+</span></span><span style="display:flex;"><span>            vmax<span style="color:#666">=</span><span style="color:#40a070">1.0</span>,
+</span></span><span style="display:flex;"><span>            vmin<span style="color:#666">=-</span><span style="color:#40a070">1.0</span>,
+</span></span><span style="display:flex;"><span>            linewidths<span style="color:#666">=</span><span style="color:#40a070">0.1</span>,
+</span></span><span style="display:flex;"><span>            annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>,
+</span></span><span style="display:flex;"><span>            annot_kws<span style="color:#666">=</span>{<span style="color:#4070a0">&#34;size&#34;</span>: <span style="color:#40a070">8</span>}, 
+</span></span><span style="display:flex;"><span>            square<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>,
+</span></span><span style="display:flex;"><span>            cbar<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>);
 </span></span></code></pre></div><p><img src="/profit_forecast/output_38_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>fig, ax <span style="color:#666">=</span> plt<span style="color:#666">.</span>subplots(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">8</span>))
-</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(modeling_data_visualization<span style="color:#666">.</span>corr()[[<span style="color:#4070a0">&#34;Net profit&#34;</span>]]<span style="color:#666">.</span>sort_values(<span style="color:#4070a0">&#34;Net profit&#34;</span>), vmax<span style="color:#666">=</span><span style="color:#40a070">1</span>, vmin<span style="color:#666">=-</span><span style="color:#40a070">1</span>, annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>, ax<span style="color:#666">=</span>ax)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>fig, ax <span style="color:#666">=</span> plt<span style="color:#666">.</span>subplots(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">8</span>))
+</span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(modeling_data_visualization<span style="color:#666">.</span>corr()[[<span style="color:#4070a0">&#34;Net profit&#34;</span>]]<span style="color:#666">.</span>sort_values(<span style="color:#4070a0">&#34;Net profit&#34;</span>),
+</span></span><span style="display:flex;"><span>            vmax<span style="color:#666">=</span><span style="color:#40a070">1</span>,
+</span></span><span style="display:flex;"><span>            vmin<span style="color:#666">=-</span><span style="color:#40a070">1</span>,
+</span></span><span style="display:flex;"><span>            annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>, 
+</span></span><span style="display:flex;"><span>            ax<span style="color:#666">=</span>ax)
 </span></span><span style="display:flex;"><span>ax<span style="color:#666">.</span>invert_yaxis()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_39_0.png" alt="My Image Description"></p>
-<h3 id="observation-1">Observation</h3>
+<h3 id="observations-1">Observations:</h3>
 <ul>
 <li>There is not any warning high correlation between target variable and independent variables.</li>
 <li>Multi-collinearity between Standard of living and yearly income, CRM score and Coefficient bonus malus, they might be problematic for linear models interpretation.</li>
 <li>There are few independent variables can be used for fitting model that correlate positively/negatively with Net profit.</li>
 <li>There is enough signals in the data simple model with fewer coefficient would generalize on unseen data.</li>
 </ul>
-<h3 id="simple-model">Simple Model:</h3>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>Features <span style="color:#666">=</span> modeling_data<span style="color:#666">.</span>columns<span style="color:#666">.</span>tolist()
+<h2 id="simple-model">Simple Model:</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>Features <span style="color:#666">=</span> modeling_data<span style="color:#666">.</span>columns<span style="color:#666">.</span>tolist()
 </span></span><span style="display:flex;"><span>Features<span style="color:#666">.</span>remove(<span style="color:#4070a0">&#34;Net profit&#34;</span>)
 </span></span><span style="display:flex;"><span>Ys <span style="color:#666">=</span> modeling_data[<span style="color:#4070a0">&#34;Net profit&#34;</span>]
 </span></span><span style="display:flex;"><span>Xs <span style="color:#666">=</span> modeling_data[Features]
 </span></span></code></pre></div><p>Multi-collinearity Check VIF:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>calculate_vif(Xs)<span style="color:#666">.</span>style<span style="color:#666">.</span>background_gradient(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;summer&#39;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>calculate_vif(Xs)<span style="color:#666">.</span>style<span style="color:#666">.</span>background_gradient(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;summer&#39;</span>)
 </span></span></code></pre></div><style type="text/css">
 #T_5a673_row0_col1 {
   background-color: #168a66;
@@ -1002,8 +770,10 @@ memory usage: 109.4+ KB
     </tr>
   </tbody>
 </table>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>fixed_Xs <span style="color:#666">=</span> Xs<span style="color:#666">.</span>drop([<span style="color:#4070a0">&#34;Standard of living&#34;</span>, <span style="color:#4070a0">&#34;Coefficient bonus malus&#34;</span>,<span style="color:#4070a0">&#34;CRM score&#34;</span>,<span style="color:#4070a0">&#34;Yearly maintenance cost&#34;</span>], axis<span style="color:#666">=</span><span style="color:#40a070">1</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>fixed_Xs <span style="color:#666">=</span> Xs<span style="color:#666">.</span>drop([<span style="color:#4070a0">&#34;Standard of living&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#4070a0">&#34;Coefficient bonus malus&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#4070a0">&#34;CRM score&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#4070a0">&#34;Yearly maintenance cost&#34;</span>], axis<span style="color:#666">=</span><span style="color:#40a070">1</span>)
 </span></span><span style="display:flex;"><span>calculate_vif(fixed_Xs)<span style="color:#666">.</span>style<span style="color:#666">.</span>background_gradient(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;summer&#39;</span>)
 </span></span></code></pre></div><style type="text/css">
 #T_f0126_row0_col1 {
@@ -1168,18 +938,14 @@ memory usage: 109.4+ KB
     </tr>
   </tbody>
 </table>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>simple_model <span style="color:#666">=</span> LinearRegression()<span style="color:#666">.</span>fit(fixed_Xs, Ys)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>simple_model <span style="color:#666">=</span> LinearRegression()<span style="color:#666">.</span>fit(fixed_Xs, Ys)
 </span></span><span style="display:flex;"><span>simple_model<span style="color:#666">.</span>score(fixed_Xs, Ys)
 </span></span></code></pre></div><pre><code>0.8834266631920002
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>coef <span style="color:#666">=</span> get_regressor_coefficients(simple_model, fixed_Xs<span style="color:#666">.</span>columns<span style="color:#666">.</span>tolist())
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>coef <span style="color:#666">=</span> get_regressor_coefficients(simple_model, fixed_Xs<span style="color:#666">.</span>columns<span style="color:#666">.</span>tolist())
 </span></span><span style="display:flex;"><span>coefficient_plot(coef<span style="color:#666">.</span>values(), coef<span style="color:#666">.</span>keys())
 </span></span></code></pre></div><p><img src="/profit_forecast/output_48_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>est <span style="color:#666">=</span> OLS(Ys, Xs)<span style="color:#666">.</span>fit()
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>est <span style="color:#666">=</span> OLS(Ys, Xs)<span style="color:#666">.</span>fit()
 </span></span><span style="display:flex;"><span><span style="color:#007020">print</span>(est<span style="color:#666">.</span>summary())
 </span></span></code></pre></div><pre><code>                                 OLS Regression Results                                
 =======================================================================================
@@ -1230,9 +996,9 @@ Notes:
 [3] The condition number is large, 2.28e+05. This might indicate that there are
 strong multicollinearity or other numerical problems.
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>statistical_results_as_frame <span style="color:#666">=</span> get_dataframe_from_summary(est)
-</span></span><span style="display:flex;"><span>statistical_results_as_frame[statistical_results_as_frame[<span style="color:#4070a0">&#34;P&gt;|t|&#34;</span>] <span style="color:#666">&lt;=</span> <span style="color:#40a070">0.000</span>]<span style="color:#666">.</span>style<span style="color:#666">.</span>background_gradient(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;summer&#39;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>statistical_results_as_frame <span style="color:#666">=</span> get_dataframe_from_summary(est)
+</span></span><span style="display:flex;"><span>statistical_results_as_frame[statistical_results_as_frame[<span style="color:#4070a0">&#34;P&gt;|t|&#34;</span>] <span style="color:#666">&lt;=</span> <span style="color:#40a070">0.000</span>]<span style="color:#666">.</span>
+</span></span><span style="display:flex;"><span>style<span style="color:#666">.</span>background_gradient(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;summer&#39;</span>)
 </span></span></code></pre></div><style type="text/css">
 #T_14bdf_row0_col0, #T_14bdf_row0_col5 {
   background-color: #018066;
@@ -1423,10 +1189,11 @@ strong multicollinearity or other numerical problems.
     </tr>
   </tbody>
 </table>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>X_train, X_test, y_train, y_test <span style="color:#666">=</span> train_test_split(fixed_Xs, Ys, test_size<span style="color:#666">=</span><span style="color:#40a070">0.3</span>, random_state<span style="color:#666">=</span><span style="color:#40a070">10101</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>visualizer <span style="color:#666">=</span> LearningCurve(
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>X_train, X_test, y_train, y_test <span style="color:#666">=</span> train_test_split(fixed_Xs,
+</span></span><span style="display:flex;"><span>                                                    Ys,
+</span></span><span style="display:flex;"><span>                                                    test_size<span style="color:#666">=</span><span style="color:#40a070">0.3</span>,
+</span></span><span style="display:flex;"><span>                                                    random_state<span style="color:#666">=</span><span style="color:#40a070">10101</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>visualizer <span style="color:#666">=</span> LearningCurve(
 </span></span><span style="display:flex;"><span>    simple_model, cv<span style="color:#666">=</span><span style="color:#40a070">20</span>, scoring<span style="color:#666">=</span><span style="color:#4070a0">&#39;r2&#39;</span>,
 </span></span><span style="display:flex;"><span>    n_jobs<span style="color:#666">=</span><span style="color:#40a070">4</span>
 </span></span><span style="display:flex;"><span>)
@@ -1437,14 +1204,13 @@ strong multicollinearity or other numerical problems.
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>model <span style="color:#666">=</span> LinearRegression()
 </span></span><span style="display:flex;"><span>visualizer <span style="color:#666">=</span> ResidualsPlot(model)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>fit(X_train, y_train)
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>score(X_test, y_test)
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_53_0.png" alt="My Image Description"></p>
 <pre><code>&lt;Axes: title={'center': 'Residuals for LinearRegression Model'}, xlabel='Predicted Value', ylabel='Residuals'&gt;
 </code></pre>
-<h3 id="observation-2">Observation:</h3>
+<h3 id="observations-2">Observations:</h3>
 <ul>
 <li>As suspected Standard of living, yearly income and Coefficient bonus malus has strong correlation with other independent variables, they can be predicted by other independent variables.</li>
 <li>As suspected model is stable against few features, after dropping independent variables with high VIF scores 0.886</li>
@@ -1454,27 +1220,23 @@ strong multicollinearity or other numerical problems.
 <li>unexpected high p-value for Socioeconomic Self employed brand Volkswagen, Credit score and Yearly maintenance cost independent variables.</li>
 <li>Model tend to generalize when applying cross-validation of 20 folds, testing and training scores are matching after 20 folds/iterations.</li>
 </ul>
-<h1 id="complex-model">Complex Model:</h1>
+<h2 id="complex-model">Complex Model:</h2>
 <ul>
-<li>From the above observation we have constructed a stable model with simple features and linear regressor, I would vote for simplified models since they are easy to explain to stakeholders and easier to productionize compared to more complex model with high variance.</li>
+<li>From the above observation we have constructed a stable model with simple features and linear repressor, I would vote for simplified models since they are easy to explain to stakeholders and easier to productionize compared to more complex model with high variance.</li>
 <li>The fact that the data is synthetic and generated from known function makes it even easier to fit a model against normally distributed target variables.</li>
 <li>Tho it&rsquo;s not required for this particular dataset but the demonstration below will help explain what is happening behind the scene why applying a particular predictions.</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">lightgbm</span> <span style="color:#007020;font-weight:bold">import</span> LGBMRegressor
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">numpy</span> <span style="color:#007020;font-weight:bold">as</span> <span style="color:#0e84b5;font-weight:bold">np</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>complex_model <span style="color:#666">=</span> LGBMRegressor(random_state<span style="color:#666">=</span>np<span style="color:#666">.</span>random<span style="color:#666">.</span>RandomState()<span style="color:#666">.</span>get_state()[<span style="color:#40a070">1</span>][<span style="color:#40a070">0</span>])
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>complex_model <span style="color:#666">=</span> LGBMRegressor(random_state<span style="color:#666">=</span>np<span style="color:#666">.</span>random<span style="color:#666">.</span>RandomState()<span style="color:#666">.</span>get_state()[<span style="color:#40a070">1</span>][<span style="color:#40a070">0</span>])
 </span></span><span style="display:flex;"><span>complex_model<span style="color:#666">.</span>fit(X_train, y_train)
 </span></span></code></pre></div><style>#sk-container-id-7 {color: black;background-color: white;}#sk-container-id-7 pre{padding: 0;}#sk-container-id-7 div.sk-toggleable {background-color: white;}#sk-container-id-7 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-7 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-7 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-7 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-7 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-7 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-7 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-7 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-7 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-7 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-7 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-7 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-7 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-7 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-7 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-7 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-7 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-7 div.sk-item {position: relative;z-index: 1;}#sk-container-id-7 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-7 div.sk-item::before, #sk-container-id-7 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-7 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-7 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-7 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-7 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-7 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-7 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-7 div.sk-label-container {text-align: center;}#sk-container-id-7 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-7 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-7" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LGBMRegressor(random_state=2147483648)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">LGBMRegressor</label><div class="sk-toggleable__content"><pre>LGBMRegressor(random_state=2147483648)</pre></div></div></div></div></div>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>{<span style="color:#4070a0">&#34;training score&#34;</span>: complex_model<span style="color:#666">.</span>score(X_train, y_train),
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>{<span style="color:#4070a0">&#34;training score&#34;</span>: complex_model<span style="color:#666">.</span>score(X_train, y_train),
 </span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#34;testing score&#34;</span>: complex_model<span style="color:#666">.</span>score(X_test, y_test)}
 </span></span></code></pre></div><pre><code>{'training score': 0.9954600929824392, 'testing score': 0.9744489721140687}
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>visualizer <span style="color:#666">=</span> LearningCurve(
-</span></span><span style="display:flex;"><span>    complex_model, cv<span style="color:#666">=</span><span style="color:#40a070">20</span>, scoring<span style="color:#666">=</span><span style="color:#4070a0">&#39;r2&#39;</span>,
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>visualizer <span style="color:#666">=</span> LearningCurve(
+</span></span><span style="display:flex;"><span>    complex_model,
+</span></span><span style="display:flex;"><span>    cv<span style="color:#666">=</span><span style="color:#40a070">20</span>,
+</span></span><span style="display:flex;"><span>    scoring<span style="color:#666">=</span><span style="color:#4070a0">&#39;r2&#39;</span>,
 </span></span><span style="display:flex;"><span>    n_jobs<span style="color:#666">=</span><span style="color:#40a070">4</span>
 </span></span><span style="display:flex;"><span>)
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>fit(fixed_Xs,Ys )
@@ -1482,49 +1244,40 @@ strong multicollinearity or other numerical problems.
 </span></span></code></pre></div><p><img src="/profit_forecast/output_58_0.png" alt="My Image Description"></p>
 <pre><code>&lt;Axes: title={'center': 'Learning Curve for LGBMRegressor'}, xlabel='Training Instances', ylabel='Score'&gt;
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>visualizer <span style="color:#666">=</span> ResidualsPlot(complex_model)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>visualizer <span style="color:#666">=</span> ResidualsPlot(complex_model)
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>fit(X_train, y_train)
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>score(X_test, y_test)
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>show()
 </span></span></code></pre></div><p><img src="/profit_forecast/output_59_0.png" alt="My Image Description"></p>
 <pre><code>&lt;Axes: title={'center': 'Residuals for LGBMRegressor Model'}, xlabel='Predicted Value', ylabel='Residuals'&gt;
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>feature_importance_plot(complex_model<span style="color:#666">.</span>feature_importances_, X_train<span style="color:#666">.</span>columns<span style="color:#666">.</span>tolist())
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>feature_importance_plot(complex_model<span style="color:#666">.</span>feature_importances_, X_train<span style="color:#666">.</span>columns<span style="color:#666">.</span>tolist())
 </span></span></code></pre></div><p><img src="/profit_forecast/output_60_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn.model_selection</span> <span style="color:#007020;font-weight:bold">import</span> train_test_split
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>X_train, X_test, y_train, y_test <span style="color:#666">=</span> train_test_split(fixed_Xs, Ys, test_size<span style="color:#666">=</span><span style="color:#40a070">0.3</span>, random_state<span style="color:#666">=</span><span style="color:#40a070">10101</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>complex_model<span style="color:#666">.</span>fit(X_train, y_train)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>X_train, X_test, y_train, y_test <span style="color:#666">=</span> train_test_split(fixed_Xs,
+</span></span><span style="display:flex;"><span>                                                    Ys,
+</span></span><span style="display:flex;"><span>                                                    test_size<span style="color:#666">=</span><span style="color:#40a070">0.3</span>,
+</span></span><span style="display:flex;"><span>                                                    random_state<span style="color:#666">=</span><span style="color:#40a070">10101</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>complex_model<span style="color:#666">.</span>fit(X_train, y_train)
 </span></span><span style="display:flex;"><span>complex_model<span style="color:#666">.</span>score(X_test, y_test)
 </span></span></code></pre></div><pre><code>0.9744489721140687
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>{<span style="color:#4070a0">&#34;training score&#34;</span>: complex_model<span style="color:#666">.</span>score(X_train, y_train),
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>{<span style="color:#4070a0">&#34;training score&#34;</span>: complex_model<span style="color:#666">.</span>score(X_train, y_train),
 </span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#34;testing score&#34;</span>: complex_model<span style="color:#666">.</span>score(X_test, y_test)}
 </span></span></code></pre></div><pre><code>{'training score': 0.9954600929824392, 'testing score': 0.9744489721140687}
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>complex_model<span style="color:#666">.</span>fit(fixed_Xs, Ys)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>complex_model<span style="color:#666">.</span>fit(fixed_Xs, Ys)
 </span></span></code></pre></div><style>#sk-container-id-9 {color: black;background-color: white;}#sk-container-id-9 pre{padding: 0;}#sk-container-id-9 div.sk-toggleable {background-color: white;}#sk-container-id-9 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-9 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-9 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-9 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-9 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-9 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-9 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-9 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-9 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-9 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-9 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-9 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-9 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-9 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-9 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-9 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-9 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-9 div.sk-item {position: relative;z-index: 1;}#sk-container-id-9 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-9 div.sk-item::before, #sk-container-id-9 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-9 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-9 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-9 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-9 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-9 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-9 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-9 div.sk-label-container {text-align: center;}#sk-container-id-9 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-9 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-9" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LGBMRegressor(random_state=2147483648)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" checked><label for="sk-estimator-id-2" class="sk-toggleable__label sk-toggleable__label-arrow">LGBMRegressor</label><div class="sk-toggleable__content"><pre>LGBMRegressor(random_state=2147483648)</pre></div></div></div></div></div>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>save_model(complex_model, <span style="color:#4070a0">&#34;lgb.pkl&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>save_model(complex_model, <span style="color:#4070a0">&#34;lgb.pkl&#34;</span>)
 </span></span></code></pre></div><pre><code>model saved....
 </code></pre>
-<h3 id="observations">Observations:</h3>
+<h3 id="observations-3">Observations:</h3>
 <ul>
 <li>Baseline boosting model is accurate enough to generalize on unseen data.</li>
 </ul>
 <h3 id="predict-on-unseen-out-of-sample-data">Predict on unseen Out-of-Sample Data:</h3>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>golden_data <span style="color:#666">=</span> pd<span style="color:#666">.</span>read_csv(<span style="color:#4070a0">&#34;../../Data/scoring_dataset.csv&#34;</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>golden_data <span style="color:#666">=</span> prepare_out_of_sample_data(golden_data)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>predictions <span style="color:#666">=</span> complex_model<span style="color:#666">.</span>predict(golden_data)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>golden_data <span style="color:#666">=</span> pd<span style="color:#666">.</span>read_csv(<span style="color:#4070a0">&#34;../../Data/scoring_dataset.csv&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>golden_data <span style="color:#666">=</span> prepare_out_of_sample_data(golden_data)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>predictions <span style="color:#666">=</span> complex_model<span style="color:#666">.</span>predict(golden_data)
 </span></span><span style="display:flex;"><span>predictions
 </span></span></code></pre></div><pre><code>array([ 58.91912859,  49.89491262,  55.44678162, -24.23093475,
        -14.2723258 ,  -8.53386753, -13.64680361,  -9.4624002 ,
@@ -1601,13 +1354,11 @@ strong multicollinearity or other numerical problems.
         51.24267263,  -3.18134816,  -5.56914843,  66.37558673,
         34.01434221])
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>golden_data_output <span style="color:#666">=</span> golden_data<span style="color:#666">.</span>copy()
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>golden_data_output <span style="color:#666">=</span> golden_data<span style="color:#666">.</span>copy()
 </span></span><span style="display:flex;"><span>golden_data_output[<span style="color:#4070a0">&#34;Predictions&#34;</span>] <span style="color:#666">=</span> predictions
 </span></span><span style="display:flex;"><span>golden_data_output<span style="color:#666">.</span>to_csv(<span style="color:#4070a0">&#34;../../Output Files/Data/prediction.csv&#34;</span>)
 </span></span></code></pre></div><h3 id="analyze-predictions-with-shap-values">Analyze Predictions with SHAP values:</h3>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>initjs()
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>shap<span style="color:#666">.</span>initjs()
 </span></span><span style="display:flex;"><span>explainer <span style="color:#666">=</span> shap<span style="color:#666">.</span>TreeExplainer(complex_model)
 </span></span><span style="display:flex;"><span>shap_values <span style="color:#666">=</span> explainer<span style="color:#666">.</span>shap_values(golden_data, predictions, check_additivity<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>)
 </span></span></code></pre></div><div align='center'><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAWCAYAAAA1vze2AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAdxJREFUeNq0Vt1Rg0AQJjcpgBJiBWIFkgoMFYhPPAIVECogPuYpdJBYgXQQrMCUkA50V7+d2ZwXuXPGm9khHLu3f9+3l1nkWNvtNqfHLgpfQ1EUS3tz5nAQ0+NIsiAZSc6eDlI8M3J00B/mDuUKDk6kfOebAgW3pkdD0pFcODGW4gKKvOrAUm04MA4QDt1OEIXU9hDigfS5rC1eS5T90gltck1Xrizo257kgySZcNRzgCSxCvgiE9nckPJo2b/B2AcEkk2OwL8bD8gmOKR1GPbaCUqxEgTq0tLvgb6zfo7+DgYGkkWL2tqLDV4RSITfbHPPfJKIrWz4nJQTMPAWA7IbD6imcNaDeDfgk+4No+wZr40BL3g9eQJJCFqRQ54KiSt72lsLpE3o3MCBSxDuq4yOckU2hKXRuwBH3OyMR4g1UpyTYw6mlmBqNdUXRM1NfyF5EPI6JkcpIDBIX8jX6DR/6ckAZJ0wEAdLR8DEk6OfC1Pp8BKo6TQIwPJbvJ6toK5lmuvJoRtfK6Ym1iRYIarRo2UyYHvRN5qpakR3yoizWrouoyuXXQqI185LCw07op5ZyCRGL99h24InP0e9xdQukEKVmhzrqZuRIfwISB//cP3Wk3f8f/yR+BRgAHu00HjLcEQBAAAAAElFTkSuQmCC' /></div><script charset='utf-8'>!function(t){function e(r){if(n[r])return n[r].exports;var i=n[r]={i:r,l:!1,exports:{}};return t[r].call(i.exports,i,i.exports,e),i.l=!0,i.exports}var n={};return e.m=t,e.c=n,e.i=function(t){return t},e.d=function(t,n,r){e.o(t,n)||Object.defineProperty(t,n,{configurable:!1,enumerable:!0,get:r})},e.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="",e(e.s=410)}([function(t,e,n){"use strict";function r(t,e,n,r,o,a,u,c){if(i(e),!t){var s;if(void 0===e)s=new Error("Minified exception occurred; use the non-minified dev environment for the full error message and additional helpful warnings.");else{var l=[n,r,o,a,u,c],f=0;s=new Error(e.replace(/%s/g,function(){return l[f++]})),s.name="Invariant Violation"}throw s.framesToPop=1,s}}var i=function(t){};t.exports=r},function(t,e,n){"use strict";var r=n(8),i=r;t.exports=i},function(t,e,n){"use strict";function r(t){for(var e=arguments.length-1,n="Minified React error #"+t+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant="+t,r=0;r<e;r++)n+="&args[]="+encodeURIComponent(arguments[r+1]);n+=" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.";var i=new Error(n);throw i.name="Invariant Violation",i.framesToPop=1,i}t.exports=r},function(t,e,n){"use strict";function r(t){if(null===t||void 0===t)throw new TypeError("Object.assign cannot be called with null or undefined");return Object(t)}function i(){try{if(!Object.assign)return!1;var t=new String("abc");if(t[5]="de","5"===Object.getOwnPropertyNames(t)[0])return!1;for(var e={},n=0;n<10;n++)e["_"+String.fromCharCode(n)]=n;var r=Object.getOwnPropertyNames(e).map(function(t){return e[t]});if("0123456789"!==r.join(""))return!1;var i={};return"abcdefghijklmnopqrst".split("").forEach(function(t){i[t]=t}),"abcdefghijklmnopqrst"===Object.keys(Object.assign({},i)).join("")}catch(t){return!1}}/*
@@ -1644,7 +1395,7 @@ n===t._wrapperState.initialValue&&(e.value=n)}});t.exports=l},function(t,e,n){"u
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>summary_plot(shap_values, golden_data, max_display<span style="color:#666">=</span><span style="color:#007020">len</span>(golden_data<span style="color:#666">.</span>index))
 </span></span></code></pre></div><p><img src="/profit_forecast/output_74_0.png" alt="My Image Description"></p>
-<h4 id="observations-1">Observations:</h4>
+<h4 id="observations-4">Observations:</h4>
 <ul>
 <li>Vehicle type 5 doors and SUV to blame for low Net-profit forecasting.</li>
 <li>Numerical variables Age and monthly kilometers and CRM score contributed the most for higher net profit.</li>
@@ -1654,20 +1405,14 @@ n===t._wrapperState.initialValue&&(e.value=n)}});t.exports=l},function(t,e,n){"u
 <li>Higher age and monthly kilometers contributes higher net-profit, tho there are some cases where high value of age &ldquo;red&rdquo; decreases nonprofit, a dependence plot between two features will show how two similar values of monthly kilometers contributes differently to profit as it depends on interaction of two features.</li>
 </ul>
 <h3 id="individual-explanations-of-high-and-low-net-profit-forecasts">Individual Explanations of High and Low net profit forecasts.</h3>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value,
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value,
 </span></span><span style="display:flex;"><span>                                       shap_values[<span style="color:#40a070">1</span>],
 </span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">1</span>],
 </span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>columns)
 </span></span><span style="display:flex;"><span><span style="color:#007020">print</span>(predictions[<span style="color:#40a070">1</span>])
 </span></span><span style="display:flex;"><span>golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">1</span>]
 </span></span></code></pre></div><p><img src="/profit_forecast/output_77_0.png" alt="My Image Description"></p>
-<pre><code>49.894912616226186
-
-
-
-
-
+<pre><code>Predicted-Profit             49.894912616226186
 Age                                        21.0
 Monthly premium                            14.0
 Monthly kilometers                        694.0
@@ -1688,19 +1433,14 @@ Socioeconomic category_Unemployed           0.0
 Brand_other                                 0.0
 Name: 1001, dtype: float64
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value, shap_values[<span style="color:#40a070">292</span>], golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">292</span>],
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value, 
+</span></span><span style="display:flex;"><span>                                       shap_values[<span style="color:#40a070">292</span>],
+</span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">292</span>],
 </span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>columns)
 </span></span><span style="display:flex;"><span><span style="color:#007020">print</span>(predictions[<span style="color:#40a070">292</span>])
 </span></span><span style="display:flex;"><span>golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">292</span>]
 </span></span></code></pre></div><p><img src="/profit_forecast/output_78_0.png" alt="My Image Description"></p>
-<pre><code>34.0143422063608
-
-
-
-
-
+<pre><code>Predicted-Profit               34.0143422063608
 Age                                        33.0
 Monthly premium                             8.0
 Monthly kilometers                        748.0
@@ -1721,18 +1461,14 @@ Socioeconomic category_Unemployed           0.0
 Brand_other                                 0.0
 Name: 1298, dtype: float64
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value, shap_values[<span style="color:#40a070">185</span>], golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">185</span>],
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value,
+</span></span><span style="display:flex;"><span>                                       shap_values[<span style="color:#40a070">185</span>],
+</span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">185</span>],
 </span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>columns)
 </span></span><span style="display:flex;"><span><span style="color:#007020">print</span>(predictions[<span style="color:#40a070">185</span>])
 </span></span><span style="display:flex;"><span>golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">185</span>]
 </span></span></code></pre></div><p><img src="/profit_forecast/output_79_0.png" alt="My Image Description"></p>
-<pre><code>36.434799275715484
-
-
-
-
-
+<pre><code>Predicted-Profit             36.434799275715484
 Age                                        42.0
 Monthly premium                            15.0
 Monthly kilometers                        345.0
@@ -1753,18 +1489,14 @@ Socioeconomic category_Unemployed           0.0
 Brand_other                                 0.0
 Name: 1190, dtype: float64
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value, shap_values[<span style="color:#40a070">3</span>], golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">3</span>],
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value,
+</span></span><span style="display:flex;"><span>                                       shap_values[<span style="color:#40a070">3</span>],
+</span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">3</span>],
 </span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>columns)
 </span></span><span style="display:flex;"><span><span style="color:#007020">print</span>(predictions[<span style="color:#40a070">3</span>])
 </span></span><span style="display:flex;"><span>golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">3</span>]
 </span></span></code></pre></div><p><img src="/profit_forecast/output_80_0.png" alt="My Image Description"></p>
-<pre><code>-24.23093475368557
-
-
-
-
-
+<pre><code>Predicted-Profit             -24.23093475368557
 Age                                        33.0
 Monthly premium                             2.0
 Monthly kilometers                        970.0
@@ -1785,18 +1517,14 @@ Socioeconomic category_Unemployed           0.0
 Brand_other                                 0.0
 Name: 1003, dtype: float64
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value, shap_values[<span style="color:#40a070">19</span>], golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">19</span>],
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value,
+</span></span><span style="display:flex;"><span>                                       shap_values[<span style="color:#40a070">19</span>],
+</span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">19</span>],
 </span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>columns)
 </span></span><span style="display:flex;"><span><span style="color:#007020">print</span>(predictions[<span style="color:#40a070">19</span>])
 </span></span><span style="display:flex;"><span>golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">19</span>]
 </span></span></code></pre></div><p><img src="/profit_forecast/output_81_0.png" alt="My Image Description"></p>
-<pre><code>-17.41840315625436
-
-
-
-
-
+<pre><code>Predicted-Profit             -17.41840315625436
 Age                                        45.0
 Monthly premium                             4.0
 Monthly kilometers                        993.0
@@ -1817,17 +1545,14 @@ Socioeconomic category_Unemployed           0.0
 Brand_other                                 0.0
 Name: 1021, dtype: float64
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value, shap_values[<span style="color:#40a070">140</span>], golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">140</span>],
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value,
+</span></span><span style="display:flex;"><span>                                       shap_values[<span style="color:#40a070">140</span>],
+</span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">140</span>],
 </span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>columns)
 </span></span><span style="display:flex;"><span><span style="color:#007020">print</span>(predictions[<span style="color:#40a070">140</span>])
 </span></span><span style="display:flex;"><span>golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">140</span>]
 </span></span></code></pre></div><p><img src="/profit_forecast/output_82_0.png" alt="My Image Description"></p>
-<pre><code>-17.65590834806663
-
-
-
-
-
+<pre><code>Predicted-Profit             -17.65590834806663
 Age                                        30.0
 Monthly premium                            27.0
 Monthly kilometers                        915.0
@@ -1849,17 +1574,14 @@ Brand_other                                 0.0
 Name: 1145, dtype: float64
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value, shap_values[<span style="color:#40a070">264</span>], golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">264</span>],
+</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>_waterfall<span style="color:#666">.</span>waterfall_legacy(explainer<span style="color:#666">.</span>expected_value,
+</span></span><span style="display:flex;"><span>                                       shap_values[<span style="color:#40a070">264</span>], 
+</span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">264</span>],
 </span></span><span style="display:flex;"><span>                                       golden_data<span style="color:#666">.</span>columns)
 </span></span><span style="display:flex;"><span><span style="color:#007020">print</span>(predictions[<span style="color:#40a070">264</span>])
 </span></span><span style="display:flex;"><span>golden_data<span style="color:#666">.</span>iloc[<span style="color:#40a070">264</span>]
 </span></span></code></pre></div><p><img src="/profit_forecast/output_83_0.png" alt="My Image Description"></p>
-<pre><code>-16.60818486301198
-
-
-
-
-
+<pre><code>Predicted-Profit             -16.60818486301198
 Age                                        41.0
 Monthly premium                             5.0
 Monthly kilometers                        801.0
@@ -1905,7 +1627,7 @@ Name: 1270, dtype: float64
   
   <p class="copyright">
     Copyright © 2023
-    <a href="https://ahmed-altakrouri.github.io/"><strong>Ahmed Altakrouri</strong></a>.
+    <a href="https://ahmed-altakrouri.github.io/"><strong>Ahmed Al-takrouri</strong></a>.
 
 
   </p>

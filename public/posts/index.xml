@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Probabilistic Thinking</title>
+    <title>Posts on AHMED AL-TAKROURI</title>
     <link>https://ahmed-altakrouri.github.io/posts/</link>
-    <description>Recent content in Posts on Probabilistic Thinking</description>
+    <description>Recent content in Posts on AHMED AL-TAKROURI</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 15 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ahmed-altakrouri.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 22 Apr 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ahmed-altakrouri.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Clustering Linkedin Profiles</title>
+      <link>https://ahmed-altakrouri.github.io/posts/clustering-linkedin-profiles/</link>
+      <pubDate>Sat, 22 Apr 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ahmed-altakrouri.github.io/posts/clustering-linkedin-profiles/</guid>
+      <description>Overview: This notebook presents my efforts to construct a simple model with intensive feature extraction, primarily based on Sentence Transformers BERT. Despite its simplicity, resting on K-means, there is significant room for model refinement and complexity enhancement.In essence, the algorithm presented below forms an excellent foundational or baseline model for addressing the problem of clustering LinkedIn profiles into similar groups.
+Here&amp;rsquo;s a brief rundown of the algorithm:
+1 . Extract BERT embeddings for sentences or textual data.</description>
+    </item>
+    
     <item>
       <title>Net Profit Forecasting</title>
       <link>https://ahmed-altakrouri.github.io/posts/net-profit-forecasting/</link>
