@@ -78,23 +78,25 @@
     
     
   </strong>
-  <span> • 3125 words</span>
+  <span> • 3069 words</span>
   <span> • 15 minute read</span>
   
   
 </div>
 
       <div><h2 id="overview">Overview:</h2>
-<p>This notebook presents my efforts to construct a simple model with intensive feature extraction, primarily based on Sentence Transformers BERT. Despite its simplicity, resting on K-means, there is significant room for model refinement and complexity enhancement.In essence, the algorithm presented below forms an excellent foundational or baseline model for addressing the problem of clustering LinkedIn profiles into similar groups.</p>
+<p class="justify-text">This notebook presents my efforts to construct a simple model with intensive feature extraction, primarily based on Sentence Transformers BERT. Despite its simplicity, resting on K-means, there is significant room for model refinement and complexity enhancement.In essence, the algorithm presented below forms an excellent foundational or baseline model for addressing the problem of clustering LinkedIn profiles into similar groups.</p>
+
 <p>Here&rsquo;s a brief rundown of the algorithm:</p>
-<pre><code> 1 . Extract BERT embeddings for sentences or textual data.
- 2 . Concat them into single vector.
- 3 . Use t-SNE to find optimal number of dimensions that explains the data.
- 4 . Reduce dimensionality using PCA.
- 5 . Find the optimal number of clusters from K-means by using distortion metric.
- 6 . Fit reduced data to optimal number of clusters extracted from the step above.
- 7. Project Exctracted clusteres to original data.
-</code></pre>
+<ol>
+<li>Extract BERT embeddings for sentences or textual data.</li>
+<li>Concat them into single vector.</li>
+<li>Use t-SNE to find optimal number of dimensions that explains the data.</li>
+<li>Reduce dimensionality using PCA.</li>
+<li>Find the optimal number of clusters from K-means by using distortion metric.</li>
+<li>Fit reduced data to optimal number of clusters extracted from the step above.</li>
+<li>Project Extracted clusters to original data.</li>
+</ol>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">utils</span> <span style="color:#007020;font-weight:bold">import</span> <span style="color:#666">*</span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">modeling_utils</span> <span style="color:#007020;font-weight:bold">import</span> <span style="color:#666">*</span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">pandas</span> <span style="color:#007020;font-weight:bold">as</span> <span style="color:#0e84b5;font-weight:bold">pd</span>
@@ -107,13 +109,9 @@
 </span></span><span style="display:flex;"><span>warnings<span style="color:#666">.</span>filterwarnings(<span style="color:#4070a0">&#39;ignore&#39;</span>)
 </span></span></code></pre></div><h5 id="utils-helper-functions-for-visualizations">Utils, helper functions for visualizations:</h5>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">def</span> <span style="color:#06287e">plot_missing_data</span>(df):
-</span></span><span style="display:flex;"><span>    <span style="color:#60a0b0;font-style:italic"># Calculating the percentage of missing values in each column</span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    missing_data <span style="color:#666">=</span> df<span style="color:#666">.</span>isnull()<span style="color:#666">.</span>sum() <span style="color:#666">/</span> <span style="color:#007020">len</span>(df) <span style="color:#666">*</span> <span style="color:#40a070">100</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#60a0b0;font-style:italic"># Filter out only columns with missing values</span>
 </span></span><span style="display:flex;"><span>    missing_data <span style="color:#666">=</span> missing_data[missing_data <span style="color:#666">!=</span> <span style="color:#40a070">0</span>]
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#60a0b0;font-style:italic"># Sort the missing data in descending order</span>
 </span></span><span style="display:flex;"><span>    missing_data<span style="color:#666">.</span>sort_values(ascending<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>, inplace<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">6</span>, <span style="color:#40a070">6</span>))
@@ -124,11 +122,12 @@
 </span></span><span style="display:flex;"><span>    plt<span style="color:#666">.</span>show()
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">def</span> <span style="color:#06287e">visualize_normalized_histogram</span>(df, column, top_n<span style="color:#666">=</span><span style="color:#40a070">100</span>, figsize<span style="color:#666">=</span>(<span style="color:#40a070">6</span>, <span style="color:#40a070">20</span>)):
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    value_counts <span style="color:#666">=</span> df[column]<span style="color:#666">.</span>value_counts()<span style="color:#666">.</span>nlargest(top_n)
 </span></span><span style="display:flex;"><span>    value_counts_normalized <span style="color:#666">=</span> (value_counts <span style="color:#666">/</span> <span style="color:#007020">len</span>(df) <span style="color:#666">*</span> <span style="color:#40a070">100</span>)<span style="color:#666">.</span>sort_values(
-</span></span><span style="display:flex;"><span>        ascending<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)  <span style="color:#60a0b0;font-style:italic"># sort values in ascending order</span>
+</span></span><span style="display:flex;"><span>        ascending<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)  
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    colors <span style="color:#666">=</span> plt<span style="color:#666">.</span>cm<span style="color:#666">.</span>get_cmap(<span style="color:#4070a0">&#39;tab20&#39;</span>)(np<span style="color:#666">.</span>arange(top_n))[::<span style="color:#666">-</span><span style="color:#40a070">1</span>]  <span style="color:#60a0b0;font-style:italic"># reverse color array</span>
+</span></span><span style="display:flex;"><span>    colors <span style="color:#666">=</span> plt<span style="color:#666">.</span>cm<span style="color:#666">.</span>get_cmap(<span style="color:#4070a0">&#39;tab20&#39;</span>)(np<span style="color:#666">.</span>arange(top_n))[::<span style="color:#666">-</span><span style="color:#40a070">1</span>]
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>figsize)
 </span></span><span style="display:flex;"><span>    plt<span style="color:#666">.</span>barh(value_counts_normalized<span style="color:#666">.</span>index, value_counts_normalized<span style="color:#666">.</span>values, color<span style="color:#666">=</span>colors)
@@ -138,13 +137,24 @@
 </span></span><span style="display:flex;"><span>    plt<span style="color:#666">.</span>xticks(rotation<span style="color:#666">=</span><span style="color:#40a070">0</span>)
 </span></span><span style="display:flex;"><span>    plt<span style="color:#666">.</span>show()
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">def</span> <span style="color:#06287e">visualize_top_15_category_histogram</span>(data, category_column, cluster_column, top, title, width, height):
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">def</span> <span style="color:#06287e">visualize_top_15_category_histogram</span>(data,
+</span></span><span style="display:flex;"><span>                                        category_column,
+</span></span><span style="display:flex;"><span>                                        cluster_column,
+</span></span><span style="display:flex;"><span>                                        top,
+</span></span><span style="display:flex;"><span>                                        title,
+</span></span><span style="display:flex;"><span>                                        width,
+</span></span><span style="display:flex;"><span>                                        height):
+</span></span><span style="display:flex;"><span>                                        
 </span></span><span style="display:flex;"><span>    top_n_categories <span style="color:#666">=</span> data[category_column]<span style="color:#666">.</span>value_counts()<span style="color:#666">.</span>nlargest(top)<span style="color:#666">.</span>index<span style="color:#666">.</span>tolist()
 </span></span><span style="display:flex;"><span>    filtered_data <span style="color:#666">=</span> data[data[category_column]<span style="color:#666">.</span>isin(top_n_categories)]
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    fig, ax <span style="color:#666">=</span> plt<span style="color:#666">.</span>subplots(
-</span></span><span style="display:flex;"><span>        figsize<span style="color:#666">=</span>(width <span style="color:#666">/</span> <span style="color:#40a070">80</span>, height <span style="color:#666">/</span> <span style="color:#40a070">80</span>))  <span style="color:#60a0b0;font-style:italic"># convert width and height from pixels to inches for matplotlib</span>
-</span></span><span style="display:flex;"><span>    sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>filtered_data, x<span style="color:#666">=</span>category_column, hue<span style="color:#666">=</span>cluster_column, multiple<span style="color:#666">=</span><span style="color:#4070a0">&#34;stack&#34;</span>, ax<span style="color:#666">=</span>ax)
+</span></span><span style="display:flex;"><span>        figsize<span style="color:#666">=</span>(width <span style="color:#666">/</span> <span style="color:#40a070">80</span>, height <span style="color:#666">/</span> <span style="color:#40a070">80</span>)) 
+</span></span><span style="display:flex;"><span>    sns<span style="color:#666">.</span>histplot(data<span style="color:#666">=</span>filtered_data,
+</span></span><span style="display:flex;"><span>                      x<span style="color:#666">=</span>category_column,
+</span></span><span style="display:flex;"><span>                      hue<span style="color:#666">=</span>cluster_column, 
+</span></span><span style="display:flex;"><span>                      multiple<span style="color:#666">=</span><span style="color:#4070a0">&#34;stack&#34;</span>,
+</span></span><span style="display:flex;"><span>                      ax<span style="color:#666">=</span>ax)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    ax<span style="color:#666">.</span>set_title(title)
 </span></span><span style="display:flex;"><span>    <span style="color:#007020;font-weight:bold">for</span> label <span style="color:#007020;font-weight:bold">in</span> ax<span style="color:#666">.</span>get_xticklabels():
@@ -229,10 +239,20 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#007020;font-weight:bold">return</span> reduced_data
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">def</span> <span style="color:#06287e">fit_kmeans_and_evaluate</span>(data, n_clusters<span style="color:#666">=</span><span style="color:#40a070">4</span>, n_init<span style="color:#666">=</span><span style="color:#40a070">100</span>, max_iter<span style="color:#666">=</span><span style="color:#40a070">400</span>, init<span style="color:#666">=</span><span style="color:#4070a0">&#39;k-means++&#39;</span>, random_state<span style="color:#666">=</span><span style="color:#40a070">42</span>):
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">def</span> <span style="color:#06287e">fit_kmeans_and_evaluate</span>(data,
+</span></span><span style="display:flex;"><span>                            n_clusters<span style="color:#666">=</span><span style="color:#40a070">4</span>,
+</span></span><span style="display:flex;"><span>                            n_init<span style="color:#666">=</span><span style="color:#40a070">100</span>,
+</span></span><span style="display:flex;"><span>                            max_iter<span style="color:#666">=</span><span style="color:#40a070">400</span>,
+</span></span><span style="display:flex;"><span>                            init<span style="color:#666">=</span><span style="color:#4070a0">&#39;k-means++&#39;</span>, 
+</span></span><span style="display:flex;"><span>                            random_state<span style="color:#666">=</span><span style="color:#40a070">42</span>):
 </span></span><span style="display:flex;"><span>    data_copy <span style="color:#666">=</span> data<span style="color:#666">.</span>copy()
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    kmeans_model <span style="color:#666">=</span> KMeans(n_clusters<span style="color:#666">=</span>n_clusters, n_init<span style="color:#666">=</span>n_init, max_iter<span style="color:#666">=</span>max_iter, init<span style="color:#666">=</span>init, random_state<span style="color:#666">=</span>random_state)
+</span></span><span style="display:flex;"><span>    kmeans_model <span style="color:#666">=</span> KMeans(n_clusters<span style="color:#666">=</span>n_clusters,
+</span></span><span style="display:flex;"><span>                          n_init<span style="color:#666">=</span>n_init,
+</span></span><span style="display:flex;"><span>                          max_iter<span style="color:#666">=</span>max_iter,
+</span></span><span style="display:flex;"><span>                          init<span style="color:#666">=</span>init,
+</span></span><span style="display:flex;"><span>                          random_state<span style="color:#666">=</span>random_state)
+</span></span><span style="display:flex;"><span>                          
 </span></span><span style="display:flex;"><span>    kmeans_model<span style="color:#666">.</span>fit(data_copy)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    silhouette <span style="color:#666">=</span> silhouette_score(data_copy, kmeans_model<span style="color:#666">.</span>labels_, metric<span style="color:#666">=</span><span style="color:#4070a0">&#39;euclidean&#39;</span>)
@@ -243,27 +263,21 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#007020;font-weight:bold">return</span> clusters
 </span></span></code></pre></div><h4 id="basic-employee-features">Basic Employee Features:</h4>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>basic_features <span style="color:#666">=</span> pd<span style="color:#666">.</span>read_csv(<span style="color:#4070a0">&#34;Clean Data/basic_features.csv&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>basic_features <span style="color:#666">=</span> pd<span style="color:#666">.</span>read_csv(<span style="color:#4070a0">&#34;Clean Data/basic_features.csv&#34;</span>)
 </span></span><span style="display:flex;"><span>basic_features[<span style="color:#4070a0">&#39;member_id&#39;</span>] <span style="color:#666">=</span> basic_features[<span style="color:#4070a0">&#39;member_id&#39;</span>]<span style="color:#666">.</span>astype(<span style="color:#007020">str</span>)
 </span></span><span style="display:flex;"><span>basic_features<span style="color:#666">.</span>replace(<span style="color:#4070a0">&#34;none&#34;</span>,np<span style="color:#666">.</span>NAN,inplace<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)
 </span></span></code></pre></div><h4 id="employees-education">Employees Education:</h4>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>education <span style="color:#666">=</span> pd<span style="color:#666">.</span>read_csv(<span style="color:#4070a0">&#34;Clean Data/employees_education_cleaned.csv&#34;</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>education <span style="color:#666">=</span> pd<span style="color:#666">.</span>read_csv(<span style="color:#4070a0">&#34;Clean Data/employees_education_cleaned.csv&#34;</span>)
 </span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># transform member_id to string for ease of use</span>
 </span></span><span style="display:flex;"><span>education[<span style="color:#4070a0">&#34;member_id&#34;</span>] <span style="color:#666">=</span> education[<span style="color:#4070a0">&#34;member_id&#34;</span>]<span style="color:#666">.</span>astype(<span style="color:#007020">str</span>)
 </span></span><span style="display:flex;"><span>education <span style="color:#666">=</span> education[education[<span style="color:#4070a0">&#34;member_id&#34;</span>]<span style="color:#666">.</span>isin(basic_features[<span style="color:#4070a0">&#34;member_id&#34;</span>])]
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>plot_missing_data(education)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>plot_missing_data(education)
 </span></span></code></pre></div><p><img src="/clustering_linkedin_profiles/output_12_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>education<span style="color:#666">.</span>drop([<span style="color:#4070a0">&#34;activities_and_societies&#34;</span>,<span style="color:#4070a0">&#34;description&#34;</span>],axis<span style="color:#666">=</span><span style="color:#40a070">1</span>,inplace<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>education<span style="color:#666">.</span>drop([<span style="color:#4070a0">&#34;activities_and_societies&#34;</span>,<span style="color:#4070a0">&#34;description&#34;</span>],axis<span style="color:#666">=</span><span style="color:#40a070">1</span>,inplace<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)
 </span></span><span style="display:flex;"><span>education[[<span style="color:#4070a0">&#34;date_from&#34;</span>,<span style="color:#4070a0">&#34;date_to&#34;</span>]] <span style="color:#666">=</span> education[[<span style="color:#4070a0">&#34;date_from&#34;</span>,<span style="color:#4070a0">&#34;date_to&#34;</span>]]<span style="color:#666">.</span>fillna(<span style="color:#40a070">0</span>)
 </span></span><span style="display:flex;"><span>education[[<span style="color:#4070a0">&#34;date_from&#34;</span>,<span style="color:#4070a0">&#34;date_to&#34;</span>]] <span style="color:#666">=</span> education[[<span style="color:#4070a0">&#34;date_from&#34;</span>,<span style="color:#4070a0">&#34;date_to&#34;</span>]]<span style="color:#666">.</span>astype(<span style="color:#007020">int</span>)
 </span></span><span style="display:flex;"><span>education[[<span style="color:#4070a0">&#34;title&#34;</span>,<span style="color:#4070a0">&#34;subtitle&#34;</span>]] <span style="color:#666">=</span> education[[<span style="color:#4070a0">&#34;title&#34;</span>,<span style="color:#4070a0">&#34;subtitle&#34;</span>]]<span style="color:#666">.</span>fillna(<span style="color:#4070a0">&#34;none&#34;</span>)
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># get the latest employee education obtained per member_id:</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># get the latest employee education obtained per member_id:</span>
 </span></span><span style="display:flex;"><span>latest_education <span style="color:#666">=</span> get_latest_dates(education)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>visualize_normalized_histogram(latest_education, <span style="color:#4070a0">&#39;title&#39;</span>, top_n<span style="color:#666">=</span><span style="color:#40a070">100</span>)
 </span></span></code></pre></div><p><img src="/clustering_linkedin_profiles/output_15_0.png" alt="My Image Description"></p>
@@ -1352,7 +1366,12 @@ dtype: int64
 </span></span></code></pre></div><p><img src="/clustering_linkedin_profiles/output_56_0.png" alt="My Image Description"></p>
 <pre><code>&lt;Axes: title={'center': 'Distortion Score Elbow for KMeans Clustering'}, xlabel='k', ylabel='distortion score'&gt;
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>merged_embeddings_clusters <span style="color:#666">=</span> fit_kmeans_and_evaluate(reduced_merged_embeddings,<span style="color:#40a070">4</span>,n_init<span style="color:#666">=</span><span style="color:#40a070">100</span>,max_iter<span style="color:#666">=</span><span style="color:#40a070">100000</span>, init<span style="color:#666">=</span><span style="color:#4070a0">&#39;k-means++&#39;</span>,random_state<span style="color:#666">=</span><span style="color:#40a070">412</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>merged_embeddings_clusters <span style="color:#666">=</span> fit_kmeans_and_evaluate(reduced_merged_embeddings,
+</span></span><span style="display:flex;"><span>                                                     <span style="color:#40a070">4</span>,
+</span></span><span style="display:flex;"><span>                                                     n_init<span style="color:#666">=</span><span style="color:#40a070">100</span>,
+</span></span><span style="display:flex;"><span>                                                     max_iter<span style="color:#666">=</span><span style="color:#40a070">100000</span>,
+</span></span><span style="display:flex;"><span>                                                     init<span style="color:#666">=</span><span style="color:#4070a0">&#39;k-means++&#39;</span>,
+</span></span><span style="display:flex;"><span>                                                     random_state<span style="color:#666">=</span><span style="color:#40a070">412</span>)
 </span></span></code></pre></div><pre><code>KMeans Scaled Silhouette Score: 0.5201332569122314
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># rename extracted clusters:</span>
@@ -1648,8 +1667,7 @@ dtype: int64
 </span></span><span style="display:flex;"><span>                                    height<span style="color:#666">=</span><span style="color:#40a070">800</span>
 </span></span><span style="display:flex;"><span>                                    )
 </span></span></code></pre></div><p><img src="/clustering_linkedin_profiles/output_60_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
 </span></span><span style="display:flex;"><span>                                    category_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;location&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    cluster_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;cluster_scaled_string&#34;</span>
 </span></span><span style="display:flex;"><span>                                    ,top<span style="color:#666">=</span><span style="color:#40a070">50</span>,
@@ -1658,8 +1676,7 @@ dtype: int64
 </span></span><span style="display:flex;"><span>                                    height<span style="color:#666">=</span><span style="color:#40a070">800</span>
 </span></span><span style="display:flex;"><span>                                    )
 </span></span></code></pre></div><p><img src="/clustering_linkedin_profiles/output_61_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
 </span></span><span style="display:flex;"><span>                                    category_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;title&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    cluster_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;cluster_scaled_string&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    top<span style="color:#666">=</span><span style="color:#40a070">30</span>,
@@ -1668,20 +1685,16 @@ dtype: int64
 </span></span><span style="display:flex;"><span>                                    height<span style="color:#666">=</span><span style="color:#40a070">800</span>
 </span></span><span style="display:flex;"><span>                                    )
 </span></span></code></pre></div><p><img src="/clustering_linkedin_profiles/output_62_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
 </span></span><span style="display:flex;"><span>                                    category_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;country&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    cluster_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;cluster_scaled_string&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    top<span style="color:#666">=</span><span style="color:#40a070">30</span>,
 </span></span><span style="display:flex;"><span>                                    title<span style="color:#666">=</span><span style="color:#4070a0">&#34;Cluster Labels Relative to Country&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    width<span style="color:#666">=</span><span style="color:#40a070">1000</span>,
 </span></span><span style="display:flex;"><span>                                    height<span style="color:#666">=</span><span style="color:#40a070">800</span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>                                    )
 </span></span></code></pre></div><p><img src="/clustering_linkedin_profiles/output_63_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
 </span></span><span style="display:flex;"><span>                                    category_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;education_title&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    cluster_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;cluster_scaled_string&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    top<span style="color:#666">=</span><span style="color:#40a070">30</span>,
@@ -1690,9 +1703,7 @@ dtype: int64
 </span></span><span style="display:flex;"><span>                                    height<span style="color:#666">=</span><span style="color:#40a070">800</span>
 </span></span><span style="display:flex;"><span>                                    )
 </span></span></code></pre></div><p><img src="/clustering_linkedin_profiles/output_64_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>visualize_top_15_category_histogram(overall_results,
 </span></span><span style="display:flex;"><span>                                    category_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;education_subtitle&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    cluster_column<span style="color:#666">=</span><span style="color:#4070a0">&#34;cluster_scaled_string&#34;</span>,
 </span></span><span style="display:flex;"><span>                                    top<span style="color:#666">=</span><span style="color:#40a070">30</span>,
@@ -1710,10 +1721,9 @@ dtype: int64
 </span></span><span style="display:flex;"><span>                                    height<span style="color:#666">=</span><span style="color:#40a070">800</span>
 </span></span><span style="display:flex;"><span>                                    )
 </span></span></code></pre></div><p><img src="/clustering_linkedin_profiles/output_66_0.png" alt="My Image Description"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>overall_results<span style="color:#666">.</span>to_csv(<span style="color:#4070a0">&#34;Clean Data/overall_results.csv&#34;</span>,index<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>)
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>overall_results<span style="color:#666">.</span>to_csv(<span style="color:#4070a0">&#34;Clean Data/overall_results.csv&#34;</span>,index<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>)
 </span></span></code></pre></div><h3 id="observations">Observations:</h3>
-<ul>
+<p class="justify-text"><ul>
 <li>By implementing dimensionality reduction on the merged high-dimensional textual feature embeddings, K-means has shown promising performance, with a Distortion Score of 152 and a Silhouette Score of 0.5201, which we regard as a respectable starting point or baseline model.</li>
 <li>The quality of clustering can potentially be enhanced with the extraction of more features, such as recommendations, as well as educational and professional experiences.</li>
 <li>The model has demonstrated its capability to cluster employees from similar industries, as observed in cluster 2 where retail and furniture sectors have been grouped together.</li>
@@ -1722,6 +1732,8 @@ Given these observations, the data appears to be well-suited for hierarchical cl
 <li>It&rsquo;s notable that the model tends to cluster empty values, &ldquo;none,&rdquo; or &ldquo;other&rdquo; embeddings together, primarily due to their similar extracted embedding vectors. To avoid this, I have chosen to exclude them.</li>
 <li>It&rsquo;s worth noting that K-means, a rather straightforward model that is susceptible to outliers, was used here. As a future endeavor, there&rsquo;s potential to develop this basic model into a more intricate one that is more robust to outliers.</li>
 </ul>
+</p>
+
 </div>
     </article>
   </main>

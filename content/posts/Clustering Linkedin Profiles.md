@@ -9,7 +9,8 @@ draft: false
 
 ## Overview:
 {{< justify >}}
-This notebook presents my efforts to construct a simple model with intensive feature extraction, primarily based on Sentence Transformers BERT. Despite its simplicity, resting on K-means, there is significant room for model refinement and complexity enhancement.In essence, the algorithm presented below forms an excellent foundational or baseline model for addressing the problem of clustering LinkedIn profiles into similar groups.
+
+This notebook shows off how I built a simple model that leans heavily on the power of Sentence Transformers BERT to pull out lots of features. The model is pretty simple because it's based on K-means, but there's a ton of space to jazz it up and make it more complex. Basically, the algorithm I've got going here is a rock-solid starting point for the job of grouping similar LinkedIn profiles together.
 {{< /justify >}}
 
 Here's a brief rundown of the algorithm:
@@ -2014,14 +2015,12 @@ overall_results.to_csv("Clean Data/overall_results.csv",index=False)
 ```
 
 ### Observations:
-{{< justify >}}
-- By implementing dimensionality reduction on the merged high-dimensional textual feature embeddings, K-means has shown promising performance, with a Distortion Score of 152 and a Silhouette Score of 0.5201, which we regard as a respectable starting point or baseline model.
-- The quality of clustering can potentially be enhanced with the extraction of more features, such as recommendations, as well as educational and professional experiences.
-- The model has demonstrated its capability to cluster employees from similar industries, as observed in cluster 2 where retail and furniture sectors have been grouped together.
-- In terms of geographic structure, the model has been successful in grouping together locations within the same country. For example, Israel and its districts and cities were combined into cluster 0, a pattern which was also observed with US cities in cluster 1.
-Given these observations, the data appears to be well-suited for hierarchical clustering models like HDBSCAN.
-- It's notable that the model tends to cluster empty values, "none," or "other" embeddings together, primarily due to their similar extracted embedding vectors. To avoid this, I have chosen to exclude them.
-- It's worth noting that K-means, a rather straightforward model that is susceptible to outliers, was used here. As a future endeavor, there's potential to develop this basic model into a more intricate one that is more robust to outliers.
-{{< /justify >}}
 
+
+- By squishing together the big, complex text features, K-means did a pretty solid job. With a Distortion Score of 152 and a Silhouette Score of 0.5201, we think it's a good place to start.
+- We can probably make the clusters even better if we pull in more info like recommendations, education, and job history.
+- The model seems to be pretty good at putting employees from the same industries together. Take a look at cluster 2 - it grouped retail and furniture folks together.
+- In terms of where people are from, the model's done a good job. It's been putting places from the same country together, like Israel and its districts and cities in cluster 0, and it did the same with US cities in cluster 1. This kind of data looks like it'd work well with hierarchy-based models like HDBSCAN.
+-One thing to note is that the model likes to stick all the empty values or "none" or "other" categories together, mostly because they look alike when transformed into vectors. To steer clear of this, I decided to leave them out.
+- Just a heads-up that I used K-means here, which is pretty simple and can be thrown off by outliers. In the future, it could be worth making a fancier model that's tougher against outliers.
 
