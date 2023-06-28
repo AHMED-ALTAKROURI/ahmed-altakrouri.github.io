@@ -13,18 +13,7 @@
       <pubDate>Sat, 22 Apr 2023 00:00:00 +0000</pubDate>
       
       <guid>https://ahmed-altakrouri.github.io/posts/clustering-linkedin-profiles/</guid>
-      <description>Overview: This notebook presents my efforts to construct a simple model with intensive feature extraction, primarily based on Sentence Transformers BERT. Despite its simplicity, resting on K-means, there is significant room for model refinement and complexity enhancement.In essence, the algorithm presented below forms an excellent foundational or baseline model for addressing the problem of clustering LinkedIn profiles into similar groups.
-Here&amp;rsquo;s a brief rundown of the algorithm:
-Extract BERT embeddings for sentences or textual data.</description>
-    </item>
-    
-    <item>
-      <title>Fraud Detection from ML to Actionable Insights</title>
-      <link>https://ahmed-altakrouri.github.io/posts/fraud-detection/</link>
-      <pubDate>Wed, 15 Feb 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://ahmed-altakrouri.github.io/posts/fraud-detection/</guid>
-      <description>Overview: In my method for detecting credit card fraud, I perceive it as a two-category classification problem. Yet, due to the significant disparity in the distribution of data, constructing a suitable decision boundary becomes a complicated task in credit card fraud detection. To navigate this issue, I adopt a systematic procedure.My first step involves examining the distribution of data variables related to fraudulent and legitimate transactions to enrich my comprehension of the data.</description>
+      <description>Overview: This notebook shows off how I built a simple model that leans heavily on the power of Sentence Transformers BERT to pull out lots of features. The model is pretty simple because it&amp;rsquo;s based on K-means, but there&amp;rsquo;s a ton of space to jazz it up and make it more complex. Basically, the algorithm I&amp;rsquo;ve got going here is a rock-solid starting point for the job of grouping similar LinkedIn profiles together.</description>
     </item>
     
     <item>
@@ -34,6 +23,15 @@ Extract BERT embeddings for sentences or textual data.</description>
       
       <guid>https://ahmed-altakrouri.github.io/posts/net-profit-forecasting/</guid>
       <description>Overview: This notebook aimed is to demonstrate the solution for simple regression problem, predict net profit given a set of attributes, first I start with simple EDA understand the data numerical and categorical distributions. Then I fit simple statistical model followed by linear regression and more complex one. each model includes scoring metrics and explanations. Finally, I communicate final finding of prediction of the provided Out-of-sample test set and the including factors or attributes that decided the final predictions using shapley values.</description>
+    </item>
+    
+    <item>
+      <title>Fraud Detection from Statistical Analysis and ML to Actionable Insights</title>
+      <link>https://ahmed-altakrouri.github.io/posts/fraud-detection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ahmed-altakrouri.github.io/posts/fraud-detection/</guid>
+      <description>Overview: In my approach to catching credit card fraud, I see it as a problem of sorting into two groups. But since the data we have is heavily skewed, it&amp;rsquo;s tough to draw a line that separates fraudulent and legit transactions. To deal with this, I follow a step-by-step plan. First, I look at how data variables tied to both fraudulent and legit transactions spread out to get a better understanding of the data.</description>
     </item>
     
   </channel>

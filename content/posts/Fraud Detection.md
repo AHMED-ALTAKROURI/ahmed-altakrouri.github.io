@@ -1,6 +1,6 @@
 ---
-title: "Fraud Detection from ML to Actionable Insights"
-date: 2023-02-15
+title: "Fraud Detection from Statistical Analysis and ML to Actionable Insights"
+date: 2022-12-1
 draft: false
 ---
 
