@@ -86,3 +86,13 @@ figure {
   text-align: justify;
 }
 
+/* Adjust the width of the whole page */
+body {
+  max-width: 90%;  /* Change this to your preferred width */
+  margin: 0 auto;  /* Centers content */
+}
+
+/* Adjust the width of the code blocks */
+pre, code {
+  max-width: 90%;  /* Change this to your preferred width */
+}

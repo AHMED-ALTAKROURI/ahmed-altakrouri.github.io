@@ -28,7 +28,7 @@
     <item>
       <title>Fraud Detection from Statistical Analysis and ML to Actionable Insights</title>
       <link>https://ahmed-altakrouri.github.io/posts/fraud-detection/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 27 Jan 2023 00:00:00 +0000</pubDate>
       
       <guid>https://ahmed-altakrouri.github.io/posts/fraud-detection/</guid>
       <description>Overview: In my approach to catching credit card fraud, I see it as a problem of sorting into two groups. But since the data we have is heavily skewed, it&amp;rsquo;s tough to draw a line that separates fraudulent and legit transactions. To deal with this, I follow a step-by-step plan. First, I look at how data variables tied to both fraudulent and legit transactions spread out to get a better understanding of the data.</description>
