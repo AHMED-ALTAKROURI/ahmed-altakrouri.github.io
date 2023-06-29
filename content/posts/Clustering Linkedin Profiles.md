@@ -304,7 +304,10 @@ plot_missing_data(experience)
 
 
 ```python
-experience.drop(["description","location","Years","Months","duration","company_id"],axis=1,inplace=True, errors="ignore")
+experience.drop(["description","location","Years","Months","duration","company_id"],
+                 axis=1,inplace=True,
+                 errors="ignore")
+                 
 experience[["date_from","date_to"]] = experience[["date_from","date_to"]].fillna(0)
 experience["title"] = experience["title"].fillna("none")
 experience.drop_duplicates(inplace=True)
@@ -318,7 +321,8 @@ experience = transform_experience_dates(experience)
 
 ```python
 experience = experience[["member_id","title","transformed_date_from","transformed_date_to"]]
-experience.rename(columns={'transformed_date_from': 'date_from', 'transformed_date_to': 'date_to'},inplace=True)
+experience.rename(columns={'transformed_date_from': 'date_from',
+                           'transformed_date_to': 'date_to'},inplace=True)
 ```
 
 
@@ -387,206 +391,397 @@ plot_missing_data(basic_features)
 basic_features["industry"] = basic_features["industry"].fillna("other")
 basic_features["title"] = basic_features["title"].fillna("other")
 basic_features["location"] = basic_features["location"].fillna("unknown")
-basic_features[["number of degrees","years of educations"]] =  basic_features[["number of degrees","years of educations"]].fillna("0")
-basic_features.drop(["months experience","number of positions","summary"],axis=1,inplace=True)
-basic_features.head(10)
+basic_features[["number of degrees","years of educations"]] = basic_features[
+                                                              ["number of degrees",
+                                                              "years of educations"]
+                                                              ].fillna("0")
+basic_features.drop(["months experience",
+                     "number of positions",
+                     "summary"],
+                      axis=1,
+                      inplace=True)
 ```
+         
 
 
 
+[//]: # (<div>)
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+[//]: # (<style scoped>)
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+[//]: # (    .dataframe tbody tr th:only-of-type {)
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>member_id</th>
-      <th>title</th>
-      <th>location</th>
-      <th>industry</th>
-      <th>recommendations_count</th>
-      <th>country</th>
-      <th>connections_count</th>
-      <th>experience_count</th>
-      <th>latitude</th>
-      <th>longitude</th>
-      <th>number of degrees</th>
-      <th>years of educations</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>4665483</td>
-      <td>Ingénieur technico commercial chez Engie</td>
-      <td>Nanterre, Île-de-France, France</td>
-      <td>Banking</td>
-      <td>0.0</td>
-      <td>France</td>
-      <td>13</td>
-      <td>1</td>
-      <td>48.892423</td>
-      <td>2.215331</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>5222619</td>
-      <td>Manager at Harveys Furnishing</td>
-      <td>United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>19</td>
-      <td>1</td>
-      <td>55.378051</td>
-      <td>-3.435973</td>
-      <td>1.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>5504049</td>
-      <td>Sales Manager at Harveys Furnishing</td>
-      <td>Bridgend, Wales, United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>0</td>
-      <td>1</td>
-      <td>51.504286</td>
-      <td>-3.576945</td>
-      <td>2.0</td>
-      <td>7.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6704970</td>
-      <td>Assistant Manager at Harveys Furnishing</td>
-      <td>Greater Guildford Area, United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>31</td>
-      <td>1</td>
-      <td>51.236220</td>
-      <td>-0.570409</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>8192070</td>
-      <td>I Help Professionals Make Career  Business Bre...</td>
-      <td>Dallas, Texas, United States</td>
-      <td>Information Technology &amp; Services</td>
-      <td>26.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>16</td>
-      <td>32.776664</td>
-      <td>-96.796988</td>
-      <td>3.0</td>
-      <td>8.0</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>8273835</td>
-      <td>Furniture Retail</td>
-      <td>United Kingdom</td>
-      <td>other</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>146</td>
-      <td>4</td>
-      <td>55.378051</td>
-      <td>-3.435973</td>
-      <td>1.0</td>
-      <td>6.0</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>9940377</td>
-      <td>Sr Research Engineer at BAMF Health</td>
-      <td>Grand Rapids, Michigan, United States</td>
-      <td>Medical Device</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>288</td>
-      <td>7</td>
-      <td>42.963360</td>
-      <td>-85.668086</td>
-      <td>7.0</td>
-      <td>15.0</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>11076570</td>
-      <td>Head of New Business at Cube Online</td>
-      <td>Sydney, New South Wales, Australia</td>
-      <td>Events Services</td>
-      <td>0.0</td>
-      <td>Australia</td>
-      <td>65535</td>
-      <td>10</td>
-      <td>-33.868820</td>
-      <td>151.209295</td>
-      <td>2.0</td>
-      <td>5.0</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>15219102</td>
-      <td>Veneer Sales Manager at Mundy Veneer Limited</td>
-      <td>Taunton, England, United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>179</td>
-      <td>6</td>
-      <td>51.015344</td>
-      <td>-3.106849</td>
-      <td>2.0</td>
-      <td>4.0</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>15809688</td>
-      <td>Senior Scientist  Computational Biology at Boe...</td>
-      <td>Cambridge, Massachusetts, United States</td>
-      <td>other</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>440</td>
-      <td>4</td>
-      <td>42.373616</td>
-      <td>-71.109733</td>
-      <td>2.0</td>
-      <td>9.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+[//]: # (        vertical-align: middle;)
+
+[//]: # (    })
+
+[//]: # ()
+[//]: # (    .dataframe tbody tr th {)
+
+[//]: # (        vertical-align: top;)
+
+[//]: # (    })
+
+[//]: # ()
+[//]: # (    .dataframe thead th {)
+
+[//]: # (        text-align: right;)
+
+[//]: # (    })
+
+[//]: # (</style>)
+
+[//]: # (<table border="1" class="dataframe">)
+
+[//]: # (  <thead>)
+
+[//]: # (    <tr style="text-align: right;">)
+
+[//]: # (      <th></th>)
+
+[//]: # (      <th>member_id</th>)
+
+[//]: # (      <th>title</th>)
+
+[//]: # (      <th>location</th>)
+
+[//]: # (      <th>industry</th>)
+
+[//]: # (      <th>recommendations_count</th>)
+
+[//]: # (      <th>country</th>)
+
+[//]: # (      <th>connections_count</th>)
+
+[//]: # (      <th>experience_count</th>)
+
+[//]: # (      <th>latitude</th>)
+
+[//]: # (      <th>longitude</th>)
+
+[//]: # (      <th>number of degrees</th>)
+
+[//]: # (      <th>years of educations</th>)
+
+[//]: # (    </tr>)
+
+[//]: # (  </thead>)
+
+[//]: # (  <tbody>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>0</th>)
+
+[//]: # (      <td>4665483</td>)
+
+[//]: # (      <td>Ingénieur technico commercial chez Engie</td>)
+
+[//]: # (      <td>Nanterre, Île-de-France, France</td>)
+
+[//]: # (      <td>Banking</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>France</td>)
+
+[//]: # (      <td>13</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>48.892423</td>)
+
+[//]: # (      <td>2.215331</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>1</th>)
+
+[//]: # (      <td>5222619</td>)
+
+[//]: # (      <td>Manager at Harveys Furnishing</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>19</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>55.378051</td>)
+
+[//]: # (      <td>-3.435973</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>2</th>)
+
+[//]: # (      <td>5504049</td>)
+
+[//]: # (      <td>Sales Manager at Harveys Furnishing</td>)
+
+[//]: # (      <td>Bridgend, Wales, United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>51.504286</td>)
+
+[//]: # (      <td>-3.576945</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>7.0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>3</th>)
+
+[//]: # (      <td>6704970</td>)
+
+[//]: # (      <td>Assistant Manager at Harveys Furnishing</td>)
+
+[//]: # (      <td>Greater Guildford Area, United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>31</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>51.236220</td>)
+
+[//]: # (      <td>-0.570409</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>4</th>)
+
+[//]: # (      <td>8192070</td>)
+
+[//]: # (      <td>I Help Professionals Make Career  Business Bre...</td>)
+
+[//]: # (      <td>Dallas, Texas, United States</td>)
+
+[//]: # (      <td>Information Technology &amp; Services</td>)
+
+[//]: # (      <td>26.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>16</td>)
+
+[//]: # (      <td>32.776664</td>)
+
+[//]: # (      <td>-96.796988</td>)
+
+[//]: # (      <td>3.0</td>)
+
+[//]: # (      <td>8.0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>5</th>)
+
+[//]: # (      <td>8273835</td>)
+
+[//]: # (      <td>Furniture Retail</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>other</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>146</td>)
+
+[//]: # (      <td>4</td>)
+
+[//]: # (      <td>55.378051</td>)
+
+[//]: # (      <td>-3.435973</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>6.0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>6</th>)
+
+[//]: # (      <td>9940377</td>)
+
+[//]: # (      <td>Sr Research Engineer at BAMF Health</td>)
+
+[//]: # (      <td>Grand Rapids, Michigan, United States</td>)
+
+[//]: # (      <td>Medical Device</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>288</td>)
+
+[//]: # (      <td>7</td>)
+
+[//]: # (      <td>42.963360</td>)
+
+[//]: # (      <td>-85.668086</td>)
+
+[//]: # (      <td>7.0</td>)
+
+[//]: # (      <td>15.0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>7</th>)
+
+[//]: # (      <td>11076570</td>)
+
+[//]: # (      <td>Head of New Business at Cube Online</td>)
+
+[//]: # (      <td>Sydney, New South Wales, Australia</td>)
+
+[//]: # (      <td>Events Services</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>Australia</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>10</td>)
+
+[//]: # (      <td>-33.868820</td>)
+
+[//]: # (      <td>151.209295</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>5.0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>8</th>)
+
+[//]: # (      <td>15219102</td>)
+
+[//]: # (      <td>Veneer Sales Manager at Mundy Veneer Limited</td>)
+
+[//]: # (      <td>Taunton, England, United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>179</td>)
+
+[//]: # (      <td>6</td>)
+
+[//]: # (      <td>51.015344</td>)
+
+[//]: # (      <td>-3.106849</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>9</th>)
+
+[//]: # (      <td>15809688</td>)
+
+[//]: # (      <td>Senior Scientist  Computational Biology at Boe...</td>)
+
+[//]: # (      <td>Cambridge, Massachusetts, United States</td>)
+
+[//]: # (      <td>other</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>440</td>)
+
+[//]: # (      <td>4</td>)
+
+[//]: # (      <td>42.373616</td>)
+
+[//]: # (      <td>-71.109733</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>9.0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (  </tbody>)
+
+[//]: # (</table>)
+
+[//]: # (</div>)
 
 
 
 
 ```python
-visualize_normalized_histogram(basic_features[basic_features["title"]!="other"],"title",top_n=120)
+visualize_normalized_histogram(basic_features[basic_features["title"]!="other"],
+                                              "title",
+                                               top_n=120)
 ```
 
 
@@ -809,411 +1004,806 @@ latest_education.head(10)
 
 ```python
 overall_features  = basic_features.merge(latest_education, on='member_id', how='outer').merge(latest_experience, on='member_id', how='outer')
-overall_features.head(20)
 ```
 
 
 
+[//]: # ()
+[//]: # (<div>)
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+[//]: # (<style scoped>)
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+[//]: # (    .dataframe tbody tr th:only-of-type {)
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>member_id</th>
-      <th>title</th>
-      <th>location</th>
-      <th>industry</th>
-      <th>recommendations_count</th>
-      <th>country</th>
-      <th>connections_count</th>
-      <th>experience_count</th>
-      <th>latitude</th>
-      <th>longitude</th>
-      <th>number of degrees</th>
-      <th>years of educations</th>
-      <th>education_title</th>
-      <th>education_subtitle</th>
-      <th>experience_title</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>4665483</td>
-      <td>Ingénieur technico commercial chez Engie</td>
-      <td>Nanterre, Île-de-France, France</td>
-      <td>Banking</td>
-      <td>0.0</td>
-      <td>France</td>
-      <td>13</td>
-      <td>1</td>
-      <td>48.892423</td>
-      <td>2.215331</td>
-      <td>0</td>
-      <td>0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>Ingénieur informatique</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>5222619</td>
-      <td>Manager at Harveys Furnishing</td>
-      <td>United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>19</td>
-      <td>1</td>
-      <td>55.378051</td>
-      <td>-3.435973</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>University of Louisiana at Lafayette</td>
-      <td>none</td>
-      <td>Manager</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>5504049</td>
-      <td>Sales Manager at Harveys Furnishing</td>
-      <td>Bridgend, Wales, United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>0</td>
-      <td>1</td>
-      <td>51.504286</td>
-      <td>-3.576945</td>
-      <td>2.0</td>
-      <td>7.0</td>
-      <td>Brynteg Comprehensive School</td>
-      <td>none</td>
-      <td>Sales Manager</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6704970</td>
-      <td>Assistant Manager at Harveys Furnishing</td>
-      <td>Greater Guildford Area, United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>31</td>
-      <td>1</td>
-      <td>51.236220</td>
-      <td>-0.570409</td>
-      <td>0</td>
-      <td>0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>Assistant Manager</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>8192070</td>
-      <td>I Help Professionals Make Career  Business Bre...</td>
-      <td>Dallas, Texas, United States</td>
-      <td>Information Technology &amp; Services</td>
-      <td>26.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>16</td>
-      <td>32.776664</td>
-      <td>-96.796988</td>
-      <td>3.0</td>
-      <td>8.0</td>
-      <td>Harvard University</td>
-      <td>Bachelor of Arts BA Computer Science  Focus on...</td>
-      <td>SVP Customer Success</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>8273835</td>
-      <td>Furniture Retail</td>
-      <td>United Kingdom</td>
-      <td>other</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>146</td>
-      <td>4</td>
-      <td>55.378051</td>
-      <td>-3.435973</td>
-      <td>1.0</td>
-      <td>6.0</td>
-      <td>Wrotham</td>
-      <td>Business Management Marketing and Related Supp...</td>
-      <td>Senior Sales</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>9940377</td>
-      <td>Sr Research Engineer at BAMF Health</td>
-      <td>Grand Rapids, Michigan, United States</td>
-      <td>Medical Device</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>288</td>
-      <td>7</td>
-      <td>42.963360</td>
-      <td>-85.668086</td>
-      <td>7.0</td>
-      <td>15.0</td>
-      <td>Grand Valley State University</td>
-      <td>Master of Science Engineering  Biomedical Engi...</td>
-      <td>Image Processing Research Engineer</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>11076570</td>
-      <td>Head of New Business at Cube Online</td>
-      <td>Sydney, New South Wales, Australia</td>
-      <td>Events Services</td>
-      <td>0.0</td>
-      <td>Australia</td>
-      <td>65535</td>
-      <td>10</td>
-      <td>-33.868820</td>
-      <td>151.209295</td>
-      <td>2.0</td>
-      <td>5.0</td>
-      <td>University of the West of England</td>
-      <td>BA Hons Business Studies</td>
-      <td>APAC Hunter Manager</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>15219102</td>
-      <td>Veneer Sales Manager at Mundy Veneer Limited</td>
-      <td>Taunton, England, United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>179</td>
-      <td>6</td>
-      <td>51.015344</td>
-      <td>-3.106849</td>
-      <td>2.0</td>
-      <td>4.0</td>
-      <td>Northumbria University</td>
-      <td>Masters Degree MSc Hons Business with Management</td>
-      <td>Project Coordinator</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>15809688</td>
-      <td>Senior Scientist  Computational Biology at Boe...</td>
-      <td>Cambridge, Massachusetts, United States</td>
-      <td>other</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>440</td>
-      <td>4</td>
-      <td>42.373616</td>
-      <td>-71.109733</td>
-      <td>2.0</td>
-      <td>9.0</td>
-      <td>University of North Carolina at Chapel Hill</td>
-      <td>Doctor of Philosophy PhD Bioinformatics</td>
-      <td>Computational Biology Scientist</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>21059859</td>
-      <td>ML  Genomics  Datadriven biology</td>
-      <td>Cambridge, Massachusetts, United States</td>
-      <td>Computer Software</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>45</td>
-      <td>1</td>
-      <td>42.373616</td>
-      <td>-71.109733</td>
-      <td>4.0</td>
-      <td>16.0</td>
-      <td>Technical University of Munich</td>
-      <td>Doctor of Philosophy  PhD Computational Biology</td>
-      <td>Computational Biologist</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>22825932</td>
-      <td>Assistant Manager Harveys</td>
-      <td>St Osyth, Essex, United Kingdom</td>
-      <td>Retail</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>218</td>
-      <td>6</td>
-      <td>51.799152</td>
-      <td>1.075842</td>
-      <td>1.0</td>
-      <td>3.0</td>
-      <td>Sallynoggin University Dublin Ireland</td>
-      <td>Bachelors degree Leisure and fitness managemen...</td>
-      <td>Online Sales Manager</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>23378337</td>
-      <td>Industrial IoT Solutions Consultant</td>
-      <td>Denver, Colorado, United States</td>
-      <td>Industrial Automation</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>4</td>
-      <td>39.739236</td>
-      <td>-104.990251</td>
-      <td>1.0</td>
-      <td>4.0</td>
-      <td>LeTourneau University</td>
-      <td>Bachelor of Science BS Electrical and Computer...</td>
-      <td>Lead Solutions Engineer</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>24620931</td>
-      <td>ExGeneral Manager at AHFFABB</td>
-      <td>London, England, United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>93</td>
-      <td>2</td>
-      <td>51.507218</td>
-      <td>-0.127586</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>Harrow College</td>
-      <td>none</td>
-      <td>Store Manager</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>25021590</td>
-      <td>Senior Director Therapeutic Area Expansion at ...</td>
-      <td>Boston, Massachusetts, United States</td>
-      <td>Biotechnology</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>15</td>
-      <td>42.360082</td>
-      <td>-71.058880</td>
-      <td>5.0</td>
-      <td>16.0</td>
-      <td>Wharton Executive Education</td>
-      <td>Certificate Executive Presence and Influence P...</td>
-      <td>Director Head of External Research Collaborati...</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>27382998</td>
-      <td>Physician scientist working at interesection o...</td>
-      <td>Greater Chicago Area</td>
-      <td>Pharmaceuticals</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>12</td>
-      <td>41.743507</td>
-      <td>-88.011847</td>
-      <td>6.0</td>
-      <td>27.0</td>
-      <td>Yale University School of Medicine</td>
-      <td>MD Medicine</td>
-      <td>Senior Vice President and Head of Strategy and...</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>27540066</td>
-      <td>Business manager at ScS  Sofa Carpet Specialist</td>
-      <td>United Kingdom</td>
-      <td>Retail</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>395</td>
-      <td>8</td>
-      <td>55.378051</td>
-      <td>-3.435973</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>University of Leeds</td>
-      <td>Business Management Marketing and Related Supp...</td>
-      <td>Branch Manager</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>27673065</td>
-      <td>Sr Bioinformatics Scientist NGS Technologies a...</td>
-      <td>Greater Boston</td>
-      <td>Research</td>
-      <td>1.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>4</td>
-      <td>42.360071</td>
-      <td>-71.058830</td>
-      <td>4.0</td>
-      <td>9.0</td>
-      <td>Brandeis University</td>
-      <td>Certificate Program Bioinformatics A</td>
-      <td>NGS Production Bioinformatics Data Scientist O...</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>28161267</td>
-      <td>Retail Professional</td>
-      <td>Greater Colchester Area</td>
-      <td>Retail</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>4</td>
-      <td>4</td>
-      <td>51.895927</td>
-      <td>0.891874</td>
-      <td>1.0</td>
-      <td>6.0</td>
-      <td>Brays Grove comprehensive</td>
-      <td>none</td>
-      <td>Retail Assistant</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>29195709</td>
-      <td>Strategic Partnerships at Stripe</td>
-      <td>New York, New York, United States</td>
-      <td>Internet</td>
-      <td>4.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>11</td>
-      <td>40.712775</td>
-      <td>-74.005973</td>
-      <td>5.0</td>
-      <td>4.0</td>
-      <td>University of San Francisco</td>
-      <td>Master of Science MS Global Entrepreneurship a...</td>
-      <td>Director Channel Partnerships</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+[//]: # (        vertical-align: middle;)
+
+[//]: # (    })
+
+[//]: # ()
+[//]: # (    .dataframe tbody tr th {)
+
+[//]: # (        vertical-align: top;)
+
+[//]: # (    })
+
+[//]: # ()
+[//]: # (    .dataframe thead th {)
+
+[//]: # (        text-align: right;)
+
+[//]: # (    })
+
+[//]: # (</style>)
+
+[//]: # (<table border="1" class="dataframe">)
+
+[//]: # (  <thead>)
+
+[//]: # (    <tr style="text-align: right;">)
+
+[//]: # (      <th></th>)
+
+[//]: # (      <th>member_id</th>)
+
+[//]: # (      <th>title</th>)
+
+[//]: # (      <th>location</th>)
+
+[//]: # (      <th>industry</th>)
+
+[//]: # (      <th>recommendations_count</th>)
+
+[//]: # (      <th>country</th>)
+
+[//]: # (      <th>connections_count</th>)
+
+[//]: # (      <th>experience_count</th>)
+
+[//]: # (      <th>latitude</th>)
+
+[//]: # (      <th>longitude</th>)
+
+[//]: # (      <th>number of degrees</th>)
+
+[//]: # (      <th>years of educations</th>)
+
+[//]: # (      <th>education_title</th>)
+
+[//]: # (      <th>education_subtitle</th>)
+
+[//]: # (      <th>experience_title</th>)
+
+[//]: # (    </tr>)
+
+[//]: # (  </thead>)
+
+[//]: # (  <tbody>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>0</th>)
+
+[//]: # (      <td>4665483</td>)
+
+[//]: # (      <td>Ingénieur technico commercial chez Engie</td>)
+
+[//]: # (      <td>Nanterre, Île-de-France, France</td>)
+
+[//]: # (      <td>Banking</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>France</td>)
+
+[//]: # (      <td>13</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>48.892423</td>)
+
+[//]: # (      <td>2.215331</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>NaN</td>)
+
+[//]: # (      <td>NaN</td>)
+
+[//]: # (      <td>Ingénieur informatique</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>1</th>)
+
+[//]: # (      <td>5222619</td>)
+
+[//]: # (      <td>Manager at Harveys Furnishing</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>19</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>55.378051</td>)
+
+[//]: # (      <td>-3.435973</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>University of Louisiana at Lafayette</td>)
+
+[//]: # (      <td>none</td>)
+
+[//]: # (      <td>Manager</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>2</th>)
+
+[//]: # (      <td>5504049</td>)
+
+[//]: # (      <td>Sales Manager at Harveys Furnishing</td>)
+
+[//]: # (      <td>Bridgend, Wales, United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>51.504286</td>)
+
+[//]: # (      <td>-3.576945</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>7.0</td>)
+
+[//]: # (      <td>Brynteg Comprehensive School</td>)
+
+[//]: # (      <td>none</td>)
+
+[//]: # (      <td>Sales Manager</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>3</th>)
+
+[//]: # (      <td>6704970</td>)
+
+[//]: # (      <td>Assistant Manager at Harveys Furnishing</td>)
+
+[//]: # (      <td>Greater Guildford Area, United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>31</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>51.236220</td>)
+
+[//]: # (      <td>-0.570409</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>NaN</td>)
+
+[//]: # (      <td>NaN</td>)
+
+[//]: # (      <td>Assistant Manager</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>4</th>)
+
+[//]: # (      <td>8192070</td>)
+
+[//]: # (      <td>I Help Professionals Make Career  Business Bre...</td>)
+
+[//]: # (      <td>Dallas, Texas, United States</td>)
+
+[//]: # (      <td>Information Technology &amp; Services</td>)
+
+[//]: # (      <td>26.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>16</td>)
+
+[//]: # (      <td>32.776664</td>)
+
+[//]: # (      <td>-96.796988</td>)
+
+[//]: # (      <td>3.0</td>)
+
+[//]: # (      <td>8.0</td>)
+
+[//]: # (      <td>Harvard University</td>)
+
+[//]: # (      <td>Bachelor of Arts BA Computer Science  Focus on...</td>)
+
+[//]: # (      <td>SVP Customer Success</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>5</th>)
+
+[//]: # (      <td>8273835</td>)
+
+[//]: # (      <td>Furniture Retail</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>other</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>146</td>)
+
+[//]: # (      <td>4</td>)
+
+[//]: # (      <td>55.378051</td>)
+
+[//]: # (      <td>-3.435973</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>6.0</td>)
+
+[//]: # (      <td>Wrotham</td>)
+
+[//]: # (      <td>Business Management Marketing and Related Supp...</td>)
+
+[//]: # (      <td>Senior Sales</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>6</th>)
+
+[//]: # (      <td>9940377</td>)
+
+[//]: # (      <td>Sr Research Engineer at BAMF Health</td>)
+
+[//]: # (      <td>Grand Rapids, Michigan, United States</td>)
+
+[//]: # (      <td>Medical Device</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>288</td>)
+
+[//]: # (      <td>7</td>)
+
+[//]: # (      <td>42.963360</td>)
+
+[//]: # (      <td>-85.668086</td>)
+
+[//]: # (      <td>7.0</td>)
+
+[//]: # (      <td>15.0</td>)
+
+[//]: # (      <td>Grand Valley State University</td>)
+
+[//]: # (      <td>Master of Science Engineering  Biomedical Engi...</td>)
+
+[//]: # (      <td>Image Processing Research Engineer</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>7</th>)
+
+[//]: # (      <td>11076570</td>)
+
+[//]: # (      <td>Head of New Business at Cube Online</td>)
+
+[//]: # (      <td>Sydney, New South Wales, Australia</td>)
+
+[//]: # (      <td>Events Services</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>Australia</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>10</td>)
+
+[//]: # (      <td>-33.868820</td>)
+
+[//]: # (      <td>151.209295</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>5.0</td>)
+
+[//]: # (      <td>University of the West of England</td>)
+
+[//]: # (      <td>BA Hons Business Studies</td>)
+
+[//]: # (      <td>APAC Hunter Manager</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>8</th>)
+
+[//]: # (      <td>15219102</td>)
+
+[//]: # (      <td>Veneer Sales Manager at Mundy Veneer Limited</td>)
+
+[//]: # (      <td>Taunton, England, United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>179</td>)
+
+[//]: # (      <td>6</td>)
+
+[//]: # (      <td>51.015344</td>)
+
+[//]: # (      <td>-3.106849</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (      <td>Northumbria University</td>)
+
+[//]: # (      <td>Masters Degree MSc Hons Business with Management</td>)
+
+[//]: # (      <td>Project Coordinator</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>9</th>)
+
+[//]: # (      <td>15809688</td>)
+
+[//]: # (      <td>Senior Scientist  Computational Biology at Boe...</td>)
+
+[//]: # (      <td>Cambridge, Massachusetts, United States</td>)
+
+[//]: # (      <td>other</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>440</td>)
+
+[//]: # (      <td>4</td>)
+
+[//]: # (      <td>42.373616</td>)
+
+[//]: # (      <td>-71.109733</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>9.0</td>)
+
+[//]: # (      <td>University of North Carolina at Chapel Hill</td>)
+
+[//]: # (      <td>Doctor of Philosophy PhD Bioinformatics</td>)
+
+[//]: # (      <td>Computational Biology Scientist</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>10</th>)
+
+[//]: # (      <td>21059859</td>)
+
+[//]: # (      <td>ML  Genomics  Datadriven biology</td>)
+
+[//]: # (      <td>Cambridge, Massachusetts, United States</td>)
+
+[//]: # (      <td>Computer Software</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>45</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>42.373616</td>)
+
+[//]: # (      <td>-71.109733</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (      <td>16.0</td>)
+
+[//]: # (      <td>Technical University of Munich</td>)
+
+[//]: # (      <td>Doctor of Philosophy  PhD Computational Biology</td>)
+
+[//]: # (      <td>Computational Biologist</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>11</th>)
+
+[//]: # (      <td>22825932</td>)
+
+[//]: # (      <td>Assistant Manager Harveys</td>)
+
+[//]: # (      <td>St Osyth, Essex, United Kingdom</td>)
+
+[//]: # (      <td>Retail</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>218</td>)
+
+[//]: # (      <td>6</td>)
+
+[//]: # (      <td>51.799152</td>)
+
+[//]: # (      <td>1.075842</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>3.0</td>)
+
+[//]: # (      <td>Sallynoggin University Dublin Ireland</td>)
+
+[//]: # (      <td>Bachelors degree Leisure and fitness managemen...</td>)
+
+[//]: # (      <td>Online Sales Manager</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>12</th>)
+
+[//]: # (      <td>23378337</td>)
+
+[//]: # (      <td>Industrial IoT Solutions Consultant</td>)
+
+[//]: # (      <td>Denver, Colorado, United States</td>)
+
+[//]: # (      <td>Industrial Automation</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>4</td>)
+
+[//]: # (      <td>39.739236</td>)
+
+[//]: # (      <td>-104.990251</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (      <td>LeTourneau University</td>)
+
+[//]: # (      <td>Bachelor of Science BS Electrical and Computer...</td>)
+
+[//]: # (      <td>Lead Solutions Engineer</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>13</th>)
+
+[//]: # (      <td>24620931</td>)
+
+[//]: # (      <td>ExGeneral Manager at AHFFABB</td>)
+
+[//]: # (      <td>London, England, United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>93</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (      <td>51.507218</td>)
+
+[//]: # (      <td>-0.127586</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>Harrow College</td>)
+
+[//]: # (      <td>none</td>)
+
+[//]: # (      <td>Store Manager</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>14</th>)
+
+[//]: # (      <td>25021590</td>)
+
+[//]: # (      <td>Senior Director Therapeutic Area Expansion at ...</td>)
+
+[//]: # (      <td>Boston, Massachusetts, United States</td>)
+
+[//]: # (      <td>Biotechnology</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>15</td>)
+
+[//]: # (      <td>42.360082</td>)
+
+[//]: # (      <td>-71.058880</td>)
+
+[//]: # (      <td>5.0</td>)
+
+[//]: # (      <td>16.0</td>)
+
+[//]: # (      <td>Wharton Executive Education</td>)
+
+[//]: # (      <td>Certificate Executive Presence and Influence P...</td>)
+
+[//]: # (      <td>Director Head of External Research Collaborati...</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>15</th>)
+
+[//]: # (      <td>27382998</td>)
+
+[//]: # (      <td>Physician scientist working at interesection o...</td>)
+
+[//]: # (      <td>Greater Chicago Area</td>)
+
+[//]: # (      <td>Pharmaceuticals</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>12</td>)
+
+[//]: # (      <td>41.743507</td>)
+
+[//]: # (      <td>-88.011847</td>)
+
+[//]: # (      <td>6.0</td>)
+
+[//]: # (      <td>27.0</td>)
+
+[//]: # (      <td>Yale University School of Medicine</td>)
+
+[//]: # (      <td>MD Medicine</td>)
+
+[//]: # (      <td>Senior Vice President and Head of Strategy and...</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>16</th>)
+
+[//]: # (      <td>27540066</td>)
+
+[//]: # (      <td>Business manager at ScS  Sofa Carpet Specialist</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>Retail</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>395</td>)
+
+[//]: # (      <td>8</td>)
+
+[//]: # (      <td>55.378051</td>)
+
+[//]: # (      <td>-3.435973</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>University of Leeds</td>)
+
+[//]: # (      <td>Business Management Marketing and Related Supp...</td>)
+
+[//]: # (      <td>Branch Manager</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>17</th>)
+
+[//]: # (      <td>27673065</td>)
+
+[//]: # (      <td>Sr Bioinformatics Scientist NGS Technologies a...</td>)
+
+[//]: # (      <td>Greater Boston</td>)
+
+[//]: # (      <td>Research</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>4</td>)
+
+[//]: # (      <td>42.360071</td>)
+
+[//]: # (      <td>-71.058830</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (      <td>9.0</td>)
+
+[//]: # (      <td>Brandeis University</td>)
+
+[//]: # (      <td>Certificate Program Bioinformatics A</td>)
+
+[//]: # (      <td>NGS Production Bioinformatics Data Scientist O...</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>18</th>)
+
+[//]: # (      <td>28161267</td>)
+
+[//]: # (      <td>Retail Professional</td>)
+
+[//]: # (      <td>Greater Colchester Area</td>)
+
+[//]: # (      <td>Retail</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>4</td>)
+
+[//]: # (      <td>4</td>)
+
+[//]: # (      <td>51.895927</td>)
+
+[//]: # (      <td>0.891874</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>6.0</td>)
+
+[//]: # (      <td>Brays Grove comprehensive</td>)
+
+[//]: # (      <td>none</td>)
+
+[//]: # (      <td>Retail Assistant</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>19</th>)
+
+[//]: # (      <td>29195709</td>)
+
+[//]: # (      <td>Strategic Partnerships at Stripe</td>)
+
+[//]: # (      <td>New York, New York, United States</td>)
+
+[//]: # (      <td>Internet</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>11</td>)
+
+[//]: # (      <td>40.712775</td>)
+
+[//]: # (      <td>-74.005973</td>)
+
+[//]: # (      <td>5.0</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (      <td>University of San Francisco</td>)
+
+[//]: # (      <td>Master of Science MS Global Entrepreneurship a...</td>)
+
+[//]: # (      <td>Director Channel Partnerships</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (  </tbody>)
+
+[//]: # (</table>)
+
+[//]: # (</div>)
 
 
 
@@ -1409,7 +1999,8 @@ final_data = pd.DataFrame(final_data)
 # keep a list or ordered members_ids to use later for explanations:
 members_ids = final_data.iloc[:, -1].tolist()
 
-# drop members_id, as it's not used in modeling the data, and it will lead to misleading results:
+# drop members_id, as it's not used in modeling the data, and it will 
+# lead to misleading results:
 final_data = final_data.drop(final_data.columns[-1], axis=1)
 ```
 
@@ -1603,286 +2194,556 @@ overall_features["member_id"] = overall_features["member_id"].astype(int)
 merged_embeddings_clusters["member_id"] = merged_embeddings_clusters["member_id"].astype(int)
 overall_results = overall_features.merge(merged_embeddings_clusters,on='member_id')
 overall_results["cluster_scaled_string"] = overall_results["cluster_scaled"].astype(str)
-overall_results.head(10)
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+[//]: # (<div>)
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+[//]: # (<style scoped>)
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>member_id</th>
-      <th>title</th>
-      <th>location</th>
-      <th>industry</th>
-      <th>recommendations_count</th>
-      <th>country</th>
-      <th>connections_count</th>
-      <th>experience_count</th>
-      <th>latitude</th>
-      <th>longitude</th>
-      <th>number of degrees</th>
-      <th>years of educations</th>
-      <th>education_title</th>
-      <th>education_subtitle</th>
-      <th>experience_title</th>
-      <th>component 1</th>
-      <th>component 2</th>
-      <th>component 3</th>
-      <th>cluster_scaled</th>
-      <th>cluster_scaled_string</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>8192070</td>
-      <td>I Help Professionals Make Career  Business Bre...</td>
-      <td>Dallas, Texas, United States</td>
-      <td>Information Technology &amp; Services</td>
-      <td>26.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>16</td>
-      <td>32.776664</td>
-      <td>-96.796988</td>
-      <td>3.0</td>
-      <td>8.0</td>
-      <td>Harvard University</td>
-      <td>Bachelor of Arts BA Computer Science  Focus on...</td>
-      <td>SVP Customer Success</td>
-      <td>-0.309824</td>
-      <td>-0.357302</td>
-      <td>0.296566</td>
-      <td>2</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>9940377</td>
-      <td>Sr Research Engineer at BAMF Health</td>
-      <td>Grand Rapids, Michigan, United States</td>
-      <td>Medical Device</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>288</td>
-      <td>7</td>
-      <td>42.963360</td>
-      <td>-85.668086</td>
-      <td>7.0</td>
-      <td>15.0</td>
-      <td>Grand Valley State University</td>
-      <td>Master of Science Engineering  Biomedical Engi...</td>
-      <td>Image Processing Research Engineer</td>
-      <td>-0.611905</td>
-      <td>-0.678734</td>
-      <td>-0.044584</td>
-      <td>2</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>11076570</td>
-      <td>Head of New Business at Cube Online</td>
-      <td>Sydney, New South Wales, Australia</td>
-      <td>Events Services</td>
-      <td>0.0</td>
-      <td>Australia</td>
-      <td>65535</td>
-      <td>10</td>
-      <td>-33.868820</td>
-      <td>151.209295</td>
-      <td>2.0</td>
-      <td>5.0</td>
-      <td>University of the West of England</td>
-      <td>BA Hons Business Studies</td>
-      <td>APAC Hunter Manager</td>
-      <td>0.103592</td>
-      <td>0.197899</td>
-      <td>0.296579</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>15219102</td>
-      <td>Veneer Sales Manager at Mundy Veneer Limited</td>
-      <td>Taunton, England, United Kingdom</td>
-      <td>Furniture</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>179</td>
-      <td>6</td>
-      <td>51.015344</td>
-      <td>-3.106849</td>
-      <td>2.0</td>
-      <td>4.0</td>
-      <td>Northumbria University</td>
-      <td>Masters Degree MSc Hons Business with Management</td>
-      <td>Project Coordinator</td>
-      <td>0.664791</td>
-      <td>-0.113497</td>
-      <td>0.114943</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>21059859</td>
-      <td>ML  Genomics  Datadriven biology</td>
-      <td>Cambridge, Massachusetts, United States</td>
-      <td>Computer Software</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>45</td>
-      <td>1</td>
-      <td>42.373616</td>
-      <td>-71.109733</td>
-      <td>4.0</td>
-      <td>16.0</td>
-      <td>Technical University of Munich</td>
-      <td>Doctor of Philosophy  PhD Computational Biology</td>
-      <td>Computational Biologist</td>
-      <td>-0.656240</td>
-      <td>-0.552984</td>
-      <td>0.348519</td>
-      <td>2</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>22825932</td>
-      <td>Assistant Manager Harveys</td>
-      <td>St Osyth, Essex, United Kingdom</td>
-      <td>Retail</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>218</td>
-      <td>6</td>
-      <td>51.799152</td>
-      <td>1.075842</td>
-      <td>1.0</td>
-      <td>3.0</td>
-      <td>Sallynoggin University Dublin Ireland</td>
-      <td>Bachelors degree Leisure and fitness managemen...</td>
-      <td>Online Sales Manager</td>
-      <td>0.917894</td>
-      <td>0.006978</td>
-      <td>-0.070045</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>23378337</td>
-      <td>Industrial IoT Solutions Consultant</td>
-      <td>Denver, Colorado, United States</td>
-      <td>Industrial Automation</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>4</td>
-      <td>39.739236</td>
-      <td>-104.990251</td>
-      <td>1.0</td>
-      <td>4.0</td>
-      <td>LeTourneau University</td>
-      <td>Bachelor of Science BS Electrical and Computer...</td>
-      <td>Lead Solutions Engineer</td>
-      <td>-0.346251</td>
-      <td>-0.219408</td>
-      <td>0.388687</td>
-      <td>2</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>25021590</td>
-      <td>Senior Director Therapeutic Area Expansion at ...</td>
-      <td>Boston, Massachusetts, United States</td>
-      <td>Biotechnology</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>15</td>
-      <td>42.360082</td>
-      <td>-71.058880</td>
-      <td>5.0</td>
-      <td>16.0</td>
-      <td>Wharton Executive Education</td>
-      <td>Certificate Executive Presence and Influence P...</td>
-      <td>Director Head of External Research Collaborati...</td>
-      <td>-0.373945</td>
-      <td>-0.679826</td>
-      <td>-0.296576</td>
-      <td>2</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>27382998</td>
-      <td>Physician scientist working at interesection o...</td>
-      <td>Greater Chicago Area</td>
-      <td>Pharmaceuticals</td>
-      <td>0.0</td>
-      <td>United States</td>
-      <td>65535</td>
-      <td>12</td>
-      <td>41.743507</td>
-      <td>-88.011847</td>
-      <td>6.0</td>
-      <td>27.0</td>
-      <td>Yale University School of Medicine</td>
-      <td>MD Medicine</td>
-      <td>Senior Vice President and Head of Strategy and...</td>
-      <td>-0.420359</td>
-      <td>-0.750556</td>
-      <td>-0.308198</td>
-      <td>2</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>27540066</td>
-      <td>Business manager at ScS  Sofa Carpet Specialist</td>
-      <td>United Kingdom</td>
-      <td>Retail</td>
-      <td>0.0</td>
-      <td>United Kingdom</td>
-      <td>395</td>
-      <td>8</td>
-      <td>55.378051</td>
-      <td>-3.435973</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>University of Leeds</td>
-      <td>Business Management Marketing and Related Supp...</td>
-      <td>Branch Manager</td>
-      <td>0.857216</td>
-      <td>0.083808</td>
-      <td>-0.129520</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+[//]: # (    .dataframe tbody tr th:only-of-type {)
+
+[//]: # (        vertical-align: middle;)
+
+[//]: # (    })
+
+[//]: # ()
+[//]: # (    .dataframe tbody tr th {)
+
+[//]: # (        vertical-align: top;)
+
+[//]: # (    })
+
+[//]: # ()
+[//]: # (    .dataframe thead th {)
+
+[//]: # (        text-align: right;)
+
+[//]: # (    })
+
+[//]: # (</style>)
+
+[//]: # (<table border="1" class="dataframe">)
+
+[//]: # (  <thead>)
+
+[//]: # (    <tr style="text-align: right;">)
+
+[//]: # (      <th></th>)
+
+[//]: # (      <th>member_id</th>)
+
+[//]: # (      <th>title</th>)
+
+[//]: # (      <th>location</th>)
+
+[//]: # (      <th>industry</th>)
+
+[//]: # (      <th>recommendations_count</th>)
+
+[//]: # (      <th>country</th>)
+
+[//]: # (      <th>connections_count</th>)
+
+[//]: # (      <th>experience_count</th>)
+
+[//]: # (      <th>latitude</th>)
+
+[//]: # (      <th>longitude</th>)
+
+[//]: # (      <th>number of degrees</th>)
+
+[//]: # (      <th>years of educations</th>)
+
+[//]: # (      <th>education_title</th>)
+
+[//]: # (      <th>education_subtitle</th>)
+
+[//]: # (      <th>experience_title</th>)
+
+[//]: # (      <th>component 1</th>)
+
+[//]: # (      <th>component 2</th>)
+
+[//]: # (      <th>component 3</th>)
+
+[//]: # (      <th>cluster_scaled</th>)
+
+[//]: # (      <th>cluster_scaled_string</th>)
+
+[//]: # (    </tr>)
+
+[//]: # (  </thead>)
+
+[//]: # (  <tbody>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>0</th>)
+
+[//]: # (      <td>8192070</td>)
+
+[//]: # (      <td>I Help Professionals Make Career  Business Bre...</td>)
+
+[//]: # (      <td>Dallas, Texas, United States</td>)
+
+[//]: # (      <td>Information Technology &amp; Services</td>)
+
+[//]: # (      <td>26.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>16</td>)
+
+[//]: # (      <td>32.776664</td>)
+
+[//]: # (      <td>-96.796988</td>)
+
+[//]: # (      <td>3.0</td>)
+
+[//]: # (      <td>8.0</td>)
+
+[//]: # (      <td>Harvard University</td>)
+
+[//]: # (      <td>Bachelor of Arts BA Computer Science  Focus on...</td>)
+
+[//]: # (      <td>SVP Customer Success</td>)
+
+[//]: # (      <td>-0.309824</td>)
+
+[//]: # (      <td>-0.357302</td>)
+
+[//]: # (      <td>0.296566</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>1</th>)
+
+[//]: # (      <td>9940377</td>)
+
+[//]: # (      <td>Sr Research Engineer at BAMF Health</td>)
+
+[//]: # (      <td>Grand Rapids, Michigan, United States</td>)
+
+[//]: # (      <td>Medical Device</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>288</td>)
+
+[//]: # (      <td>7</td>)
+
+[//]: # (      <td>42.963360</td>)
+
+[//]: # (      <td>-85.668086</td>)
+
+[//]: # (      <td>7.0</td>)
+
+[//]: # (      <td>15.0</td>)
+
+[//]: # (      <td>Grand Valley State University</td>)
+
+[//]: # (      <td>Master of Science Engineering  Biomedical Engi...</td>)
+
+[//]: # (      <td>Image Processing Research Engineer</td>)
+
+[//]: # (      <td>-0.611905</td>)
+
+[//]: # (      <td>-0.678734</td>)
+
+[//]: # (      <td>-0.044584</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>2</th>)
+
+[//]: # (      <td>11076570</td>)
+
+[//]: # (      <td>Head of New Business at Cube Online</td>)
+
+[//]: # (      <td>Sydney, New South Wales, Australia</td>)
+
+[//]: # (      <td>Events Services</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>Australia</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>10</td>)
+
+[//]: # (      <td>-33.868820</td>)
+
+[//]: # (      <td>151.209295</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>5.0</td>)
+
+[//]: # (      <td>University of the West of England</td>)
+
+[//]: # (      <td>BA Hons Business Studies</td>)
+
+[//]: # (      <td>APAC Hunter Manager</td>)
+
+[//]: # (      <td>0.103592</td>)
+
+[//]: # (      <td>0.197899</td>)
+
+[//]: # (      <td>0.296579</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>3</th>)
+
+[//]: # (      <td>15219102</td>)
+
+[//]: # (      <td>Veneer Sales Manager at Mundy Veneer Limited</td>)
+
+[//]: # (      <td>Taunton, England, United Kingdom</td>)
+
+[//]: # (      <td>Furniture</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>179</td>)
+
+[//]: # (      <td>6</td>)
+
+[//]: # (      <td>51.015344</td>)
+
+[//]: # (      <td>-3.106849</td>)
+
+[//]: # (      <td>2.0</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (      <td>Northumbria University</td>)
+
+[//]: # (      <td>Masters Degree MSc Hons Business with Management</td>)
+
+[//]: # (      <td>Project Coordinator</td>)
+
+[//]: # (      <td>0.664791</td>)
+
+[//]: # (      <td>-0.113497</td>)
+
+[//]: # (      <td>0.114943</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>4</th>)
+
+[//]: # (      <td>21059859</td>)
+
+[//]: # (      <td>ML  Genomics  Datadriven biology</td>)
+
+[//]: # (      <td>Cambridge, Massachusetts, United States</td>)
+
+[//]: # (      <td>Computer Software</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>45</td>)
+
+[//]: # (      <td>1</td>)
+
+[//]: # (      <td>42.373616</td>)
+
+[//]: # (      <td>-71.109733</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (      <td>16.0</td>)
+
+[//]: # (      <td>Technical University of Munich</td>)
+
+[//]: # (      <td>Doctor of Philosophy  PhD Computational Biology</td>)
+
+[//]: # (      <td>Computational Biologist</td>)
+
+[//]: # (      <td>-0.656240</td>)
+
+[//]: # (      <td>-0.552984</td>)
+
+[//]: # (      <td>0.348519</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>5</th>)
+
+[//]: # (      <td>22825932</td>)
+
+[//]: # (      <td>Assistant Manager Harveys</td>)
+
+[//]: # (      <td>St Osyth, Essex, United Kingdom</td>)
+
+[//]: # (      <td>Retail</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>218</td>)
+
+[//]: # (      <td>6</td>)
+
+[//]: # (      <td>51.799152</td>)
+
+[//]: # (      <td>1.075842</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>3.0</td>)
+
+[//]: # (      <td>Sallynoggin University Dublin Ireland</td>)
+
+[//]: # (      <td>Bachelors degree Leisure and fitness managemen...</td>)
+
+[//]: # (      <td>Online Sales Manager</td>)
+
+[//]: # (      <td>0.917894</td>)
+
+[//]: # (      <td>0.006978</td>)
+
+[//]: # (      <td>-0.070045</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>6</th>)
+
+[//]: # (      <td>23378337</td>)
+
+[//]: # (      <td>Industrial IoT Solutions Consultant</td>)
+
+[//]: # (      <td>Denver, Colorado, United States</td>)
+
+[//]: # (      <td>Industrial Automation</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>4</td>)
+
+[//]: # (      <td>39.739236</td>)
+
+[//]: # (      <td>-104.990251</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>4.0</td>)
+
+[//]: # (      <td>LeTourneau University</td>)
+
+[//]: # (      <td>Bachelor of Science BS Electrical and Computer...</td>)
+
+[//]: # (      <td>Lead Solutions Engineer</td>)
+
+[//]: # (      <td>-0.346251</td>)
+
+[//]: # (      <td>-0.219408</td>)
+
+[//]: # (      <td>0.388687</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>7</th>)
+
+[//]: # (      <td>25021590</td>)
+
+[//]: # (      <td>Senior Director Therapeutic Area Expansion at ...</td>)
+
+[//]: # (      <td>Boston, Massachusetts, United States</td>)
+
+[//]: # (      <td>Biotechnology</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>15</td>)
+
+[//]: # (      <td>42.360082</td>)
+
+[//]: # (      <td>-71.058880</td>)
+
+[//]: # (      <td>5.0</td>)
+
+[//]: # (      <td>16.0</td>)
+
+[//]: # (      <td>Wharton Executive Education</td>)
+
+[//]: # (      <td>Certificate Executive Presence and Influence P...</td>)
+
+[//]: # (      <td>Director Head of External Research Collaborati...</td>)
+
+[//]: # (      <td>-0.373945</td>)
+
+[//]: # (      <td>-0.679826</td>)
+
+[//]: # (      <td>-0.296576</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>8</th>)
+
+[//]: # (      <td>27382998</td>)
+
+[//]: # (      <td>Physician scientist working at interesection o...</td>)
+
+[//]: # (      <td>Greater Chicago Area</td>)
+
+[//]: # (      <td>Pharmaceuticals</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United States</td>)
+
+[//]: # (      <td>65535</td>)
+
+[//]: # (      <td>12</td>)
+
+[//]: # (      <td>41.743507</td>)
+
+[//]: # (      <td>-88.011847</td>)
+
+[//]: # (      <td>6.0</td>)
+
+[//]: # (      <td>27.0</td>)
+
+[//]: # (      <td>Yale University School of Medicine</td>)
+
+[//]: # (      <td>MD Medicine</td>)
+
+[//]: # (      <td>Senior Vice President and Head of Strategy and...</td>)
+
+[//]: # (      <td>-0.420359</td>)
+
+[//]: # (      <td>-0.750556</td>)
+
+[//]: # (      <td>-0.308198</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (      <td>2</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (    <tr>)
+
+[//]: # (      <th>9</th>)
+
+[//]: # (      <td>27540066</td>)
+
+[//]: # (      <td>Business manager at ScS  Sofa Carpet Specialist</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>Retail</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>United Kingdom</td>)
+
+[//]: # (      <td>395</td>)
+
+[//]: # (      <td>8</td>)
+
+[//]: # (      <td>55.378051</td>)
+
+[//]: # (      <td>-3.435973</td>)
+
+[//]: # (      <td>1.0</td>)
+
+[//]: # (      <td>0.0</td>)
+
+[//]: # (      <td>University of Leeds</td>)
+
+[//]: # (      <td>Business Management Marketing and Related Supp...</td>)
+
+[//]: # (      <td>Branch Manager</td>)
+
+[//]: # (      <td>0.857216</td>)
+
+[//]: # (      <td>0.083808</td>)
+
+[//]: # (      <td>-0.129520</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (      <td>0</td>)
+
+[//]: # (    </tr>)
+
+[//]: # (  </tbody>)
+
+[//]: # (</table>)
+
+[//]: # (</div>)
 
 
 
