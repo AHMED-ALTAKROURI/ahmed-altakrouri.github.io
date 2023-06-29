@@ -2876,12 +2876,13 @@ overall_results.to_csv("Clean Data/overall_results.csv",index=False)
 ```
 
 ### Observations:
-
-
+{{< justify >}}
 - By squishing together the big, complex text features, K-means did a pretty solid job. With a Distortion Score of 152 and a Silhouette Score of 0.5201, we think it's a good place to start.
 - We can probably make the clusters even better if we pull in more info like recommendations, education, and job history.
 - The model seems to be pretty good at putting employees from the same industries together. Take a look at cluster 2 - it grouped retail and furniture folks together.
 - In terms of where people are from, the model's done a good job. It's been putting places from the same country together, like Israel and its districts and cities in cluster 0, and it did the same with US cities in cluster 1. This kind of data looks like it'd work well with hierarchy-based models like HDBSCAN.
--One thing to note is that the model likes to stick all the empty values or "none" or "other" categories together, mostly because they look alike when transformed into vectors. To steer clear of this, I decided to leave them out.
+- One thing to note is that the model likes to stick all the empty values or "none" or "other" categories together, mostly because they look alike when transformed into vectors. To steer clear of this, I decided to leave them out.
 - Just a heads-up that I used K-means here, which is pretty simple and can be thrown off by outliers. In the future, it could be worth making a fancier model that's tougher against outliers.
+ 
+ {{< /justify >}}
 

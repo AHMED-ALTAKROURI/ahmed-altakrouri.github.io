@@ -10,9 +10,7 @@ draft: false
 {{< justify >}}
 
 In my approach to catching credit card fraud, I see it as a problem of sorting into two groups. But since the data we have is heavily skewed, it's tough to draw a line that separates fraudulent and legit transactions. To deal with this, I follow a step-by-step plan. First, I look at how data variables tied to both fraudulent and legit transactions spread out to get a better understanding of the data. Then, I use a simple stats model, like logistic regression, to get a feel for how different variables affect fraud. After that, I upgrade the model to a more flexible one, using techniques to choose the best features and decrease the size of the majority class to boost the model's ability to predict fraud. I also demonstrate how boosting models, like Lightgbm, can help improve the model's performance. Plus, I use Shapley values to explain what the model predicts, giving useful insights for the business.
-
 At the end of it all, we have a chat about the findings and what they mean in practice.
-
 {{< /justify >}}
 
 Here is a breakdown of the steps included in this notebook:
@@ -636,6 +634,7 @@ plt.show()
 
 
 ### Observations:
+
 {{< justify >}}
 
 - Amount variable correlates highly compared to other variables with V20,V7,V6,V5,V4,V3,V2,V2.
@@ -647,6 +646,7 @@ plt.show()
 - Projecting data on 3D space with PCA shows that the data is not linearly separable and there is a pattern shared among or clusters in the data. for fraud class.
 - The data is still heavily imbalanced.
 - There are no missing values in the data.
+
 {{< /justify >}}
 
 
@@ -2016,6 +2016,9 @@ sns.scatterplot(overall_final,
 ![My Image Description](/fraud_detection/output_87_1.png)
 
 
+{{< justify >}}
+
+
 ### Observations
 - Features V18,V8,V16,TIME and V7 has the most impact on the probability of fraud.
 - The lower the value of V18 the lower the probability of fraud almost most fraud transactions predicted fraud influenced by lower value of V18.
@@ -2029,9 +2032,7 @@ sns.scatterplot(overall_final,
     - The higher value of V11 when its values is positive integer and greater or equal to 3 the higher the impact of the model in predicting fraud.
     - Time of the transaction almost has no effect in distinguishing fraud transactions from non-fraud transactions.
 
-# Conclusion, discussion  and Actionable Insights:
-
-
+### Conclusion, discussion  and Actionable Insights:
 - The goal is to detect fraud from a series of transactions, the problem is very challenging as the data is highly imbalanced, tho I have came up with actionable insight from the data after investigating it and building multiple models and comparing them, the first actionable insight is of course is related to how certain we are in detecting fraud from population of transactions, we now logist regression model is efficient in its probability calibration so it outputs well calibrated probability output for this reason I have chosen this model to decide weather a transaction is a fraud or not based on the probability output, unsurprisingly the probability threshold is 0.1, so if the probability of a transaction being a fraud is greater or equal to 0.1 then we will consider it as a fraud.
 - The second actionable insight is related to the features that are most important in detecting fraud, the lower the value of V18 the lower the probability of fraud almost most fraud transactions predicted fraud influenced by lower value of V18.
 - thirdly interstage transaction that has higher the value of V8 which lower the probability of fraud.
@@ -2040,4 +2041,4 @@ sns.scatterplot(overall_final,
 - The higher value of V11 when its values is positive integer and greater or equal to 3 the higher the impact of the model in predicting fraud.
 - Time of the transaction almost has no effect in distinguishing fraud transactions from non-fraud transactions.
 
-
+{{< /justify >}}

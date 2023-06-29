@@ -94,5 +94,5 @@ body {
 
 /* Adjust the width of the code blocks */
 pre, code {
-  max-width: 90%;  /* Change this to your preferred width */
+  max-width: 100%;  /* Change this to your preferred width */
 }
