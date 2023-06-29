@@ -17,3 +17,5 @@ and Bayesian Inference, and I have achieved substantial results in these areas, 
 projects and publications. I am deeply committed to using my skills and experience to continue driving positive change
 in the business world through the use of cutting-edge technology.
 {{< /justify >}}
+
+You can download my CV [here](/files/Ahmed_Altakrouri_Best_CV.pdf).
