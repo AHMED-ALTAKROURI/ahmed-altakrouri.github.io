@@ -8,7 +8,7 @@ layout: default
 
 
 {{< justify >}}
-<span style="font-size: 20px;">
+<span style="font-size: 18px;">
 As a seasoned data scientist with over 6 years of professional experience, I have a proven track record of leveraging
 the power of machine learning and AI to drive business success. My expertise ranges from natural language processing to
 complex forecasting models, and I am constantly seeking out new and innovative ways to solve difficult problems.
@@ -19,7 +19,7 @@ in the business world through the use of cutting-edge technology.
 </span>
 {{< /justify >}}
 
-<span style="font-size: 20px;">
+<span style="font-size: 18px;">
 Below are list of projects I have implemented from scratch during my career as Data Scientist:
 
 - Churn prediction for purchasers.
@@ -38,7 +38,7 @@ Below are list of projects I have implemented from scratch during my career as D
 - Large scale article classification model for Mowjaz.com
 - Large LDA modeling for Mawdoo3.com articles ~140K.
 - Emotion detection in Arabic text.
-- Sentiment analysis in Arabic text.
+- Sentiment detection in Arabic text.
 - Intent classification.
 
 You can download my CV [here](/files/Ahmed_Altakrouri_Best_CV.pdf).
