@@ -1408,7 +1408,7 @@ Length: 66, dtype: float64
 </span></span></code></pre></div><pre><code>[Text(0.5, 1.0, 'Estimated Probability of Fraud with Respect to Time')]
 </code></pre>
 <p><img src="/fraud_detection/output_87_1.png" alt="My Image Description"></p>
-<h3 id="observations-3">Observations</h3>
+<p class="justify-text"><h3 id="observations">Observations</h3>
 <ul>
 <li>Features V18,V8,V16,TIME and V7 has the most impact on the probability of fraud.</li>
 <li>The lower the value of V18 the lower the probability of fraud almost most fraud transactions predicted fraud influenced by lower value of V18.</li>
@@ -1425,7 +1425,7 @@ Length: 66, dtype: float64
 </ul>
 </li>
 </ul>
-<h1 id="conclusion-discussion--and-actionable-insights">Conclusion, discussion  and Actionable Insights:</h1>
+<h3 id="conclusion-discussion--and-actionable-insights">Conclusion, discussion  and Actionable Insights:</h3>
 <ul>
 <li>The goal is to detect fraud from a series of transactions, the problem is very challenging as the data is highly imbalanced, tho I have came up with actionable insight from the data after investigating it and building multiple models and comparing them, the first actionable insight is of course is related to how certain we are in detecting fraud from population of transactions, we now logist regression model is efficient in its probability calibration so it outputs well calibrated probability output for this reason I have chosen this model to decide weather a transaction is a fraud or not based on the probability output, unsurprisingly the probability threshold is 0.1, so if the probability of a transaction being a fraud is greater or equal to 0.1 then we will consider it as a fraud.</li>
 <li>The second actionable insight is related to the features that are most important in detecting fraud, the lower the value of V18 the lower the probability of fraud almost most fraud transactions predicted fraud influenced by lower value of V18.</li>
@@ -1435,6 +1435,8 @@ Length: 66, dtype: float64
 <li>The higher value of V11 when its values is positive integer and greater or equal to 3 the higher the impact of the model in predicting fraud.</li>
 <li>Time of the transaction almost has no effect in distinguishing fraud transactions from non-fraud transactions.</li>
 </ul>
+</p>
+
 </div>
     </article>
   </main>

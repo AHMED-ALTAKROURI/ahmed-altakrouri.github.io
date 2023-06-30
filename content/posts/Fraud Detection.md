@@ -16,14 +16,14 @@ At the end of it all, we have a chat about the findings and what they mean in pr
 Here is a breakdown of the steps included in this notebook:
 
 
-1. Exploration of Data.
-2. Statistical Analysis.
-3. Logistic Regression.
-4. Recursive Feature Elimination.
-5. Downsizing the Majority Class.
-6. Complex Model.
-7. Explainable AI.
-8. Final Remarks, Discussion, and Practical Insights.
+1. [Exploration of Data](#explorationofdata)
+2. [Statistical Analysis](#Statistical_Analysis)
+3. [Logistic Regression](#Logisitc_Regression)
+4. [Recursive Feature Elimination](#Recursive_Feature_Elimination)
+5. [Downsizing the Majority Class](#Downsizing_the_Majority_Class)
+6. [Complex Model](#Complex_Model)
+7. [Explainable AI](#Explainable_AI)
+8. [Final Remarks, Discussion, and Practical Insights](#Final_Remarks_Discussion_and_Practical_Insights)
 
 
 ```python
@@ -51,7 +51,7 @@ import warnings
 warnings.filterwarnings('ignore')
 ```
 
-##### Reusable Helper Functions:
+#### Reusable Helper Functions:
 
 
 ```python
@@ -120,7 +120,7 @@ def feature_importance_plot(importances, feature_labels, ax=None):
 
 ```
 
-####  Data Exploration:
+## Exploration of Data <a name="explorationofdata"></a>
 
 
 ```python
@@ -219,7 +219,7 @@ data["Amount"].plot(kind="hist",title="Amount Distribution Most of the transacti
     
 
 
-###### correlations:
+#### correlations:
 
 
 ```python
@@ -262,7 +262,7 @@ sns.heatmap(corr[(corr <= -0.1)], vmax=1.0, vmin=-1.0, linewidths=0.1, annot=Tru
 
 
 
-###### Correlation with target variable:
+#### Correlation with target variable:
 
 
 ```python
@@ -281,7 +281,7 @@ plt.show()
 ![My Image Description](/fraud_detection/output_14_0.png)
 
 
-###### let's see if scaling amount and time variables has any effect on the correlation:
+#### let's see if scaling amount and time variables has any effect on the correlation:
 
 
 
@@ -313,7 +313,7 @@ sns.heatmap(corr_df, cmap="YlGn", annot=True).set(title="Correlation with Class 
 ![My Image Description](/fraud_detection/output_16_1.png)
 
 
-###### Dimensionality Reduction and Visualization of the data variables with respect to the target variable:
+#### Dimensionality Reduction and Visualization of the data variables with respect to the target variable:
 
 
 ```python
@@ -347,7 +347,7 @@ ax.legend()
 ![My Image Description](/fraud_detection/output_18_1.png)
 
 
-###### Understand the data from numerical columns distributions and target variable distribution:
+#### Understand the data from numerical columns distributions and target variable distribution:
 
 
 ```python
@@ -528,7 +528,7 @@ data["ID"].is_unique
 
 
 
-###### Hard to detect outliers by inspecting the data, let's use IQR to detect outliers:
+#### Hard to detect outliers by inspecting the data, let's use IQR to detect outliers:
 
 
 ```python
@@ -581,7 +581,7 @@ outliers_removed = data.copy()
 outliers_removed = outliers_removed[~outliers_removed["ID"].isin(set(overall_outliers))]
 ```
 
-###### Check the class distribution after dropping outliers:
+#### Check the class distribution after dropping outliers:
 
 
 ```python
@@ -600,7 +600,7 @@ outliers_removed["Class"].value_counts().plot(kind="bar",title="Class Distributi
 ![My Image Description](/fraud_detection/output_27_1.png)
 
 
-###### Show correlation after dropping outliers:
+#### Show correlation after dropping outliers:
 
 
 ```python
@@ -617,7 +617,7 @@ plt.show()
 ![My Image Description](/fraud_detection/output_29_0.png)
 
 
-###### visualize the correlation again:
+#### visualize the correlation again:
 
 
 ```python
@@ -650,8 +650,7 @@ plt.show()
 {{< /justify >}}
 
 
-## Modeling:
-### Statistical Analysis:
+## Statistical Analysis <a name="Statistical_Analysis"></a>
 
 
 ```python
@@ -987,7 +986,7 @@ statistical_results_as_frame[statistical_results_as_frame["P>|z|"] <= 0.000].sty
 
 
 
-### Simple Logistic Regression "Establishing a Baseline":
+## Logistic Regression "Establishing a Baseline": <a name="Logisitc_Regression"></a>
 
 
 ```python
@@ -1066,8 +1065,10 @@ get_DiscriminationThreshold(logistic_regression_model, X, y)
 
 ![My Image Description](/fraud_detection/output_44_0.png)
 
-### Feature Selection:
-###### Let's try to improve the model by eliminating features and employing feature selection techniques:
+
+
+## Recursive Feature Elimination <a name="Recursive_Feature_Elimination"></a>
+#### Let's try to improve the model by eliminating features and employing feature selection techniques:
 
 
 ```python
@@ -1130,8 +1131,8 @@ get_ConfusionMatrix(logistic_regression_model, reduced_features_train, y_train, 
 ![My Image Description](/fraud_detection/output_48_0.png)
 
 
-### Under-Sampling the Majority Class "Non-Fraud":
-###### where we employ under sampling to balance the data and remove redundant data points in a highly imbalanced dataset:
+### Under-Sampling the Majority Class "Non-Fraud": <a name="Downsizing_the_Majority_Class"></a>
+#### where we employ under sampling to balance the data and remove redundant data points in a highly imbalanced dataset:
 
 
 ```python
@@ -1210,8 +1211,7 @@ get_ConfusionMatrix(logistic_regression_model, x_train_resampled, y_train_resamp
 - Under-sampling the majority class "Non-Fraud" to 0.4% of the data, increases the fraud detection from 87 to 102 but still we might risk losing information from the original distribution of the data we can not take such decision without further domain knowledge about the meaning of the variables introduced in the data.
 
 
-## Complex Model:
-###### Where we increase the complexity of the model by using ensemble methods:
+## Complex Model: <a name="Complex_Model"></a>
 
 
 ```python
@@ -1384,6 +1384,7 @@ n===t._wrapperState.initialValue&&(e.value=n)}});t.exports=l},function(t,e,n){"u
 }function f(t){for(var e=t.__reactAutoBindPairs,n=0;n<e.length;n+=2){var r=e[n],i=e[n+1];t[r]=l(t,i)}}var p=n(28),h=n(3),d=n(97),v=n(27),g=(n(175),n(98)),m=n(38),y=(n(0),n(1),"mixins"),_=[],b={mixins:"DEFINE_MANY",statics:"DEFINE_MANY",propTypes:"DEFINE_MANY",contextTypes:"DEFINE_MANY",childContextTypes:"DEFINE_MANY",getDefaultProps:"DEFINE_MANY_MERGED",getInitialState:"DEFINE_MANY_MERGED",getChildContext:"DEFINE_MANY_MERGED",render:"DEFINE_ONCE",componentWillMount:"DEFINE_MANY",componentDidMount:"DEFINE_MANY",componentWillReceiveProps:"DEFINE_MANY",shouldComponentUpdate:"DEFINE_ONCE",componentWillUpdate:"DEFINE_MANY",componentDidUpdate:"DEFINE_MANY",componentWillUnmount:"DEFINE_MANY",updateComponent:"OVERRIDE_BASE"},x={displayName:function(t,e){t.displayName=e},mixins:function(t,e){if(e)for(var n=0;n<e.length;n++)o(t,e[n])},childContextTypes:function(t,e){t.childContextTypes=h({},t.childContextTypes,e)},contextTypes:function(t,e){t.contextTypes=h({},t.contextTypes,e)},getDefaultProps:function(t,e){t.getDefaultProps?t.getDefaultProps=c(t.getDefaultProps,e):t.getDefaultProps=e},propTypes:function(t,e){t.propTypes=h({},t.propTypes,e)},statics:function(t,e){a(t,e)},autobind:function(){}},w={replaceState:function(t,e){this.updater.enqueueReplaceState(this,t),e&&this.updater.enqueueCallback(this,e,"replaceState")},isMounted:function(){return this.updater.isMounted(this)}},C=function(){};h(C.prototype,d.prototype,w);var M={createClass:function(t){var e=r(function(t,n,r){this.__reactAutoBindPairs.length&&f(this),this.props=t,this.context=n,this.refs=m,this.updater=r||g,this.state=null;var i=this.getInitialState?this.getInitialState():null;"object"!=typeof i||Array.isArray(i)?p("82",e.displayName||"ReactCompositeComponent"):void 0,this.state=i});e.prototype=new C,e.prototype.constructor=e,e.prototype.__reactAutoBindPairs=[],_.forEach(o.bind(null,e)),o(e,t),e.getDefaultProps&&(e.defaultProps=e.getDefaultProps()),e.prototype.render?void 0:p("83");for(var n in b)e.prototype[n]||(e.prototype[n]=null);return e},injection:{injectMixin:function(t){_.push(t)}}};t.exports=M},function(t,e,n){"use strict";var r=n(27),i=r.createFactory,o={a:i("a"),abbr:i("abbr"),address:i("address"),area:i("area"),article:i("article"),aside:i("aside"),audio:i("audio"),b:i("b"),base:i("base"),bdi:i("bdi"),bdo:i("bdo"),big:i("big"),blockquote:i("blockquote"),body:i("body"),br:i("br"),button:i("button"),canvas:i("canvas"),caption:i("caption"),cite:i("cite"),code:i("code"),col:i("col"),colgroup:i("colgroup"),data:i("data"),datalist:i("datalist"),dd:i("dd"),del:i("del"),details:i("details"),dfn:i("dfn"),dialog:i("dialog"),div:i("div"),dl:i("dl"),dt:i("dt"),em:i("em"),embed:i("embed"),fieldset:i("fieldset"),figcaption:i("figcaption"),figure:i("figure"),footer:i("footer"),form:i("form"),h1:i("h1"),h2:i("h2"),h3:i("h3"),h4:i("h4"),h5:i("h5"),h6:i("h6"),head:i("head"),header:i("header"),hgroup:i("hgroup"),hr:i("hr"),html:i("html"),i:i("i"),iframe:i("iframe"),img:i("img"),input:i("input"),ins:i("ins"),kbd:i("kbd"),keygen:i("keygen"),label:i("label"),legend:i("legend"),li:i("li"),link:i("link"),main:i("main"),map:i("map"),mark:i("mark"),menu:i("menu"),menuitem:i("menuitem"),meta:i("meta"),meter:i("meter"),nav:i("nav"),noscript:i("noscript"),object:i("object"),ol:i("ol"),optgroup:i("optgroup"),option:i("option"),output:i("output"),p:i("p"),param:i("param"),picture:i("picture"),pre:i("pre"),progress:i("progress"),q:i("q"),rp:i("rp"),rt:i("rt"),ruby:i("ruby"),s:i("s"),samp:i("samp"),script:i("script"),section:i("section"),select:i("select"),small:i("small"),source:i("source"),span:i("span"),strong:i("strong"),style:i("style"),sub:i("sub"),summary:i("summary"),sup:i("sup"),table:i("table"),tbody:i("tbody"),td:i("td"),textarea:i("textarea"),tfoot:i("tfoot"),th:i("th"),thead:i("thead"),time:i("time"),title:i("title"),tr:i("tr"),track:i("track"),u:i("u"),ul:i("ul"),var:i("var"),video:i("video"),wbr:i("wbr"),circle:i("circle"),clipPath:i("clipPath"),defs:i("defs"),ellipse:i("ellipse"),g:i("g"),image:i("image"),line:i("line"),linearGradient:i("linearGradient"),mask:i("mask"),path:i("path"),pattern:i("pattern"),polygon:i("polygon"),polyline:i("polyline"),radialGradient:i("radialGradient"),rect:i("rect"),stop:i("stop"),svg:i("svg"),text:i("text"),tspan:i("tspan")};t.exports=o},function(t,e,n){"use strict";function r(t,e){return t===e?0!==t||1/t===1/e:t!==t&&e!==e}function i(t){this.message=t,this.stack=""}function o(t){function e(e,n,r,o,a,u,c){o=o||E,u=u||r;if(null==n[r]){var s=w[a];return e?new i(null===n[r]?"The "+s+" `"+u+"` is marked as required "+("in `"+o+"`, but its value is `null`."):"The "+s+" `"+u+"` is marked as required in "+("`"+o+"`, but its value is `undefined`.")):null}return t(n,r,o,a,u)}var n=e.bind(null,!1);return n.isRequired=e.bind(null,!0),n}function a(t){function e(e,n,r,o,a,u){var c=e[n],s=y(c);if(s!==t){var l=w[o],f=_(c);return new i("Invalid "+l+" `"+a+"` of type "+("`"+f+"` supplied to `"+r+"`, expected ")+("`"+t+"`."))}return null}return o(e)}function u(){return o(M.thatReturns(null))}function c(t){function e(e,n,r,o,a){if("function"!=typeof t)return new i("Property `"+a+"` of component `"+r+"` has invalid PropType notation inside arrayOf.");var u=e[n];if(!Array.isArray(u)){var c=w[o],s=y(u);return new i("Invalid "+c+" `"+a+"` of type "+("`"+s+"` supplied to `"+r+"`, expected an array."))}for(var l=0;l<u.length;l++){var f=t(u,l,r,o,a+"["+l+"]",C);if(f instanceof Error)return f}return null}return o(e)}function s(){function t(t,e,n,r,o){var a=t[e];if(!x.isValidElement(a)){var u=w[r],c=y(a);return new i("Invalid "+u+" `"+o+"` of type "+("`"+c+"` supplied to `"+n+"`, expected a single ReactElement."))}return null}return o(t)}function l(t){function e(e,n,r,o,a){if(!(e[n]instanceof t)){var u=w[o],c=t.name||E,s=b(e[n]);return new i("Invalid "+u+" `"+a+"` of type "+("`"+s+"` supplied to `"+r+"`, expected ")+("instance of `"+c+"`."))}return null}return o(e)}function f(t){function e(e,n,o,a,u){for(var c=e[n],s=0;s<t.length;s++)if(r(c,t[s]))return null;var l=w[a],f=JSON.stringify(t);return new i("Invalid "+l+" `"+u+"` of value `"+c+"` "+("supplied to `"+o+"`, expected one of "+f+"."))}return Array.isArray(t)?o(e):M.thatReturnsNull}function p(t){function e(e,n,r,o,a){if("function"!=typeof t)return new i("Property `"+a+"` of component `"+r+"` has invalid PropType notation inside objectOf.");var u=e[n],c=y(u);if("object"!==c){var s=w[o];return new i("Invalid "+s+" `"+a+"` of type "+("`"+c+"` supplied to `"+r+"`, expected an object."))}for(var l in u)if(u.hasOwnProperty(l)){var f=t(u,l,r,o,a+"."+l,C);if(f instanceof Error)return f}return null}return o(e)}function h(t){function e(e,n,r,o,a){for(var u=0;u<t.length;u++){var c=t[u];if(null==c(e,n,r,o,a,C))return null}var s=w[o];return new i("Invalid "+s+" `"+a+"` supplied to "+("`"+r+"`."))}return Array.isArray(t)?o(e):M.thatReturnsNull}function d(){function t(t,e,n,r,o){if(!g(t[e])){var a=w[r];return new i("Invalid "+a+" `"+o+"` supplied to "+("`"+n+"`, expected a ReactNode."))}return null}return o(t)}function v(t){function e(e,n,r,o,a){var u=e[n],c=y(u);if("object"!==c){var s=w[o];return new i("Invalid "+s+" `"+a+"` of type `"+c+"` "+("supplied to `"+r+"`, expected `object`."))}for(var l in t){var f=t[l];if(f){var p=f(u,l,r,o,a+"."+l,C);if(p)return p}}return null}return o(e)}function g(t){switch(typeof t){case"number":case"string":case"undefined":return!0;case"boolean":return!t;case"object":if(Array.isArray(t))return t.every(g);if(null===t||x.isValidElement(t))return!0;var e=k(t);if(!e)return!1;var n,r=e.call(t);if(e!==t.entries){for(;!(n=r.next()).done;)if(!g(n.value))return!1}else for(;!(n=r.next()).done;){var i=n.value;if(i&&!g(i[1]))return!1}return!0;default:return!1}}function m(t,e){return"symbol"===t||("Symbol"===e["@@toStringTag"]||"function"==typeof Symbol&&e instanceof Symbol)}function y(t){var e=typeof t;return Array.isArray(t)?"array":t instanceof RegExp?"object":m(e,t)?"symbol":e}function _(t){var e=y(t);if("object"===e){if(t instanceof Date)return"date";if(t instanceof RegExp)return"regexp"}return e}function b(t){return t.constructor&&t.constructor.name?t.constructor.name:E}var x=n(27),w=n(175),C=n(405),M=n(8),k=n(177),E=(n(1),"<<anonymous>>"),T={array:a("array"),bool:a("boolean"),func:a("function"),number:a("number"),object:a("object"),string:a("string"),symbol:a("symbol"),any:u(),arrayOf:c,element:s(),instanceOf:l,node:d(),objectOf:p,oneOf:f,oneOfType:h,shape:v};i.prototype=Error.prototype,t.exports=T},function(t,e,n){"use strict";var r="SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED";t.exports=r},function(t,e,n){"use strict";function r(t,e,n){this.props=t,this.context=e,this.refs=c,this.updater=n||u}function i(){}var o=n(3),a=n(97),u=n(98),c=n(38);i.prototype=a.prototype,r.prototype=new i,r.prototype.constructor=r,o(r.prototype,a.prototype),r.prototype.isPureReactComponent=!0,t.exports=r},function(t,e,n){"use strict";t.exports="15.4.2"},function(t,e,n){"use strict";function r(t){return o.isValidElement(t)?void 0:i("143"),t}var i=n(28),o=n(27);n(0);t.exports=r},function(t,e,n){"use strict";function r(t,e){return t&&"object"==typeof t&&null!=t.key?s.escape(t.key):e.toString(36)}function i(t,e,n,o){var p=typeof t;if("undefined"!==p&&"boolean"!==p||(t=null),null===t||"string"===p||"number"===p||"object"===p&&t.$$typeof===u)return n(o,t,""===e?l+r(t,0):e),1;var h,d,v=0,g=""===e?l:e+f;if(Array.isArray(t))for(var m=0;m<t.length;m++)h=t[m],d=g+r(h,m),v+=i(h,d,n,o);else{var y=c(t);if(y){var _,b=y.call(t);if(y!==t.entries)for(var x=0;!(_=b.next()).done;)h=_.value,d=g+r(h,x++),v+=i(h,d,n,o);else for(;!(_=b.next()).done;){var w=_.value;w&&(h=w[1],d=g+s.escape(w[0])+f+r(h,0),v+=i(h,d,n,o))}}else if("object"===p){var C="",M=String(t);a("31","[object Object]"===M?"object with keys {"+Object.keys(t).join(", ")+"}":M,C)}}return v}function o(t,e,n){return null==t?0:i(t,"",e,n)}var a=n(28),u=(n(15),n(174)),c=n(177),s=(n(0),n(399)),l=(n(1),"."),f=":";t.exports=o},function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var i=n(41),o=r(i),a=n(182),u=r(a),c=n(183),s=r(c),l=n(181),f=r(l),p=n(180),h=r(p),d=n(179),v=r(d);(0,s.default)(),window.SHAP={SimpleListVisualizer:f.default,AdditiveForceVisualizer:h.default,AdditiveForceArrayVisualizer:v.default,React:o.default,ReactDom:u.default}}]);</script></pre></div>
 
 
+## Explainable AI: <a name="Explainable_AI"></a>
 
 ```python
 shap.summary_plot(shap_values, X_resampled, max_display=len(X.index),class_names=['Non-Fraud', 'Fraud'])
@@ -1405,7 +1406,7 @@ shap.summary_plot(shap_values[1],
 
 ![My Image Description](/fraud_detection/output_66_0.png)
 
-###### Interaction between most impactful features for Fraud transactions:
+#### Interaction between most impactful features for Fraud transactions:
 
 
 ```python
@@ -1443,7 +1444,7 @@ shap.dependence_plot("V24", shap_values[1], X_resampled)
 ![My Image Description](/fraud_detection/output_68_5.png)
 
 
-###### Local Explanations of randomly chosen frauds transactions:
+#### Local Explanations of randomly chosen frauds transactions:
 
 
 ```python
@@ -1809,7 +1810,7 @@ final_results.loc[choose_random_fraud]
 
 ### Insight from real values and Explainable AI values:
 
-###### Prepare the data first:
+#### Prepare the data first:
 
 
 ```python
@@ -2018,6 +2019,8 @@ sns.scatterplot(overall_final,
 
 {{< justify >}}
 
+
+## Final Remarks, Discussion, and Practical Insights: <a name="Final_Remarks_Discussion_and_Practical_Insights"></a>
 
 ### Observations
 - Features V18,V8,V16,TIME and V7 has the most impact on the probability of fraud.
