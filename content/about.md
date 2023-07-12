@@ -20,7 +20,7 @@ in the business world through the use of cutting-edge technology.
 {{< /justify >}}
 
 <span style="font-size: 18px;">
-Below are list of projects I have implemented from scratch during my career as Data Scientist:
+Below a list of projects I have implemented from scratch during my career as Data Scientist:
 
 - Churn prediction for purchasers.
 - Purchase prediction.
@@ -29,8 +29,8 @@ Below are list of projects I have implemented from scratch during my career as D
 - Churn prediction for customers of the economic zone.
 - Predictive maintenance and survival modeling for machines used in mining groups.
 - Uplift modeling for persuasion.
-- Incoming call prediction for call center.
-- Call center speech logs topics identification.
+- Incoming call prediction for a call center.
+- Call center speech logs topic identification.
 - Churn prediction for mobile subscription.
 - Identifying high potential sales areas.
 - Social media crawling of users’ complaints.
