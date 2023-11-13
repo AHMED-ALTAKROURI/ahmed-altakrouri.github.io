@@ -26,7 +26,6 @@ Here's a brief rundown of the algorithm:
 
 
 
-
 ```python
 from utils import *
 from modeling_utils import *

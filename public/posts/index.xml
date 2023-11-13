@@ -6,7 +6,17 @@
     <description>Recent content in Posts on AHMED AL-TAKROURI</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 22 Apr 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ahmed-altakrouri.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 11 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ahmed-altakrouri.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Forecasting Switzerland&#39;s Inflation Rate</title>
+      <link>https://ahmed-altakrouri.github.io/posts/forecasting-switzerlands-inflation-rate/</link>
+      <pubDate>Sat, 11 Nov 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://ahmed-altakrouri.github.io/posts/forecasting-switzerlands-inflation-rate/</guid>
+      <description>Data Source: https://www.worldbank.org/en/research/brief/inflation-database
+Notebook Content: Reading and Preprocessing Data. Explanatory Data Analysis. Statistical Analysis. ARIMA Model SARIMA Model. Backtesting. import statsmodels.api as sm from statsmodels.tsa.seasonal import seasonal_decompose from statsmodels.graphics.tsaplots import plot_acf, plot_pacf from statsmodels.tsa.stattools import adfuller import warnings import matplotlib.dates as mdates from pmdarima import auto_arima from statsmodels.tsa.arima.model import ARIMA from statsmodels.tsa.statespace.sarimax import SARIMAX from sklearn.metrics import mean_squared_error import numpy as np import pandas as pd import seaborn as sns import matplotlib.</description>
+    </item>
+    
     <item>
       <title>Clustering Linkedin Profiles</title>
       <link>https://ahmed-altakrouri.github.io/posts/clustering-linkedin-profiles/</link>
