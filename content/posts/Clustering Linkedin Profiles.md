@@ -1,6 +1,6 @@
 
 ---
-title: "Clustering Linkedin Profiles"
+title: "NLP/NLU Series: Clustering Linkedin Profiles"
 date: 2023-04-22
 draft: false
 ---

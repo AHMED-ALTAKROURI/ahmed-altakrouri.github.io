@@ -40,7 +40,7 @@
     </a>
     <div class="text">
       <a href="https://ahmed-altakrouri.github.io/"><h1>AHMED AL-TAKROURI</h1></a>
-      <h3>Data Science Blog</h3>
+      <h3>AI/ML Blog</h3>
     </div>
   </div>
   <nav>
@@ -78,8 +78,8 @@
     
     
   </strong>
-  <span> • 2633 words</span>
-  <span> • 13 minute read</span>
+  <span> • 2211 words</span>
+  <span> • 11 minute read</span>
   
   
 </div>
@@ -493,22 +493,21 @@ Length: 66, dtype: object
 </span></span><span style="display:flex;"><span>numerical_columns<span style="color:#666">.</span>remove(<span style="color:#4070a0">&#34;churn&#34;</span>)
 </span></span><span style="display:flex;"><span>numerical_columns<span style="color:#666">.</span>remove(<span style="color:#4070a0">&#34;churn_string&#34;</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Determine the number of rows needed for the subplots</span>
 </span></span><span style="display:flex;"><span>num_columns <span style="color:#666">=</span> <span style="color:#007020">len</span>(numerical_columns)
 </span></span><span style="display:flex;"><span>num_rows <span style="color:#666">=</span> (num_columns <span style="color:#666">+</span> <span style="color:#40a070">5</span>) <span style="color:#666">//</span> <span style="color:#40a070">6</span>  <span style="color:#60a0b0;font-style:italic"># 6 plots per row</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Create the subplot grid</span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>fig, axs <span style="color:#666">=</span> plt<span style="color:#666">.</span>subplots(num_rows, <span style="color:#40a070">6</span>, figsize<span style="color:#666">=</span>(<span style="color:#40a070">20</span>, <span style="color:#40a070">4</span><span style="color:#666">*</span>num_rows))  <span style="color:#60a0b0;font-style:italic"># Adjust figsize as needed</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Flatten the array of axes for easy iteration</span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>axs <span style="color:#666">=</span> axs<span style="color:#666">.</span>flatten()
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Plot each histogram</span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">for</span> i, column <span style="color:#007020;font-weight:bold">in</span> <span style="color:#007020">enumerate</span>(numerical_columns):
 </span></span><span style="display:flex;"><span>    data<span style="color:#666">.</span>pivot(columns<span style="color:#666">=</span><span style="color:#4070a0">&#39;churn_string&#39;</span>, values<span style="color:#666">=</span>column)<span style="color:#666">.</span>plot<span style="color:#666">.</span>hist(bins<span style="color:#666">=</span><span style="color:#40a070">40</span>, ax<span style="color:#666">=</span>axs[i], title<span style="color:#666">=</span>column)
 </span></span><span style="display:flex;"><span>    axs[i]<span style="color:#666">.</span>set_title(column)  <span style="color:#60a0b0;font-style:italic"># Set the title for each subplot</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Hide any unused subplots</span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">for</span> i <span style="color:#007020;font-weight:bold">in</span> <span style="color:#007020">range</span>(<span style="color:#007020">len</span>(numerical_columns), <span style="color:#007020">len</span>(axs)):
 </span></span><span style="display:flex;"><span>    axs[i]<span style="color:#666">.</span>set_visible(<span style="color:#007020;font-weight:bold">False</span>)
 </span></span><span style="display:flex;"><span>
@@ -1045,318 +1044,7 @@ weighted avg       0.81      0.56      0.60     16618
 </script>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>vals_df <span style="color:#666">=</span> pd<span style="color:#666">.</span>DataFrame(vals<span style="color:#666">.</span>values, columns<span style="color:#666">=</span>X_test<span style="color:#666">.</span>columns, index<span style="color:#666">=</span>X_test<span style="color:#666">.</span>index)
-</span></span><span style="display:flex;"><span>vals_df
-</span></span></code></pre></div><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-<pre><code>.dataframe tbody tr th {
-    vertical-align: top;
-}
-
-.dataframe thead th {
-    text-align: right;
-}
-</code></pre>
-<p></style></p>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>year</th>
-      <th>month</th>
-      <th>user_lifetime</th>
-      <th>user_intake</th>
-      <th>user_no_outgoing_activity_in_days</th>
-      <th>user_account_balance_last</th>
-      <th>user_spendings</th>
-      <th>user_has_outgoing_calls</th>
-      <th>user_has_outgoing_sms</th>
-      <th>user_use_gprs</th>
-      <th>...</th>
-      <th>last_100_reloads_sum</th>
-      <th>last_100_calls_outgoing_duration</th>
-      <th>last_100_calls_outgoing_to_onnet_duration</th>
-      <th>last_100_calls_outgoing_to_offnet_duration</th>
-      <th>last_100_calls_outgoing_to_abroad_duration</th>
-      <th>last_100_sms_outgoing_count</th>
-      <th>last_100_sms_outgoing_to_onnet_count</th>
-      <th>last_100_sms_outgoing_to_offnet_count</th>
-      <th>last_100_sms_outgoing_to_abroad_count</th>
-      <th>last_100_gprs_usage</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>7964</th>
-      <td>0.0</td>
-      <td>-0.018185</td>
-      <td>-0.322744</td>
-      <td>-0.021275</td>
-      <td>-0.087055</td>
-      <td>-0.091655</td>
-      <td>-0.527080</td>
-      <td>0.001898</td>
-      <td>0.000891</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.021859</td>
-      <td>-0.026060</td>
-      <td>-0.000078</td>
-      <td>-0.004671</td>
-      <td>0.000954</td>
-      <td>0.116469</td>
-      <td>0.014535</td>
-      <td>0.099936</td>
-      <td>-0.001501</td>
-      <td>-0.001064</td>
-    </tr>
-    <tr>
-      <th>17096</th>
-      <td>0.0</td>
-      <td>-0.029802</td>
-      <td>-0.363317</td>
-      <td>-0.018913</td>
-      <td>0.591749</td>
-      <td>-0.104244</td>
-      <td>-0.472721</td>
-      <td>0.000857</td>
-      <td>-0.013034</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>-0.057765</td>
-      <td>-0.209940</td>
-      <td>-0.000839</td>
-      <td>-0.024065</td>
-      <td>0.000889</td>
-      <td>-0.128824</td>
-      <td>-0.039794</td>
-      <td>-0.180094</td>
-      <td>-0.001346</td>
-      <td>0.029340</td>
-    </tr>
-    <tr>
-      <th>42891</th>
-      <td>0.0</td>
-      <td>-0.042019</td>
-      <td>-0.379174</td>
-      <td>-0.007842</td>
-      <td>0.185051</td>
-      <td>0.056165</td>
-      <td>0.458102</td>
-      <td>-0.000426</td>
-      <td>0.000849</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.016854</td>
-      <td>0.334461</td>
-      <td>-0.000049</td>
-      <td>0.058787</td>
-      <td>0.001469</td>
-      <td>0.043297</td>
-      <td>0.002862</td>
-      <td>0.044568</td>
-      <td>-0.001346</td>
-      <td>-0.000668</td>
-    </tr>
-    <tr>
-      <th>11104</th>
-      <td>0.0</td>
-      <td>-0.022164</td>
-      <td>-0.249745</td>
-      <td>-0.019925</td>
-      <td>-0.126036</td>
-      <td>-0.121047</td>
-      <td>0.593709</td>
-      <td>0.000454</td>
-      <td>0.000306</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.027978</td>
-      <td>0.041770</td>
-      <td>-0.000140</td>
-      <td>0.152986</td>
-      <td>-0.001281</td>
-      <td>0.065583</td>
-      <td>0.003115</td>
-      <td>0.083771</td>
-      <td>-0.004096</td>
-      <td>-0.000878</td>
-    </tr>
-    <tr>
-      <th>26622</th>
-      <td>0.0</td>
-      <td>-0.016163</td>
-      <td>-0.269373</td>
-      <td>-0.040835</td>
-      <td>-0.153664</td>
-      <td>0.060840</td>
-      <td>-0.565275</td>
-      <td>-0.000222</td>
-      <td>-0.021776</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>-0.083254</td>
-      <td>-0.316697</td>
-      <td>-0.000264</td>
-      <td>0.020052</td>
-      <td>0.001367</td>
-      <td>-0.113131</td>
-      <td>0.025581</td>
-      <td>-0.195970</td>
-      <td>0.044991</td>
-      <td>-0.001235</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>63871</th>
-      <td>0.0</td>
-      <td>0.120240</td>
-      <td>0.011200</td>
-      <td>-0.006299</td>
-      <td>0.106907</td>
-      <td>0.076810</td>
-      <td>0.822737</td>
-      <td>0.000676</td>
-      <td>0.001031</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.028185</td>
-      <td>0.669777</td>
-      <td>-0.000036</td>
-      <td>0.081977</td>
-      <td>0.001285</td>
-      <td>0.047387</td>
-      <td>0.004574</td>
-      <td>0.035136</td>
-      <td>-0.001823</td>
-      <td>-0.000812</td>
-    </tr>
-    <tr>
-      <th>6639</th>
-      <td>0.0</td>
-      <td>-0.017170</td>
-      <td>-0.434583</td>
-      <td>-0.042446</td>
-      <td>-0.109621</td>
-      <td>-0.213052</td>
-      <td>-0.698033</td>
-      <td>0.000493</td>
-      <td>-0.022429</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>-0.098633</td>
-      <td>-0.239283</td>
-      <td>-0.000189</td>
-      <td>-0.128699</td>
-      <td>0.009184</td>
-      <td>-0.185395</td>
-      <td>0.024804</td>
-      <td>-0.198384</td>
-      <td>0.030131</td>
-      <td>-0.001206</td>
-    </tr>
-    <tr>
-      <th>37634</th>
-      <td>0.0</td>
-      <td>-0.010846</td>
-      <td>0.066509</td>
-      <td>-0.031279</td>
-      <td>-0.155740</td>
-      <td>-0.041903</td>
-      <td>-0.589396</td>
-      <td>-0.000047</td>
-      <td>-0.017430</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>-0.079455</td>
-      <td>-0.343673</td>
-      <td>0.000419</td>
-      <td>-0.064056</td>
-      <td>0.005388</td>
-      <td>-0.052072</td>
-      <td>0.025733</td>
-      <td>0.139011</td>
-      <td>-0.005605</td>
-      <td>-0.000426</td>
-    </tr>
-    <tr>
-      <th>52106</th>
-      <td>0.0</td>
-      <td>-0.010975</td>
-      <td>0.270435</td>
-      <td>-0.033815</td>
-      <td>-0.213307</td>
-      <td>0.061521</td>
-      <td>-0.429782</td>
-      <td>0.000024</td>
-      <td>-0.017562</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>-0.072503</td>
-      <td>-0.355573</td>
-      <td>-0.000287</td>
-      <td>-0.042085</td>
-      <td>-0.000453</td>
-      <td>-0.067022</td>
-      <td>-0.136286</td>
-      <td>-0.077156</td>
-      <td>-0.009474</td>
-      <td>-0.001303</td>
-    </tr>
-    <tr>
-      <th>18511</th>
-      <td>0.0</td>
-      <td>-0.016563</td>
-      <td>-0.324003</td>
-      <td>-0.017004</td>
-      <td>0.266256</td>
-      <td>-0.192276</td>
-      <td>-0.583881</td>
-      <td>0.001707</td>
-      <td>0.000533</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>-0.020464</td>
-      <td>-0.373385</td>
-      <td>-0.000141</td>
-      <td>0.001592</td>
-      <td>0.001715</td>
-      <td>0.083979</td>
-      <td>0.010817</td>
-      <td>0.041071</td>
-      <td>-0.001299</td>
-      <td>-0.001787</td>
-    </tr>
-  </tbody>
-</table>
-<p>16618 rows × 64 columns</p>
-</div>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>shap_ex<span style="color:#666">.</span>expected_value
 </span></span></code></pre></div><pre><code>-1.5311589
 </code></pre>
@@ -1561,39 +1249,7 @@ Length: 64, dtype: float32
 </span></span><span style="display:flex;"><span>                                                   <span style="color:#4070a0">&#39;user_intake&#39;</span>: <span style="color:#666">-</span><span style="color:#40a070">1</span>,
 </span></span><span style="display:flex;"><span>                                                   <span style="color:#4070a0">&#34;user_spendings&#34;</span>: <span style="color:#666">-</span><span style="color:#40a070">1</span>})
 </span></span><span style="display:flex;"><span>xg_const<span style="color:#666">.</span>fit(Xs, Ys,verbose<span style="color:#666">=</span><span style="color:#40a070">100</span>)
-</span></span></code></pre></div><style>#sk-container-id-1 {color: black;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>XGBClassifier(base_score=None, booster=None, callbacks=None,
-<pre><code>          colsample_bylevel=None, colsample_bynode=None,
-          colsample_bytree=0.647742541625645, device=None,
-          early_stopping_rounds=None, enable_categorical=False,
-          eval_metric=&amp;#x27;aucpr&amp;#x27;, feature_types=None,
-          gamma=0.0010860710789745316, grow_policy=None,
-          importance_type=None, interaction_constraints=None,
-          learning_rate=...
-          max_delta_step=4.116066988118725, max_depth=7, max_leaves=None,
-          min_child_weight=0.4180116655186252, missing=nan,
-          monotone_constraints={&amp;#x27;calls_outgoing_inactive_days&amp;#x27;: -1,
-                                &amp;#x27;calls_outgoing_to_abroad_inactive_days&amp;#x27;: 1,
-                                &amp;#x27;last_100_calls_outgoing_duration&amp;#x27;: -1,
-                                &amp;#x27;user_intake&amp;#x27;: -1, &amp;#x27;user_spendings&amp;#x27;: -1},
-          multi_strategy=None, n_estimators=None, n_jobs=None,
-          num_parallel_tree=None, random_state=42, ...)&lt;/pre&gt;&lt;b&gt;In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. &lt;br /&gt;On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;sk-container&quot; hidden&gt;&lt;div class=&quot;sk-item&quot;&gt;&lt;div class=&quot;sk-estimator sk-toggleable&quot;&gt;&lt;input class=&quot;sk-toggleable__control sk-hidden--visually&quot; id=&quot;sk-estimator-id-1&quot; type=&quot;checkbox&quot; checked&gt;&lt;label for=&quot;sk-estimator-id-1&quot; class=&quot;sk-toggleable__label sk-toggleable__label-arrow&quot;&gt;XGBClassifier&lt;/label&gt;&lt;div class=&quot;sk-toggleable__content&quot;&gt;&lt;pre&gt;XGBClassifier(base_score=None, booster=None, callbacks=None,
-          colsample_bylevel=None, colsample_bynode=None,
-          colsample_bytree=0.647742541625645, device=None,
-          early_stopping_rounds=None, enable_categorical=False,
-          eval_metric=&amp;#x27;aucpr&amp;#x27;, feature_types=None,
-          gamma=0.0010860710789745316, grow_policy=None,
-          importance_type=None, interaction_constraints=None,
-          learning_rate=...
-          max_delta_step=4.116066988118725, max_depth=7, max_leaves=None,
-          min_child_weight=0.4180116655186252, missing=nan,
-          monotone_constraints={&amp;#x27;calls_outgoing_inactive_days&amp;#x27;: -1,
-                                &amp;#x27;calls_outgoing_to_abroad_inactive_days&amp;#x27;: 1,
-                                &amp;#x27;last_100_calls_outgoing_duration&amp;#x27;: -1,
-                                &amp;#x27;user_intake&amp;#x27;: -1, &amp;#x27;user_spendings&amp;#x27;: -1},
-          multi_strategy=None, n_estimators=None, n_jobs=None,
-          num_parallel_tree=None, random_state=42, ...)&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-</code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">mlflow</span>
 </span></span><span style="display:flex;"><span>model_info <span style="color:#666">=</span> mlflow<span style="color:#666">.</span>xgboost<span style="color:#666">.</span>log_model(xg_const, artifact_path<span style="color:#666">=</span><span style="color:#4070a0">&#39;artifact&#39;</span>)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
