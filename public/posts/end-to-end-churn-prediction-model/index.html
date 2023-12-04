@@ -11,7 +11,7 @@
   />
   
     
-      <title>Large Scale End-to-End Churn Modeling | AHMED AL-TAKROURI</title>
+      <title>Churn Forecasting Series: Large Scale End-to-End Churn Modeling | AHMED AL-TAKROURI</title>
     
   
   <link rel="stylesheet" href="/css/reset.css"/>
@@ -70,7 +70,7 @@
       
   <main>
     <article>
-      <h1>Large Scale End-to-End Churn Modeling</h1>
+      <h1>Churn Forecasting Series: Large Scale End-to-End Churn Modeling</h1>
       <div class="post-meta">
   <strong>
     <span>Posted on</span>
@@ -78,8 +78,8 @@
     
     
   </strong>
-  <span> • 3060 words</span>
-  <span> • 15 minute read</span>
+  <span> • 2633 words</span>
+  <span> • 13 minute read</span>
   
   
 </div>
@@ -97,7 +97,7 @@
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>data, meta <span style="color:#666">=</span> arff<span style="color:#666">.</span>loadarff(<span style="color:#4070a0">&#39;large_churn_data&#39;</span>)
 </span></span><span style="display:flex;"><span>data <span style="color:#666">=</span> pd<span style="color:#666">.</span>DataFrame(data)
-</span></span><span style="display:flex;"><span>data
+</span></span><span style="display:flex;"><span>data<span style="color:#666">.</span>iloc[:, :<span style="color:#40a070">8</span>]
 </span></span></code></pre></div><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -124,19 +124,6 @@
       <th>user_no_outgoing_activity_in_days</th>
       <th>user_account_balance_last</th>
       <th>user_spendings</th>
-      <th>user_has_outgoing_calls</th>
-      <th>user_has_outgoing_sms</th>
-      <th>...</th>
-      <th>last_100_calls_outgoing_duration</th>
-      <th>last_100_calls_outgoing_to_onnet_duration</th>
-      <th>last_100_calls_outgoing_to_offnet_duration</th>
-      <th>last_100_calls_outgoing_to_abroad_duration</th>
-      <th>last_100_sms_outgoing_count</th>
-      <th>last_100_sms_outgoing_to_onnet_count</th>
-      <th>last_100_sms_outgoing_to_offnet_count</th>
-      <th>last_100_sms_outgoing_to_abroad_count</th>
-      <th>last_100_gprs_usage</th>
-      <th>churn</th>
     </tr>
   </thead>
   <tbody>
@@ -150,19 +137,6 @@
       <td>1.0</td>
       <td>0.05</td>
       <td>0.00</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>...</td>
-      <td>75.27</td>
-      <td>0.00</td>
-      <td>63.43</td>
-      <td>0.00</td>
-      <td>210.0</td>
-      <td>1.0</td>
-      <td>84.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
     </tr>
     <tr>
       <th>1</th>
@@ -174,19 +148,6 @@
       <td>25.0</td>
       <td>28.31</td>
       <td>3.45</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>13.38</td>
-      <td>11.18</td>
-      <td>2.00</td>
-      <td>11.18</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
     </tr>
     <tr>
       <th>2</th>
@@ -198,19 +159,6 @@
       <td>8.0</td>
       <td>15.62</td>
       <td>1.97</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>30.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>10.45</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
     </tr>
     <tr>
       <th>3</th>
@@ -222,19 +170,6 @@
       <td>11.0</td>
       <td>5.62</td>
       <td>0.00</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
     </tr>
     <tr>
       <th>4</th>
@@ -246,35 +181,9 @@
       <td>2.0</td>
       <td>5.86</td>
       <td>0.15</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>2.58</td>
-      <td>0.00</td>
-      <td>1.00</td>
-      <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
     </tr>
     <tr>
       <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
       <td>...</td>
       <td>...</td>
       <td>...</td>
@@ -294,19 +203,6 @@
       <td>1.0</td>
       <td>0.00</td>
       <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
     </tr>
     <tr>
       <th>66465</th>
@@ -318,19 +214,6 @@
       <td>1.0</td>
       <td>0.00</td>
       <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
     </tr>
     <tr>
       <th>66466</th>
@@ -342,19 +225,6 @@
       <td>1.0</td>
       <td>15.00</td>
       <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
     </tr>
     <tr>
       <th>66467</th>
@@ -366,19 +236,6 @@
       <td>1.0</td>
       <td>0.00</td>
       <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
     </tr>
     <tr>
       <th>66468</th>
@@ -390,23 +247,10 @@
       <td>1.0</td>
       <td>15.00</td>
       <td>0.00</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>1.13</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
     </tr>
   </tbody>
 </table>
-<p>66469 rows × 66 columns</p>
+<p>66469 rows × 8 columns</p>
 </div>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>data[<span style="color:#4070a0">&#34;churn&#34;</span>]<span style="color:#666">.</span>value_counts()
@@ -495,246 +339,6 @@ Data columns (total 66 columns):
 dtypes: float64(66)
 memory usage: 33.5 MB
 </code></pre>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>data<span style="color:#666">.</span>describe()
-</span></span></code></pre></div><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-<pre><code>.dataframe tbody tr th {
-    vertical-align: top;
-}
-
-.dataframe thead th {
-    text-align: right;
-}
-</code></pre>
-<p></style></p>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>year</th>
-      <th>month</th>
-      <th>user_account_id</th>
-      <th>user_lifetime</th>
-      <th>user_intake</th>
-      <th>user_no_outgoing_activity_in_days</th>
-      <th>user_account_balance_last</th>
-      <th>user_spendings</th>
-      <th>user_has_outgoing_calls</th>
-      <th>user_has_outgoing_sms</th>
-      <th>...</th>
-      <th>last_100_calls_outgoing_duration</th>
-      <th>last_100_calls_outgoing_to_onnet_duration</th>
-      <th>last_100_calls_outgoing_to_offnet_duration</th>
-      <th>last_100_calls_outgoing_to_abroad_duration</th>
-      <th>last_100_sms_outgoing_count</th>
-      <th>last_100_sms_outgoing_to_onnet_count</th>
-      <th>last_100_sms_outgoing_to_offnet_count</th>
-      <th>last_100_sms_outgoing_to_abroad_count</th>
-      <th>last_100_gprs_usage</th>
-      <th>churn</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>count</th>
-      <td>66469.0</td>
-      <td>66469.000000</td>
-      <td>6.646900e+04</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>...</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-      <td>66469.000000</td>
-    </tr>
-    <tr>
-      <th>mean</th>
-      <td>2013.0</td>
-      <td>6.256721</td>
-      <td>5.948572e+05</td>
-      <td>4006.037867</td>
-      <td>0.040365</td>
-      <td>63.975718</td>
-      <td>9.645420</td>
-      <td>6.845812</td>
-      <td>0.804450</td>
-      <td>0.603229</td>
-      <td>...</td>
-      <td>98.757451</td>
-      <td>1.023373</td>
-      <td>66.910263</td>
-      <td>3.037600</td>
-      <td>101.418105</td>
-      <td>7.318630</td>
-      <td>62.272684</td>
-      <td>3.062616</td>
-      <td>5.931800</td>
-      <td>0.209225</td>
-    </tr>
-    <tr>
-      <th>std</th>
-      <td>0.0</td>
-      <td>0.662637</td>
-      <td>4.292423e+05</td>
-      <td>6058.350935</td>
-      <td>0.196815</td>
-      <td>264.006882</td>
-      <td>18.473371</td>
-      <td>14.512993</td>
-      <td>0.396626</td>
-      <td>0.489232</td>
-      <td>...</td>
-      <td>193.659214</td>
-      <td>7.409313</td>
-      <td>149.067804</td>
-      <td>19.771915</td>
-      <td>263.280424</td>
-      <td>35.573779</td>
-      <td>185.571343</td>
-      <td>25.071290</td>
-      <td>76.366818</td>
-      <td>0.406759</td>
-    </tr>
-    <tr>
-      <th>min</th>
-      <td>2013.0</td>
-      <td>6.000000</td>
-      <td>1.300000e+01</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>-30.060000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>...</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>25%</th>
-      <td>2013.0</td>
-      <td>6.000000</td>
-      <td>2.501070e+05</td>
-      <td>457.000000</td>
-      <td>0.000000</td>
-      <td>1.000000</td>
-      <td>0.040000</td>
-      <td>0.000000</td>
-      <td>1.000000</td>
-      <td>0.000000</td>
-      <td>...</td>
-      <td>1.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>50%</th>
-      <td>2013.0</td>
-      <td>6.000000</td>
-      <td>4.135120e+05</td>
-      <td>1216.000000</td>
-      <td>0.000000</td>
-      <td>2.000000</td>
-      <td>5.270000</td>
-      <td>2.280000</td>
-      <td>1.000000</td>
-      <td>1.000000</td>
-      <td>...</td>
-      <td>30.880000</td>
-      <td>0.000000</td>
-      <td>15.480000</td>
-      <td>0.000000</td>
-      <td>14.000000</td>
-      <td>0.000000</td>
-      <td>5.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>75%</th>
-      <td>2013.0</td>
-      <td>6.000000</td>
-      <td>1.041120e+06</td>
-      <td>1985.000000</td>
-      <td>0.000000</td>
-      <td>8.000000</td>
-      <td>12.920000</td>
-      <td>8.110000</td>
-      <td>1.000000</td>
-      <td>1.000000</td>
-      <td>...</td>
-      <td>111.650000</td>
-      <td>0.000000</td>
-      <td>69.980000</td>
-      <td>0.000000</td>
-      <td>96.000000</td>
-      <td>1.000000</td>
-      <td>51.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>max</th>
-      <td>2013.0</td>
-      <td>8.000000</td>
-      <td>1.196944e+06</td>
-      <td>15947.000000</td>
-      <td>1.000000</td>
-      <td>1307.000000</td>
-      <td>1775.710000</td>
-      <td>1236.470000</td>
-      <td>1.000000</td>
-      <td>1.000000</td>
-      <td>...</td>
-      <td>4953.120000</td>
-      <td>473.250000</td>
-      <td>4772.370000</td>
-      <td>1149.120000</td>
-      <td>18637.000000</td>
-      <td>2829.000000</td>
-      <td>13860.000000</td>
-      <td>4692.000000</td>
-      <td>5571.220000</td>
-      <td>1.000000</td>
-    </tr>
-  </tbody>
-</table>
-<p>8 rows × 66 columns</p>
-</div>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>data<span style="color:#666">.</span>isnull()<span style="color:#666">.</span>sum()
 </span></span></code></pre></div><pre><code>year                                     0
@@ -837,7 +441,7 @@ Length: 66, dtype: object
 </span></span><span style="display:flex;"><span>    plt<span style="color:#666">.</span>tight_layout()
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_14_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_13_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>zeros_count <span style="color:#666">=</span> {col: (data[col] <span style="color:#666">==</span> <span style="color:#40a070">0</span>)<span style="color:#666">.</span>sum() <span style="color:#007020;font-weight:bold">for</span> col <span style="color:#007020;font-weight:bold">in</span> data<span style="color:#666">.</span>select_dtypes(include<span style="color:#666">=</span>[<span style="color:#4070a0">&#39;float64&#39;</span>])}
 </span></span><span style="display:flex;"><span>zeros_df <span style="color:#666">=</span> pd<span style="color:#666">.</span>DataFrame(<span style="color:#007020">list</span>(zeros_count<span style="color:#666">.</span>items()), columns<span style="color:#666">=</span>[<span style="color:#4070a0">&#39;Column&#39;</span>, <span style="color:#4070a0">&#39;Number of Zeros&#39;</span>])
@@ -846,7 +450,7 @@ Length: 66, dtype: object
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>barplot(y<span style="color:#666">=</span><span style="color:#4070a0">&#39;Column&#39;</span>, x<span style="color:#666">=</span><span style="color:#4070a0">&#39;Number of Zeros&#39;</span>, data<span style="color:#666">=</span>zeros_df)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#39;Zeros Count&#39;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_15_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_14_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>counts <span style="color:#666">=</span> []
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">for</span> col <span style="color:#007020;font-weight:bold">in</span> data<span style="color:#666">.</span>select_dtypes(include<span style="color:#666">=</span>[<span style="color:#4070a0">&#39;float64&#39;</span>]):
@@ -858,13 +462,13 @@ Length: 66, dtype: object
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>barplot(y<span style="color:#666">=</span><span style="color:#4070a0">&#39;Column&#39;</span>, x<span style="color:#666">=</span><span style="color:#4070a0">&#39;Count&#39;</span>, hue<span style="color:#666">=</span><span style="color:#4070a0">&#39;Type&#39;</span>, data<span style="color:#666">=</span>count_df)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#39;Zeros and Non-Zeros Columns&#39;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_16_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_15_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>churn_counts <span style="color:#666">=</span> data[<span style="color:#4070a0">&#39;churn&#39;</span>]<span style="color:#666">.</span>value_counts()
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>pie(churn_counts, labels<span style="color:#666">=</span>churn_counts<span style="color:#666">.</span>index, autopct<span style="color:#666">=</span><span style="color:#4070a0">&#39;</span><span style="color:#70a0d0">%1.1f%%</span><span style="color:#4070a0">&#39;</span>, startangle<span style="color:#666">=</span><span style="color:#40a070">140</span>, colors<span style="color:#666">=</span>[<span style="color:#4070a0">&#39;skyblue&#39;</span>, <span style="color:#4070a0">&#39;salmon&#39;</span>])
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#39;Churn Distribution&#39;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_17_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_16_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>corr <span style="color:#666">=</span> data<span style="color:#666">.</span>drop(<span style="color:#4070a0">&#34;churn_string&#34;</span>,axis<span style="color:#666">=</span><span style="color:#40a070">1</span>)<span style="color:#666">.</span>corr()
 </span></span><span style="display:flex;"><span>
@@ -873,7 +477,7 @@ Length: 66, dtype: object
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(corr, annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>,fmt<span style="color:#666">=</span><span style="color:#4070a0">&#39;.2f&#39;</span>,cmap<span style="color:#666">=</span><span style="color:#4070a0">&#34;rocket&#34;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#39;Correlation Heatmap&#39;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_18_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_17_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>spearman_corr <span style="color:#666">=</span> data<span style="color:#666">.</span>drop(<span style="color:#4070a0">&#34;churn_string&#34;</span>,axis<span style="color:#666">=</span><span style="color:#40a070">1</span>)<span style="color:#666">.</span>corr(method<span style="color:#666">=</span><span style="color:#4070a0">&#39;spearman&#39;</span>)
 </span></span><span style="display:flex;"><span>
@@ -881,7 +485,7 @@ Length: 66, dtype: object
 </span></span><span style="display:flex;"><span>sns<span style="color:#666">.</span>heatmap(spearman_corr, annot<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">False</span>,cmap<span style="color:#666">=</span><span style="color:#4070a0">&#34;rocket&#34;</span>,fmt<span style="color:#666">=</span><span style="color:#4070a0">&#39;.2f&#39;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>title(<span style="color:#4070a0">&#39;Pearson Correlation Heatmap&#39;</span>)
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_19_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_18_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>data[<span style="color:#4070a0">&#34;churn_string&#34;</span>] <span style="color:#666">=</span> data[<span style="color:#4070a0">&#34;churn&#34;</span>]<span style="color:#666">.</span>map({<span style="color:#40a070">0</span>: <span style="color:#4070a0">&#34;active&#34;</span>, <span style="color:#40a070">1</span>: <span style="color:#4070a0">&#34;churn&#34;</span>})
 </span></span><span style="display:flex;"><span>
@@ -912,7 +516,7 @@ Length: 66, dtype: object
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>data<span style="color:#666">.</span>drop(<span style="color:#4070a0">&#34;churn_string&#34;</span>, axis<span style="color:#666">=</span><span style="color:#40a070">1</span>, inplace<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_20_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_19_0.png" alt="png"></p>
 <h3 id="modeling">Modeling:</h3>
 <h5 id="split-the-data">Split the data:</h5>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
@@ -981,7 +585,7 @@ Name: count, dtype: int64
 [20]	validation_0-logloss:0.26279	validation_1-logloss:0.29272
 [30]	validation_0-logloss:0.25650	validation_1-logloss:0.29388
 [40]	validation_0-logloss:0.24975	validation_1-logloss:0.29504
-[41]	validation_0-logloss:0.24946	validation_1-logloss:0.29514
+[42]	validation_0-logloss:0.24930	validation_1-logloss:0.29527
 
 
 
@@ -1008,7 +612,7 @@ Name: count, dtype: int64
 </span></span><span style="display:flex;"><span>ax<span style="color:#666">.</span>set_xlabel(<span style="color:#4070a0">&#39;ntrees&#39;</span>)
 </span></span></code></pre></div><pre><code>Text(0.5, 0, 'ntrees')
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_33_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_32_1.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn.model_selection</span> <span style="color:#007020;font-weight:bold">import</span> StratifiedKFold
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">yellowbrick.model_selection</span> <span style="color:#007020;font-weight:bold">import</span> LearningCurve
@@ -1022,7 +626,7 @@ Name: count, dtype: int64
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>fit(X_train, y_train)         
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>show()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_34_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_33_0.png" alt="png"></p>
 <pre><code>&lt;Axes: title={'center': 'Learning Curve for XGBClassifier'}, xlabel='Training Instances', ylabel='Score'&gt;
 </code></pre>
 <h3 id="evaluation">Evaluation</h3>
@@ -1037,9 +641,9 @@ Name: count, dtype: int64
 </span></span><span style="display:flex;"><span>disp <span style="color:#666">=</span> metrics<span style="color:#666">.</span>ConfusionMatrixDisplay(confusion_matrix<span style="color:#666">=</span>cm,
 </span></span><span style="display:flex;"><span>                                      display_labels<span style="color:#666">=</span>[<span style="color:#4070a0">&#39;Active&#39;</span>, <span style="color:#4070a0">&#39;Churn&#39;</span>])
 </span></span><span style="display:flex;"><span>disp<span style="color:#666">.</span>plot(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;Blues&#39;</span>)
-</span></span></code></pre></div><pre><code>&lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay at 0x3307e5110&gt;
+</span></span></code></pre></div><pre><code>&lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay at 0x2a2476210&gt;
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_37_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_36_1.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># cmap on raw counts many be confusing</span>
 </span></span><span style="display:flex;"><span>cm <span style="color:#666">=</span> metrics<span style="color:#666">.</span>confusion_matrix(y_test, xg<span style="color:#666">.</span>predict(X_test),
@@ -1047,9 +651,9 @@ Name: count, dtype: int64
 </span></span><span style="display:flex;"><span>disp <span style="color:#666">=</span> metrics<span style="color:#666">.</span>ConfusionMatrixDisplay(confusion_matrix<span style="color:#666">=</span>cm,
 </span></span><span style="display:flex;"><span>                                      display_labels<span style="color:#666">=</span>[<span style="color:#4070a0">&#39;Active&#39;</span>, <span style="color:#4070a0">&#39;Churn&#39;</span>])
 </span></span><span style="display:flex;"><span>disp<span style="color:#666">.</span>plot(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;Blues&#39;</span>)
-</span></span></code></pre></div><pre><code>&lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay at 0x32869c9d0&gt;
+</span></span></code></pre></div><pre><code>&lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay at 0x2a242d7d0&gt;
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_38_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_37_1.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn</span> <span style="color:#007020;font-weight:bold">import</span> metrics
 </span></span><span style="display:flex;"><span>
@@ -1085,7 +689,7 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>classifier<span style="color:#666">.</span>precision_recall_curve(xg, X_train, y_train,
 </span></span><span style="display:flex;"><span>                                  X_test, y_test, ax<span style="color:#666">=</span>ax, per_class<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>)
 </span></span><span style="display:flex;"><span>ax<span style="color:#666">.</span>set_ylim((<span style="color:#40a070">0</span>,<span style="color:#40a070">1.05</span>))
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_41_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_40_0.png" alt="png"></p>
 <pre><code>(0.0, 1.05)
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
@@ -1096,7 +700,7 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>fit(X_train, y_train)
 </span></span><span style="display:flex;"><span>visualizer<span style="color:#666">.</span>show()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_42_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_41_0.png" alt="png"></p>
 <pre><code>&lt;Axes: title={'center': 'Threshold Plot for XGBClassifier'}, xlabel='discrimination threshold', ylabel='score'&gt;
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
@@ -1121,7 +725,7 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>xg_data <span style="color:#666">=</span> metric_data(xgb<span style="color:#666">.</span>XGBClassifier(), small_data, small_y, metrics<span style="color:#666">=</span>scorers)
-</span></span><span style="display:flex;"><span>xg_data
+</span></span><span style="display:flex;"><span>xg_data<span style="color:#666">.</span>iloc[:, :<span style="color:#40a070">9</span>]
 </span></span></code></pre></div><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -1149,71 +753,56 @@ weighted avg       0.81      0.56      0.60     16618
       <th>test_recall_score</th>
       <th>train_recall_score</th>
       <th>test_accuracy_score</th>
-      <th>train_accuracy_score</th>
-      <th>test_roc_auc_score</th>
-      <th>train_roc_auc_score</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.330851</td>
-      <td>0.019993</td>
-      <td>0.870081</td>
-      <td>0.900463</td>
-      <td>0.870081</td>
-      <td>0.900463</td>
-      <td>0.870081</td>
-      <td>0.900463</td>
-      <td>0.870081</td>
-      <td>0.900463</td>
-      <td>0.789997</td>
-      <td>0.848644</td>
+      <td>0.493094</td>
+      <td>0.021333</td>
+      <td>0.877181</td>
+      <td>0.897194</td>
+      <td>0.877181</td>
+      <td>0.897194</td>
+      <td>0.877181</td>
+      <td>0.897194</td>
+      <td>0.877181</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.356826</td>
-      <td>0.021323</td>
-      <td>0.873804</td>
-      <td>0.897657</td>
-      <td>0.873804</td>
-      <td>0.897657</td>
-      <td>0.873804</td>
-      <td>0.897657</td>
-      <td>0.873804</td>
-      <td>0.897657</td>
-      <td>0.802568</td>
-      <td>0.846210</td>
+      <td>0.559788</td>
+      <td>0.021369</td>
+      <td>0.878257</td>
+      <td>0.897115</td>
+      <td>0.878257</td>
+      <td>0.897115</td>
+      <td>0.878257</td>
+      <td>0.897115</td>
+      <td>0.878257</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.337094</td>
-      <td>0.019361</td>
-      <td>0.876091</td>
-      <td>0.897396</td>
-      <td>0.876091</td>
-      <td>0.897396</td>
-      <td>0.876091</td>
-      <td>0.897396</td>
-      <td>0.876091</td>
-      <td>0.897396</td>
-      <td>0.809027</td>
-      <td>0.847445</td>
+      <td>0.539547</td>
+      <td>0.022056</td>
+      <td>0.871036</td>
+      <td>0.899984</td>
+      <td>0.871036</td>
+      <td>0.899984</td>
+      <td>0.871036</td>
+      <td>0.899984</td>
+      <td>0.871036</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.350650</td>
-      <td>0.020949</td>
-      <td>0.879882</td>
-      <td>0.897356</td>
-      <td>0.879882</td>
-      <td>0.897356</td>
-      <td>0.879882</td>
-      <td>0.897356</td>
-      <td>0.879882</td>
-      <td>0.897356</td>
-      <td>0.811107</td>
-      <td>0.846679</td>
+      <td>0.576529</td>
+      <td>0.021437</td>
+      <td>0.877535</td>
+      <td>0.899503</td>
+      <td>0.877535</td>
+      <td>0.899503</td>
+      <td>0.877535</td>
+      <td>0.899503</td>
+      <td>0.877535</td>
     </tr>
   </tbody>
 </table>
@@ -1222,16 +811,14 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(xg_data
 </span></span><span style="display:flex;"><span> <span style="color:#666">.</span>assign(<span style="color:#007020">type</span><span style="color:#666">=</span><span style="color:#4070a0">&#39;xg&#39;</span>)
-</span></span><span style="display:flex;"><span> <span style="color:#60a0b0;font-style:italic"># .pipe(lambda adf: pd.concat([adf, lr_data.assign(type=&#39;lr&#39;)]))</span>
 </span></span><span style="display:flex;"><span> <span style="color:#666">.</span>groupby(<span style="color:#4070a0">&#39;type&#39;</span>)
-</span></span><span style="display:flex;"><span> <span style="color:#60a0b0;font-style:italic">#.agg([&#39;mean&#39;, &#39;std&#39;])</span>
 </span></span><span style="display:flex;"><span> <span style="color:#666">.</span>mean()
 </span></span><span style="display:flex;"><span> <span style="color:#666">.</span>plot<span style="color:#666">.</span>bar()
 </span></span><span style="display:flex;"><span> <span style="color:#666">.</span>legend(bbox_to_anchor<span style="color:#666">=</span>(<span style="color:#40a070">1</span>,<span style="color:#40a070">1</span>))
 </span></span><span style="display:flex;"><span> )
-</span></span></code></pre></div><pre><code>&lt;matplotlib.legend.Legend at 0x332e72950&gt;
+</span></span></code></pre></div><pre><code>&lt;matplotlib.legend.Legend at 0x2a26a7150&gt;
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_44_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_43_1.png" alt="png"></p>
 <h3 id="tuning">Tuning</h3>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">hyperopt</span> <span style="color:#007020;font-weight:bold">import</span> fmin, tpe, hp, Trials
@@ -1288,42 +875,41 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>                )
 </span></span><span style="display:flex;"><span>    params <span style="color:#666">=</span> {<span style="color:#666">**</span>params, <span style="color:#666">**</span>best}
 </span></span><span style="display:flex;"><span>    all_trials<span style="color:#666">.</span>append(trials)
-</span></span><span style="display:flex;"><span>    
-</span></span></code></pre></div><pre><code>100%|██████████| 20/20 [00:14&lt;00:00,  1.36trial/s, best loss: -0.8779636538692983]
-100%|██████████| 20/20 [00:15&lt;00:00,  1.26trial/s, best loss: -0.8757973281983391]
-100%|██████████| 20/20 [00:16&lt;00:00,  1.23trial/s, best loss: -0.8760380310506679]
-100%|██████████| 20/20 [00:22&lt;00:00,  1.10s/trial, best loss: -0.8759176796245035]
-100%|██████████| 20/20 [00:15&lt;00:00,  1.29trial/s, best loss: -0.8759176796245035]
-100%|██████████| 20/20 [00:23&lt;00:00,  1.18s/trial, best loss: -0.8760982067637502]
+</span></span></code></pre></div><pre><code>100%|██████████| 20/20 [00:17&lt;00:00,  1.14trial/s, best loss: -0.8778433024431339]
+100%|██████████| 20/20 [00:17&lt;00:00,  1.13trial/s, best loss: -0.876940666746901] 
+100%|██████████| 20/20 [00:17&lt;00:00,  1.14trial/s, best loss: -0.8773618967384763]
+100%|██████████| 20/20 [00:22&lt;00:00,  1.13s/trial, best loss: -0.8776627753038874]
+100%|██████████| 20/20 [00:20&lt;00:00,  1.03s/trial, best loss: -0.8776627753038874]
+100%|██████████| 20/20 [00:24&lt;00:00,  1.21s/trial, best loss: -0.8772415453123119]
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>params
 </span></span></code></pre></div><pre><code>{'random_state': 42,
  'eval_metric': 'aucpr',
  'max_depth': 6.0,
- 'min_child_weight': 0.21542153409494613,
- 'scale_pos_weight': 1.4044231153976983,
- 'max_delta_step': 3.164291466793676,
- 'subsample': 0.7133681763205779,
- 'colsample_bytree': 0.9993046789168403,
- 'reg_alpha': 8.21891890897981,
- 'reg_lambda': 3.0482017696150034,
- 'gamma': 0.018593160428984328,
- 'learning_rate': 0.02747566992358936}
+ 'min_child_weight': 0.23193058123356144,
+ 'scale_pos_weight': 0.9019571775366886,
+ 'max_delta_step': 4.521025902082406,
+ 'subsample': 0.6927185598814062,
+ 'colsample_bytree': 0.9760587389780198,
+ 'reg_alpha': 9.42070439253806,
+ 'reg_lambda': 7.767016493057269,
+ 'gamma': 0.0026822919233543095,
+ 'learning_rate': 0.1369703361489519}
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>step_params <span style="color:#666">=</span> {<span style="color:#4070a0">&#39;random_state&#39;</span>: <span style="color:#40a070">42</span>,
 </span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;eval_metric&#39;</span>: <span style="color:#4070a0">&#39;aucpr&#39;</span>,
 </span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;max_depth&#39;</span>: <span style="color:#40a070">6</span>,
-</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;min_child_weight&#39;</span>: <span style="color:#40a070">0.21542153409494613</span>,
-</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;scale_pos_weight&#39;</span>: <span style="color:#40a070">1.4044231153976983</span>,
-</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;max_delta_step&#39;</span>: <span style="color:#40a070">3.164291466793676</span>,
-</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;subsample&#39;</span>: <span style="color:#40a070">0.7133681763205779</span>,
-</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;colsample_bytree&#39;</span>: <span style="color:#40a070">0.9993046789168403</span>,
-</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;reg_alpha&#39;</span>: <span style="color:#40a070">8.21891890897981</span>,
-</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;reg_lambda&#39;</span>: <span style="color:#40a070">3.0482017696150034</span>,
-</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;gamma&#39;</span>: <span style="color:#40a070">0.018593160428984328</span>,
-</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;learning_rate&#39;</span>: <span style="color:#40a070">0.02747566992358936</span>}
+</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;min_child_weight&#39;</span>: <span style="color:#40a070">0.23193058123356144</span>,
+</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;scale_pos_weight&#39;</span>: <span style="color:#40a070">0.9019571775366886</span>,
+</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;max_delta_step&#39;</span>: <span style="color:#40a070">4.521025902082406</span>,
+</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;subsample&#39;</span>: <span style="color:#40a070">0.6927185598814062</span>,
+</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;colsample_bytree&#39;</span>: <span style="color:#40a070">0.9760587389780198</span>,
+</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;reg_alpha&#39;</span>: <span style="color:#40a070">9.42070439253806</span>,
+</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;reg_lambda&#39;</span>: <span style="color:#40a070">7.767016493057269</span>,
+</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;gamma&#39;</span>: <span style="color:#40a070">0.0026822919233543095</span>,
+</span></span><span style="display:flex;"><span> <span style="color:#4070a0">&#39;learning_rate&#39;</span>: <span style="color:#40a070">0.1369703361489519</span>}
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">xgboost</span> <span style="color:#007020;font-weight:bold">as</span> <span style="color:#0e84b5;font-weight:bold">xgb</span>
@@ -1332,20 +918,20 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>                                        (X_test, y_test)],
 </span></span><span style="display:flex;"><span>            verbose<span style="color:#666">=</span><span style="color:#40a070">100</span>)
 </span></span><span style="display:flex;"><span>xg_step<span style="color:#666">.</span>score(X_test, y_test)
-</span></span></code></pre></div><pre><code>[0]	validation_0-aucpr:0.75366	validation_1-aucpr:0.74829
-[100]	validation_0-aucpr:0.77034	validation_1-aucpr:0.75983
-[200]	validation_0-aucpr:0.77525	validation_1-aucpr:0.76083
-[249]	validation_0-aucpr:0.77684	validation_1-aucpr:0.76105
+</span></span></code></pre></div><pre><code>[0]	validation_0-aucpr:0.72961	validation_1-aucpr:0.71990
+[100]	validation_0-aucpr:0.78069	validation_1-aucpr:0.76154
+[200]	validation_0-aucpr:0.79322	validation_1-aucpr:0.76115
+[230]	validation_0-aucpr:0.79634	validation_1-aucpr:0.76068
 
 
 
 
 
-0.8754964496329282
+0.8768203153207366
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>xg_step<span style="color:#666">.</span>best_iteration
-</span></span></code></pre></div><pre><code>228
+</span></span></code></pre></div><pre><code>131
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">xgboost</span> <span style="color:#007020;font-weight:bold">as</span> <span style="color:#0e84b5;font-weight:bold">xgb</span>
@@ -1372,7 +958,7 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>axes[<span style="color:#40a070">1</span>]<span style="color:#666">.</span>set(title<span style="color:#666">=</span><span style="color:#4070a0">&#39;ROC plots for stepwise model&#39;</span>)
 </span></span></code></pre></div><pre><code>[Text(0.5, 1.0, 'ROC plots for stepwise model')]
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_52_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_51_1.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">yellowbrick</span> <span style="color:#007020;font-weight:bold">import</span> classifier
 </span></span><span style="display:flex;"><span>
@@ -1390,7 +976,7 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>axes[<span style="color:#40a070">1</span>]<span style="color:#666">.</span>set(title<span style="color:#666">=</span><span style="color:#4070a0">&#39;PR plots for stepwise model&#39;</span>)
 </span></span></code></pre></div><pre><code>[Text(0.5, 1.0, 'PR plots for stepwise model')]
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_53_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_52_1.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn</span> <span style="color:#007020;font-weight:bold">import</span> metrics
 </span></span><span style="display:flex;"><span>
@@ -1399,9 +985,9 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>disp <span style="color:#666">=</span> metrics<span style="color:#666">.</span>ConfusionMatrixDisplay(confusion_matrix<span style="color:#666">=</span>cm,
 </span></span><span style="display:flex;"><span>                                      display_labels<span style="color:#666">=</span>[<span style="color:#4070a0">&#39;no&#39;</span>, <span style="color:#4070a0">&#39;yes&#39;</span>])
 </span></span><span style="display:flex;"><span>disp<span style="color:#666">.</span>plot(cmap<span style="color:#666">=</span><span style="color:#4070a0">&#39;Blues&#39;</span>)
-</span></span></code></pre></div><pre><code>&lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay at 0x330a383d0&gt;
+</span></span></code></pre></div><pre><code>&lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay at 0x2e01d6e10&gt;
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_51_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_53_1.png" alt="png"></p>
 <h4 id="interpreting">Interpreting</h4>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn</span> <span style="color:#007020;font-weight:bold">import</span> linear_model, preprocessing
@@ -1416,12 +1002,12 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>figure(figsize<span style="color:#666">=</span>(<span style="color:#40a070">8</span>, <span style="color:#40a070">12</span>)) 
 </span></span><span style="display:flex;"><span>feature_importances<span style="color:#666">.</span>plot<span style="color:#666">.</span>barh()
 </span></span><span style="display:flex;"><span>plt<span style="color:#666">.</span>show()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_57_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_56_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>xgb<span style="color:#666">.</span>plot_tree(xg_step, num_trees<span style="color:#666">=</span><span style="color:#40a070">0</span>, rankdir<span style="color:#666">=</span><span style="color:#4070a0">&#39;LR&#39;</span>)
 </span></span></code></pre></div><pre><code>&lt;Axes: &gt;
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_58_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_57_1.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">dtreeviz</span>
 </span></span><span style="display:flex;"><span>
@@ -1431,7 +1017,7 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>                     feature_names<span style="color:#666">=</span><span style="color:#007020">list</span>(X_train<span style="color:#666">.</span>columns), class_names<span style="color:#666">=</span>[<span style="color:#4070a0">&#39;Active&#39;</span>, <span style="color:#4070a0">&#39;Churn&#39;</span>],
 </span></span><span style="display:flex;"><span>                     tree_index<span style="color:#666">=</span><span style="color:#40a070">0</span>)
 </span></span><span style="display:flex;"><span>viz<span style="color:#666">.</span>view()
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_59_0.png" alt="svg"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_58_0.svg" alt="svg"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">xgboost</span> <span style="color:#007020;font-weight:bold">as</span> <span style="color:#0e84b5;font-weight:bold">xgb</span>
 </span></span><span style="display:flex;"><span>xg_step <span style="color:#666">=</span> xgb<span style="color:#666">.</span>XGBClassifier(<span style="color:#666">**</span>step_params, early_stopping_rounds<span style="color:#666">=</span><span style="color:#40a070">20</span>)
@@ -1439,14 +1025,14 @@ weighted avg       0.81      0.56      0.60     16618
 </span></span><span style="display:flex;"><span>                                        (X_test, y_test)],
 </span></span><span style="display:flex;"><span>            verbose<span style="color:#666">=</span><span style="color:#40a070">100</span>)
 </span></span><span style="display:flex;"><span>xg_step<span style="color:#666">.</span>score(X_test, y_test)
-</span></span></code></pre></div><pre><code>[0]	validation_0-aucpr:0.75366	validation_1-aucpr:0.74829
-[99]	validation_0-aucpr:0.77030	validation_1-aucpr:0.75991
+</span></span></code></pre></div><pre><code>[0]	validation_0-aucpr:0.72961	validation_1-aucpr:0.71990
+[91]	validation_0-aucpr:0.77963	validation_1-aucpr:0.76151
 
 
 
 
 
-0.8760380310506679
+0.8762185581899146
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">shap</span>
@@ -1505,122 +1091,122 @@ weighted avg       0.81      0.56      0.60     16618
     <tr>
       <th>7964</th>
       <td>0.0</td>
-      <td>-0.004326</td>
-      <td>-0.186911</td>
-      <td>-0.016829</td>
-      <td>-0.101254</td>
-      <td>-0.045583</td>
-      <td>-0.530206</td>
-      <td>1.779393e-06</td>
-      <td>0.004272</td>
-      <td>0.000021</td>
+      <td>-0.018185</td>
+      <td>-0.322744</td>
+      <td>-0.021275</td>
+      <td>-0.087055</td>
+      <td>-0.091655</td>
+      <td>-0.527080</td>
+      <td>0.001898</td>
+      <td>0.000891</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>0.028220</td>
-      <td>0.037375</td>
-      <td>4.552236e-06</td>
-      <td>-0.021480</td>
-      <td>0.000072</td>
-      <td>0.086956</td>
-      <td>0.002381</td>
-      <td>0.095622</td>
-      <td>-0.000105</td>
-      <td>-0.000223</td>
+      <td>0.021859</td>
+      <td>-0.026060</td>
+      <td>-0.000078</td>
+      <td>-0.004671</td>
+      <td>0.000954</td>
+      <td>0.116469</td>
+      <td>0.014535</td>
+      <td>0.099936</td>
+      <td>-0.001501</td>
+      <td>-0.001064</td>
     </tr>
     <tr>
       <th>17096</th>
       <td>0.0</td>
-      <td>-0.009720</td>
-      <td>-0.240921</td>
-      <td>-0.018822</td>
-      <td>0.557036</td>
-      <td>-0.054030</td>
-      <td>-0.502559</td>
-      <td>2.700362e-05</td>
-      <td>-0.013808</td>
-      <td>0.000100</td>
+      <td>-0.029802</td>
+      <td>-0.363317</td>
+      <td>-0.018913</td>
+      <td>0.591749</td>
+      <td>-0.104244</td>
+      <td>-0.472721</td>
+      <td>0.000857</td>
+      <td>-0.013034</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>-0.030073</td>
-      <td>-0.118481</td>
-      <td>1.200191e-06</td>
-      <td>-0.060734</td>
-      <td>0.000029</td>
-      <td>-0.057154</td>
-      <td>-0.009026</td>
-      <td>-0.075417</td>
-      <td>-0.000154</td>
-      <td>0.001356</td>
+      <td>-0.057765</td>
+      <td>-0.209940</td>
+      <td>-0.000839</td>
+      <td>-0.024065</td>
+      <td>0.000889</td>
+      <td>-0.128824</td>
+      <td>-0.039794</td>
+      <td>-0.180094</td>
+      <td>-0.001346</td>
+      <td>0.029340</td>
     </tr>
     <tr>
       <th>42891</th>
       <td>0.0</td>
-      <td>-0.016144</td>
-      <td>-0.289873</td>
-      <td>-0.005264</td>
-      <td>0.159002</td>
-      <td>0.050780</td>
-      <td>0.491350</td>
-      <td>-2.105775e-04</td>
-      <td>0.002364</td>
-      <td>0.000112</td>
+      <td>-0.042019</td>
+      <td>-0.379174</td>
+      <td>-0.007842</td>
+      <td>0.185051</td>
+      <td>0.056165</td>
+      <td>0.458102</td>
+      <td>-0.000426</td>
+      <td>0.000849</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>0.008856</td>
-      <td>0.168161</td>
-      <td>2.095219e-06</td>
-      <td>0.088705</td>
-      <td>0.000143</td>
-      <td>0.033317</td>
-      <td>0.001650</td>
-      <td>0.029731</td>
-      <td>-0.000100</td>
-      <td>-0.002674</td>
+      <td>0.016854</td>
+      <td>0.334461</td>
+      <td>-0.000049</td>
+      <td>0.058787</td>
+      <td>0.001469</td>
+      <td>0.043297</td>
+      <td>0.002862</td>
+      <td>0.044568</td>
+      <td>-0.001346</td>
+      <td>-0.000668</td>
     </tr>
     <tr>
       <th>11104</th>
       <td>0.0</td>
-      <td>-0.006000</td>
-      <td>-0.188877</td>
-      <td>-0.017848</td>
-      <td>-0.062419</td>
-      <td>-0.014018</td>
-      <td>0.613912</td>
-      <td>1.522947e-06</td>
-      <td>0.003078</td>
-      <td>0.000018</td>
+      <td>-0.022164</td>
+      <td>-0.249745</td>
+      <td>-0.019925</td>
+      <td>-0.126036</td>
+      <td>-0.121047</td>
+      <td>0.593709</td>
+      <td>0.000454</td>
+      <td>0.000306</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>0.012120</td>
-      <td>-0.004557</td>
-      <td>1.108728e-06</td>
-      <td>0.137426</td>
-      <td>-0.000111</td>
-      <td>0.042880</td>
-      <td>0.001491</td>
-      <td>0.058821</td>
-      <td>-0.000333</td>
-      <td>-0.000163</td>
+      <td>0.027978</td>
+      <td>0.041770</td>
+      <td>-0.000140</td>
+      <td>0.152986</td>
+      <td>-0.001281</td>
+      <td>0.065583</td>
+      <td>0.003115</td>
+      <td>0.083771</td>
+      <td>-0.004096</td>
+      <td>-0.000878</td>
     </tr>
     <tr>
       <th>26622</th>
       <td>0.0</td>
-      <td>-0.005495</td>
-      <td>-0.209013</td>
-      <td>-0.031593</td>
-      <td>-0.123486</td>
-      <td>0.037241</td>
-      <td>-0.591230</td>
-      <td>2.845434e-06</td>
-      <td>-0.028328</td>
-      <td>0.000086</td>
+      <td>-0.016163</td>
+      <td>-0.269373</td>
+      <td>-0.040835</td>
+      <td>-0.153664</td>
+      <td>0.060840</td>
+      <td>-0.565275</td>
+      <td>-0.000222</td>
+      <td>-0.021776</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>-0.031601</td>
-      <td>-0.169958</td>
-      <td>2.401895e-06</td>
-      <td>-0.099546</td>
-      <td>-0.001269</td>
-      <td>-0.020493</td>
-      <td>0.002527</td>
-      <td>-0.041778</td>
-      <td>0.004567</td>
-      <td>-0.000715</td>
+      <td>-0.083254</td>
+      <td>-0.316697</td>
+      <td>-0.000264</td>
+      <td>0.020052</td>
+      <td>0.001367</td>
+      <td>-0.113131</td>
+      <td>0.025581</td>
+      <td>-0.195970</td>
+      <td>0.044991</td>
+      <td>-0.001235</td>
     </tr>
     <tr>
       <th>...</th>
@@ -1649,122 +1235,122 @@ weighted avg       0.81      0.56      0.60     16618
     <tr>
       <th>63871</th>
       <td>0.0</td>
-      <td>0.048030</td>
-      <td>0.012661</td>
-      <td>-0.005231</td>
-      <td>0.085879</td>
-      <td>0.048615</td>
-      <td>0.933390</td>
-      <td>3.573359e-07</td>
-      <td>0.001988</td>
-      <td>0.000120</td>
+      <td>0.120240</td>
+      <td>0.011200</td>
+      <td>-0.006299</td>
+      <td>0.106907</td>
+      <td>0.076810</td>
+      <td>0.822737</td>
+      <td>0.000676</td>
+      <td>0.001031</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>0.008899</td>
-      <td>0.333635</td>
-      <td>2.083790e-06</td>
-      <td>0.115813</td>
-      <td>0.000156</td>
-      <td>0.029782</td>
-      <td>0.001428</td>
-      <td>0.023893</td>
-      <td>-0.000046</td>
-      <td>-0.000108</td>
+      <td>0.028185</td>
+      <td>0.669777</td>
+      <td>-0.000036</td>
+      <td>0.081977</td>
+      <td>0.001285</td>
+      <td>0.047387</td>
+      <td>0.004574</td>
+      <td>0.035136</td>
+      <td>-0.001823</td>
+      <td>-0.000812</td>
     </tr>
     <tr>
       <th>6639</th>
       <td>0.0</td>
-      <td>-0.004893</td>
-      <td>-0.228379</td>
-      <td>-0.028914</td>
-      <td>-0.104027</td>
-      <td>-0.110506</td>
-      <td>-0.698708</td>
-      <td>2.793857e-06</td>
-      <td>-0.027978</td>
-      <td>0.000028</td>
+      <td>-0.017170</td>
+      <td>-0.434583</td>
+      <td>-0.042446</td>
+      <td>-0.109621</td>
+      <td>-0.213052</td>
+      <td>-0.698033</td>
+      <td>0.000493</td>
+      <td>-0.022429</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>-0.034653</td>
-      <td>-0.130167</td>
-      <td>3.409348e-07</td>
-      <td>-0.051841</td>
-      <td>0.000316</td>
-      <td>-0.056989</td>
-      <td>0.006362</td>
-      <td>-0.072529</td>
-      <td>0.002039</td>
-      <td>-0.000628</td>
+      <td>-0.098633</td>
+      <td>-0.239283</td>
+      <td>-0.000189</td>
+      <td>-0.128699</td>
+      <td>0.009184</td>
+      <td>-0.185395</td>
+      <td>0.024804</td>
+      <td>-0.198384</td>
+      <td>0.030131</td>
+      <td>-0.001206</td>
     </tr>
     <tr>
       <th>37634</th>
       <td>0.0</td>
-      <td>-0.004597</td>
-      <td>-0.021718</td>
-      <td>-0.021502</td>
-      <td>-0.135810</td>
-      <td>-0.025174</td>
-      <td>-0.580150</td>
-      <td>1.779393e-06</td>
-      <td>-0.021775</td>
-      <td>0.000087</td>
+      <td>-0.010846</td>
+      <td>0.066509</td>
+      <td>-0.031279</td>
+      <td>-0.155740</td>
+      <td>-0.041903</td>
+      <td>-0.589396</td>
+      <td>-0.000047</td>
+      <td>-0.017430</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>-0.042821</td>
-      <td>-0.167176</td>
-      <td>-4.584270e-06</td>
-      <td>-0.117476</td>
-      <td>-0.000492</td>
-      <td>-0.018712</td>
-      <td>0.001913</td>
-      <td>0.053149</td>
-      <td>-0.000667</td>
-      <td>-0.000300</td>
+      <td>-0.079455</td>
+      <td>-0.343673</td>
+      <td>0.000419</td>
+      <td>-0.064056</td>
+      <td>0.005388</td>
+      <td>-0.052072</td>
+      <td>0.025733</td>
+      <td>0.139011</td>
+      <td>-0.005605</td>
+      <td>-0.000426</td>
     </tr>
     <tr>
       <th>52106</th>
       <td>0.0</td>
-      <td>-0.004794</td>
-      <td>0.198000</td>
-      <td>-0.023279</td>
-      <td>-0.146950</td>
-      <td>0.013452</td>
-      <td>-0.552019</td>
-      <td>1.779393e-06</td>
-      <td>-0.021730</td>
-      <td>0.000037</td>
+      <td>-0.010975</td>
+      <td>0.270435</td>
+      <td>-0.033815</td>
+      <td>-0.213307</td>
+      <td>0.061521</td>
+      <td>-0.429782</td>
+      <td>0.000024</td>
+      <td>-0.017562</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>-0.040012</td>
-      <td>-0.164132</td>
-      <td>-1.278787e-05</td>
-      <td>-0.105401</td>
-      <td>-0.000495</td>
-      <td>-0.018872</td>
-      <td>-0.009718</td>
-      <td>-0.033759</td>
-      <td>-0.000375</td>
-      <td>-0.000302</td>
+      <td>-0.072503</td>
+      <td>-0.355573</td>
+      <td>-0.000287</td>
+      <td>-0.042085</td>
+      <td>-0.000453</td>
+      <td>-0.067022</td>
+      <td>-0.136286</td>
+      <td>-0.077156</td>
+      <td>-0.009474</td>
+      <td>-0.001303</td>
     </tr>
     <tr>
       <th>18511</th>
       <td>0.0</td>
-      <td>-0.006547</td>
-      <td>-0.228138</td>
-      <td>-0.014027</td>
-      <td>0.274864</td>
-      <td>-0.053530</td>
-      <td>-0.619797</td>
-      <td>2.790163e-06</td>
-      <td>0.001777</td>
-      <td>0.000012</td>
+      <td>-0.016563</td>
+      <td>-0.324003</td>
+      <td>-0.017004</td>
+      <td>0.266256</td>
+      <td>-0.192276</td>
+      <td>-0.583881</td>
+      <td>0.001707</td>
+      <td>0.000533</td>
+      <td>0.0</td>
       <td>...</td>
-      <td>0.010702</td>
-      <td>-0.210859</td>
-      <td>4.724333e-07</td>
-      <td>-0.140850</td>
-      <td>0.000095</td>
-      <td>0.052042</td>
-      <td>0.002264</td>
-      <td>0.032684</td>
-      <td>-0.000111</td>
-      <td>-0.000223</td>
+      <td>-0.020464</td>
+      <td>-0.373385</td>
+      <td>-0.000141</td>
+      <td>0.001592</td>
+      <td>0.001715</td>
+      <td>0.083979</td>
+      <td>0.010817</td>
+      <td>0.041071</td>
+      <td>-0.001299</td>
+      <td>-0.001787</td>
     </tr>
   </tbody>
 </table>
@@ -1772,59 +1358,53 @@ weighted avg       0.81      0.56      0.60     16618
 </div>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>shap_ex<span style="color:#666">.</span>expected_value
-</span></span></code></pre></div><pre><code>-0.99952215
+</span></span></code></pre></div><pre><code>-1.5311589
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># index 40153 prediction</span>
 </span></span><span style="display:flex;"><span>(vals_df<span style="color:#666">.</span>sum(axis<span style="color:#666">=</span><span style="color:#4070a0">&#39;columns&#39;</span>) <span style="color:#666">+</span> shap_ex<span style="color:#666">.</span>expected_value)<span style="color:#666">.</span>pipe(<span style="color:#007020;font-weight:bold">lambda</span> ser: ser[ser <span style="color:#666">&gt;</span> <span style="color:#40a070">0</span>])
-</span></span></code></pre></div><pre><code>60710    0.639703
-64399    1.508982
-62002    1.508982
-62986    1.508982
-55933    0.377139
+</span></span></code></pre></div><pre><code>60710    0.450789
+64399    1.400459
+62002    1.400459
+62986    1.400459
+25853    0.352904
            ...   
-64617    1.159080
-59634    0.656181
-47023    1.048178
-59216    0.335659
-63871    1.508982
-Length: 3585, dtype: float32
+64617    0.785654
+59634    0.494769
+47023    1.122428
+59216    0.078687
+63871    1.400459
+Length: 3072, dtype: float32
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>vals_df<span style="color:#666">.</span>loc[<span style="color:#40a070">62986</span>]
 </span></span></code></pre></div><pre><code>year                                     0.000000
-month                                    0.048030
-user_lifetime                            0.012661
-user_intake                             -0.005231
-user_no_outgoing_activity_in_days        0.085879
+month                                    0.120240
+user_lifetime                            0.011200
+user_intake                             -0.006299
+user_no_outgoing_activity_in_days        0.106907
                                            ...   
-last_100_sms_outgoing_count              0.029782
-last_100_sms_outgoing_to_onnet_count     0.001428
-last_100_sms_outgoing_to_offnet_count    0.023893
-last_100_sms_outgoing_to_abroad_count   -0.000046
-last_100_gprs_usage                     -0.000108
+last_100_sms_outgoing_count              0.047387
+last_100_sms_outgoing_to_onnet_count     0.004574
+last_100_sms_outgoing_to_offnet_count    0.035136
+last_100_sms_outgoing_to_abroad_count   -0.001823
+last_100_gprs_usage                     -0.000812
 Name: 62986, Length: 64, dtype: float32
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># waterfall plot</span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># need to convert label to position</span>
 </span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>waterfall(vals[<span style="color:#40a070">26</span>])
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_65_0.png" alt="png"></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>waterfall(vals[<span style="color:#40a070">28</span>])
 </span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_66_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># waterfall plot</span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># need to convert label to position</span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>waterfall(vals[<span style="color:#40a070">28</span>])
+</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>waterfall(vals[<span style="color:#40a070">29</span>])
 </span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_67_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># waterfall plot</span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># need to convert label to position</span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>waterfall(vals[<span style="color:#40a070">29</span>])
+</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>beeswarm(vals, max_display<span style="color:#666">=</span><span style="color:#40a070">100</span>)
 </span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_68_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># global view</span>
-</span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>beeswarm(vals, max_display<span style="color:#666">=</span><span style="color:#40a070">100</span>)
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_69_0.png" alt="png"></p>
-<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>feature_importances
 </span></span></code></pre></div><pre><code>year                                      0.000000
 sms_incoming_from_abroad_spendings        0.000000
@@ -1832,11 +1412,11 @@ sms_outgoing_to_abroad_inactive_days      0.000000
 sms_outgoing_to_offnet_inactive_days      0.000000
 calls_outgoing_to_offnet_inactive_days    0.000000
                                             ...   
-calls_outgoing_duration                   0.027573
-calls_outgoing_inactive_days              0.040994
-calls_outgoing_to_onnet_inactive_days     0.060916
-last_100_calls_outgoing_duration          0.089625
-user_spendings                            0.479799
+user_intake                               0.026111
+calls_outgoing_duration                   0.030865
+calls_outgoing_inactive_days              0.038314
+last_100_calls_outgoing_duration          0.136882
+user_spendings                            0.316150
 Length: 64, dtype: float32
 </code></pre>
 <h3 id="constraints">Constraints</h3>
@@ -1845,29 +1425,29 @@ Length: 64, dtype: float32
 </span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>partial_dependence(ind<span style="color:#666">=</span><span style="color:#4070a0">&#39;user_spendings&#39;</span>,
 </span></span><span style="display:flex;"><span>                              model<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">lambda</span> rows: xg_step<span style="color:#666">.</span>predict_proba(rows)[:,<span style="color:#666">-</span><span style="color:#40a070">1</span>],
 </span></span><span style="display:flex;"><span>                              data<span style="color:#666">=</span>X_train)
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_72_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_71_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span> 
 </span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>partial_dependence(ind<span style="color:#666">=</span><span style="color:#4070a0">&#39;calls_outgoing_to_abroad_inactive_days&#39;</span>,
 </span></span><span style="display:flex;"><span>                              model<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">lambda</span> rows: xg_step<span style="color:#666">.</span>predict_proba(rows)[:,<span style="color:#666">-</span><span style="color:#40a070">1</span>],
 </span></span><span style="display:flex;"><span>                              data<span style="color:#666">=</span>X_train)
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_73_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_72_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span> 
 </span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>partial_dependence(ind<span style="color:#666">=</span><span style="color:#4070a0">&#39;last_100_calls_outgoing_duration&#39;</span>,
 </span></span><span style="display:flex;"><span>                              model<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">lambda</span> rows: xg_step<span style="color:#666">.</span>predict_proba(rows)[:,<span style="color:#666">-</span><span style="color:#40a070">1</span>],
 </span></span><span style="display:flex;"><span>                              data<span style="color:#666">=</span>X_train)
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_74_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_73_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span> 
 </span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>partial_dependence(ind<span style="color:#666">=</span><span style="color:#4070a0">&#39;calls_outgoing_inactive_days&#39;</span>,
 </span></span><span style="display:flex;"><span>                              model<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">lambda</span> rows: xg_step<span style="color:#666">.</span>predict_proba(rows)[:,<span style="color:#666">-</span><span style="color:#40a070">1</span>],
 </span></span><span style="display:flex;"><span>                              data<span style="color:#666">=</span>X_train)
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_75_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_74_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>shap<span style="color:#666">.</span>plots<span style="color:#666">.</span>partial_dependence(ind<span style="color:#666">=</span><span style="color:#4070a0">&#39;user_intake&#39;</span>,
 </span></span><span style="display:flex;"><span>                              model<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">lambda</span> rows: xg_step<span style="color:#666">.</span>predict_proba(rows)[:,<span style="color:#666">-</span><span style="color:#40a070">1</span>],
 </span></span><span style="display:flex;"><span>                              data<span style="color:#666">=</span>X_train)
-</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_76_0.png" alt="png"></p>
+</span></span></code></pre></div><p><img src="/end_to_end_churn_prediction_model/output_75_0.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">xgboost</span> <span style="color:#007020;font-weight:bold">as</span> <span style="color:#0e84b5;font-weight:bold">xgb</span>
@@ -1881,18 +1461,16 @@ Length: 64, dtype: float32
 </span></span><span style="display:flex;"><span>                                         (X_test, y_test)],
 </span></span><span style="display:flex;"><span>             verbose<span style="color:#666">=</span><span style="color:#40a070">100</span>)
 </span></span><span style="display:flex;"><span>xg_const<span style="color:#666">.</span>score(X_test, y_test)
-</span></span></code></pre></div><pre><code>[0]	validation_0-aucpr:0.74918	validation_1-aucpr:0.74544
-[99]	validation_0-aucpr:0.76864	validation_1-aucpr:0.75940
+</span></span></code></pre></div><pre><code>[0]	validation_0-aucpr:0.72500	validation_1-aucpr:0.71750
+[99]	validation_0-aucpr:0.77979	validation_1-aucpr:0.76136
 
 
 
 
 
-0.875737152485257
+0.8765796124684078
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># bump up n_estimators</span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># in this case, wasn&#39;t required</span>
 </span></span><span style="display:flex;"><span>xg_const <span style="color:#666">=</span> xgb<span style="color:#666">.</span>XGBClassifier(<span style="color:#666">**</span>step_params, early_stopping_rounds<span style="color:#666">=</span><span style="color:#40a070">20</span>,
 </span></span><span style="display:flex;"><span>                             n_estimators<span style="color:#666">=</span><span style="color:#40a070">200</span>,
 </span></span><span style="display:flex;"><span>                             monotone_constraints<span style="color:#666">=</span>{<span style="color:#4070a0">&#39;calls_outgoing_to_abroad_inactive_days&#39;</span>: <span style="color:#40a070">1</span>,
@@ -1903,29 +1481,27 @@ Length: 64, dtype: float32
 </span></span><span style="display:flex;"><span>                                         (X_test, y_test)],
 </span></span><span style="display:flex;"><span>             verbose<span style="color:#666">=</span><span style="color:#40a070">100</span>)
 </span></span><span style="display:flex;"><span>xg_const<span style="color:#666">.</span>score(X_test, y_test)
-</span></span></code></pre></div><pre><code>[0]	validation_0-aucpr:0.74918	validation_1-aucpr:0.74544
-[100]	validation_0-aucpr:0.76871	validation_1-aucpr:0.75934
-[199]	validation_0-aucpr:0.77416	validation_1-aucpr:0.76102
+</span></span></code></pre></div><pre><code>[0]	validation_0-aucpr:0.72500	validation_1-aucpr:0.71750
+[100]	validation_0-aucpr:0.77987	validation_1-aucpr:0.76135
+[111]	validation_0-aucpr:0.78168	validation_1-aucpr:0.76126
 
 
 
 
 
-0.8750150439282706
+0.8765796124684078
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">from</span> <span style="color:#0e84b5;font-weight:bold">sklearn</span> <span style="color:#007020;font-weight:bold">import</span> metrics
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>metrics<span style="color:#666">.</span>roc_auc_score(y_test, xg_const<span style="color:#666">.</span>predict(X_test))
-</span></span></code></pre></div><pre><code>0.8214586983238391
+</span></span></code></pre></div><pre><code>0.7917795192196179
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>xg_step<span style="color:#666">.</span>score(X_test, y_test)
-</span></span></code></pre></div><pre><code>0.8760380310506679
+</span></span></code></pre></div><pre><code>0.8762185581899146
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(pd<span style="color:#666">.</span>Series(xg_step<span style="color:#666">.</span>feature_importances_, index<span style="color:#666">=</span>X_train<span style="color:#666">.</span>columns)
 </span></span><span style="display:flex;"><span> <span style="color:#666">.</span>sort_values()
 </span></span><span style="display:flex;"><span> <span style="color:#666">.</span>iloc[<span style="color:#666">-</span><span style="color:#40a070">10</span>:]
@@ -1933,9 +1509,8 @@ Length: 64, dtype: float32
 </span></span><span style="display:flex;"><span> )
 </span></span></code></pre></div><pre><code>&lt;Axes: &gt;
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_81_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_80_1.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>(pd<span style="color:#666">.</span>Series(xg_const<span style="color:#666">.</span>feature_importances_, index<span style="color:#666">=</span>X_train<span style="color:#666">.</span>columns)
 </span></span><span style="display:flex;"><span> <span style="color:#666">.</span>sort_values()
 </span></span><span style="display:flex;"><span> <span style="color:#666">.</span>iloc[<span style="color:#666">-</span><span style="color:#40a070">10</span>:]
@@ -1943,7 +1518,7 @@ Length: 64, dtype: float32
 </span></span><span style="display:flex;"><span> )
 </span></span></code></pre></div><pre><code>&lt;Axes: &gt;
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_82_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_81_1.png" alt="png"></p>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">xgboost</span> <span style="color:#007020;font-weight:bold">as</span> <span style="color:#0e84b5;font-weight:bold">xgb</span>
 </span></span><span style="display:flex;"><span>xg <span style="color:#666">=</span> xgb<span style="color:#666">.</span>XGBClassifier()
@@ -1959,7 +1534,7 @@ Length: 64, dtype: float32
 </span></span><span style="display:flex;"><span> )
 </span></span></code></pre></div><pre><code>&lt;Axes: &gt;
 </code></pre>
-<p><img src="/end_to_end_churn_prediction_model/output_84_1.png" alt="png"></p>
+<p><img src="/end_to_end_churn_prediction_model/output_83_1.png" alt="png"></p>
 <h3 id="deployment">Deployment</h3>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>Ys <span style="color:#666">=</span> data[<span style="color:#4070a0">&#34;churn&#34;</span>]
@@ -1986,7 +1561,7 @@ Length: 64, dtype: float32
 </span></span><span style="display:flex;"><span>                                                   <span style="color:#4070a0">&#39;user_intake&#39;</span>: <span style="color:#666">-</span><span style="color:#40a070">1</span>,
 </span></span><span style="display:flex;"><span>                                                   <span style="color:#4070a0">&#34;user_spendings&#34;</span>: <span style="color:#666">-</span><span style="color:#40a070">1</span>})
 </span></span><span style="display:flex;"><span>xg_const<span style="color:#666">.</span>fit(Xs, Ys,verbose<span style="color:#666">=</span><span style="color:#40a070">100</span>)
-</span></span></code></pre></div><style>#sk-container-id-2 {color: black;}#sk-container-id-2 pre{padding: 0;}#sk-container-id-2 div.sk-toggleable {background-color: white;}#sk-container-id-2 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-2 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-2 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-2 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-2 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-2 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-2 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-2 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-2 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-2 div.sk-item {position: relative;z-index: 1;}#sk-container-id-2 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-2 div.sk-item::before, #sk-container-id-2 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-2 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-2 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-2 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-2 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-2 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-2 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-2 div.sk-label-container {text-align: center;}#sk-container-id-2 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-2 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>XGBClassifier(base_score=None, booster=None, callbacks=None,
+</span></span></code></pre></div><style>#sk-container-id-1 {color: black;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>XGBClassifier(base_score=None, booster=None, callbacks=None,
 <pre><code>          colsample_bylevel=None, colsample_bynode=None,
           colsample_bytree=0.647742541625645, device=None,
           early_stopping_rounds=None, enable_categorical=False,
@@ -2001,7 +1576,7 @@ Length: 64, dtype: float32
                                 &amp;#x27;last_100_calls_outgoing_duration&amp;#x27;: -1,
                                 &amp;#x27;user_intake&amp;#x27;: -1, &amp;#x27;user_spendings&amp;#x27;: -1},
           multi_strategy=None, n_estimators=None, n_jobs=None,
-          num_parallel_tree=None, random_state=42, ...)&lt;/pre&gt;&lt;b&gt;In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. &lt;br /&gt;On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;sk-container&quot; hidden&gt;&lt;div class=&quot;sk-item&quot;&gt;&lt;div class=&quot;sk-estimator sk-toggleable&quot;&gt;&lt;input class=&quot;sk-toggleable__control sk-hidden--visually&quot; id=&quot;sk-estimator-id-2&quot; type=&quot;checkbox&quot; checked&gt;&lt;label for=&quot;sk-estimator-id-2&quot; class=&quot;sk-toggleable__label sk-toggleable__label-arrow&quot;&gt;XGBClassifier&lt;/label&gt;&lt;div class=&quot;sk-toggleable__content&quot;&gt;&lt;pre&gt;XGBClassifier(base_score=None, booster=None, callbacks=None,
+          num_parallel_tree=None, random_state=42, ...)&lt;/pre&gt;&lt;b&gt;In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. &lt;br /&gt;On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;sk-container&quot; hidden&gt;&lt;div class=&quot;sk-item&quot;&gt;&lt;div class=&quot;sk-estimator sk-toggleable&quot;&gt;&lt;input class=&quot;sk-toggleable__control sk-hidden--visually&quot; id=&quot;sk-estimator-id-1&quot; type=&quot;checkbox&quot; checked&gt;&lt;label for=&quot;sk-estimator-id-1&quot; class=&quot;sk-toggleable__label sk-toggleable__label-arrow&quot;&gt;XGBClassifier&lt;/label&gt;&lt;div class=&quot;sk-toggleable__content&quot;&gt;&lt;pre&gt;XGBClassifier(base_score=None, booster=None, callbacks=None,
           colsample_bylevel=None, colsample_bynode=None,
           colsample_bytree=0.647742541625645, device=None,
           early_stopping_rounds=None, enable_categorical=False,
@@ -2020,15 +1595,12 @@ Length: 64, dtype: float32
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">mlflow</span>
-</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># log model</span>
 </span></span><span style="display:flex;"><span>model_info <span style="color:#666">=</span> mlflow<span style="color:#666">.</span>xgboost<span style="color:#666">.</span>log_model(xg_const, artifact_path<span style="color:#666">=</span><span style="color:#4070a0">&#39;artifact&#39;</span>)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>model_info<span style="color:#666">.</span>run_id
-</span></span></code></pre></div><pre><code>'1cdf9ce7481b40d79408b5c23c0e700d'
+</span></span></code></pre></div><pre><code>'e7de66e56ade4eb9b29eadaad731941b'
 </code></pre>
 <div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">mlflow</span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>logged_model <span style="color:#666">=</span> <span style="color:#4070a0">&#39;mlruns/0/1cdf9ce7481b40d79408b5c23c0e700d/artifacts/artifact&#39;</span>
 </span></span><span style="display:flex;"><span>loaded_model <span style="color:#666">=</span> mlflow<span style="color:#666">.</span>pyfunc<span style="color:#666">.</span>load_model(logged_model)
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>

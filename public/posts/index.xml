@@ -8,12 +8,12 @@
     <language>en-us</language>
     <lastBuildDate>Mon, 04 Dec 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ahmed-altakrouri.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Large Scale End-to-End Churn Modeling</title>
+      <title>Churn Forecasting Series: Large Scale End-to-End Churn Modeling</title>
       <link>https://ahmed-altakrouri.github.io/posts/end-to-end-churn-prediction-model/</link>
       <pubDate>Mon, 04 Dec 2023 00:00:00 +0000</pubDate>
       
       <guid>https://ahmed-altakrouri.github.io/posts/end-to-end-churn-prediction-model/</guid>
-      <description>import pandas as pd import seaborn as sns import matplotlib.pyplot as plt import warnings import numpy as np from scipy.io import arff # Disable warnings warnings.filterwarnings(&amp;#39;ignore&amp;#39;) data, meta = arff.loadarff(&amp;#39;large_churn_data&amp;#39;) data = pd.DataFrame(data) data year month user_account_id user_lifetime user_intake user_no_outgoing_activity_in_days user_account_balance_last user_spendings user_has_outgoing_calls user_has_outgoing_sms ... last_100_calls_outgoing_duration last_100_calls_outgoing_to_onnet_duration last_100_calls_outgoing_to_offnet_duration last_100_calls_outgoing_to_abroad_duration last_100_sms_outgoing_count last_100_sms_outgoing_to_onnet_count last_100_sms_outgoing_to_offnet_count last_100_sms_outgoing_to_abroad_count last_100_gprs_usage churn 0 2013.0 6.0 13.0 1000.0 0.0 1.0 0.05 0.00 1.0 1.0 ... 75.27 0.00 63.</description>
+      <description>import pandas as pd import seaborn as sns import matplotlib.pyplot as plt import warnings import numpy as np from scipy.io import arff # Disable warnings warnings.filterwarnings(&amp;#39;ignore&amp;#39;) data, meta = arff.loadarff(&amp;#39;large_churn_data&amp;#39;) data = pd.DataFrame(data) data.iloc[:, :8] year month user_account_id user_lifetime user_intake user_no_outgoing_activity_in_days user_account_balance_last user_spendings 0 2013.0 6.0 13.0 1000.0 0.0 1.0 0.05 0.00 1 2013.0 6.0 14.0 1000.0 0.0 25.0 28.31 3.45 2 2013.0 6.0 18.0 1005.0 0.0 8.0 15.62 1.</description>
     </item>
     
     <item>
