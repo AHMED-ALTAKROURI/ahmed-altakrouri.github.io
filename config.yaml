@@ -40,7 +40,7 @@ params:
     #      url: https://www.reddit.com/user/ian-s-mcb
     - name: Linkedin
       url: https://www.linkedin.com/in/ahmed-altakrouri-7422b185/
-  subtitle: "Data Science Blog"
+  subtitle: "AI/ML Blog"
 
 
 markup:
